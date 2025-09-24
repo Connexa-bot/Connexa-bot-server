@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: connexabot-server
+    env: node
+    plan: free
+    region: frankfurt   # or oregon/dublin/singapore depending on where your users are
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false   # keep it secret, set this in Render Dashboard manually
