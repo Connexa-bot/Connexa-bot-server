@@ -45,11 +45,9 @@ async function connectMongoDB() {
     console.log("✅ Connected to MongoDB");
   } catch (err) {
     console.error("⚠️ MongoDB connection error:", err.message);
-    process.exit(1); // Exit if MongoDB fails for production
+    process.exit(1);
   }
 }
-
-// Call on startup
 connectMongoDB();
 
 app.use(express.json());
@@ -66,19 +64,18 @@ async function clearSession(phone) {
     await fs.rm(authDir, { recursive: true, force: true });
     console.log(`🗑️ Session cleared for ${phone}`);
     sessions.delete(phone);
-    await User.findOneAndUpdate({ phone }, { connected: false }); // Update MongoDB
+    await User.findOneAndUpdate({ phone }, { connected: false });
   } catch (err) {
     console.error(`⚠️ Error clearing session for ${phone}:`, err.message);
   }
 }
 
 async function startBot(phone) {
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
+  const normalizedPhone = phone.replace(/^\+|\s/g, ""); // ✅ fixed regex
   if (sessions.has(normalizedPhone)) {
-    console.log(`ℹ️ Session exists for ${normalizedPhone}, closing and clearing...`);
+    console.log(`ℹ️ Session exists for ${normalizedPhone}, clearing...`);
     const session = sessions.get(normalizedPhone);
     if (session.sock.ws.readyState !== session.sock.ws.CLOSED) {
-      console.log(`🔗 Closing WebSocket for ${normalizedPhone}`);
       session.sock.ws.close();
     }
     await clearSession(normalizedPhone);
@@ -89,58 +86,57 @@ async function startBot(phone) {
 
   const sock = makeWASocket({
     auth: state,
-    printQRInTerminal: false, // Disable terminal QR for production
+    printQRInTerminal: false,
     browser: Browsers.ubuntu("Chrome"),
     syncFullHistory: false,
     connectTimeoutMs: 60000,
     defaultQueryTimeoutMs: 60000,
   });
 
-  sessions.set(normalizedPhone, { sock, qrCode: null, linkCode: null, connected: false, error: null });
+  sessions.set(normalizedPhone, {
+    sock,
+    qrCode: null,
+    linkCode: null,
+    connected: false,
+    error: null,
+  });
 
   sock.ev.on("connection.update", async (update) => {
     const { qr, connection, lastDisconnect } = update;
     const session = sessions.get(normalizedPhone);
 
     if (qr && !state.creds.registered) {
-      console.log(`📌 QR code updated for ${normalizedPhone}`);
       session.qrCode = qr;
       try {
-        console.log(`Waiting 10s before requesting pairing code...`);
         await delay(10000);
         const code = await sock.requestPairingCode(normalizedPhone);
-        console.log(`🔑 Pairing Code generated for ${normalizedPhone}: ${code}`);
         session.linkCode = code;
       } catch (err) {
-        console.error(`⚠️ Could not get pairing code for ${normalizedPhone}:`, err.message);
         session.error = `Pairing code error: ${err.message}`;
       }
     }
 
     if (connection === "open") {
-      console.log(`✅ Connected to WhatsApp for ${normalizedPhone}`);
       session.connected = true;
       session.qrCode = null;
       session.linkCode = null;
       session.error = null;
-      // Update MongoDB
-      await User.findOneAndUpdate({ phone: normalizedPhone }, { connected: true }, { upsert: true });
+      await User.findOneAndUpdate(
+        { phone: normalizedPhone },
+        { connected: true },
+        { upsert: true }
+      );
     }
 
     if (connection === "close") {
-      const statusCode = lastDisconnect?.error?.output?.statusCode;
       const errorMsg = lastDisconnect?.error?.message || "Unknown error";
-      console.log(`❌ Connection closed for ${normalizedPhone}, status code: ${statusCode}, error: ${errorMsg}`);
-      session.error = `Connection failed: ${errorMsg} (Code: ${statusCode})`;
-      // Update MongoDB
-      await User.findOneAndUpdate({ phone: normalizedPhone }, { connected: false });
-
-      console.log(`🔄 Closing WebSocket and clearing session for ${normalizedPhone}...`);
-      if (sock.ws.readyState !== sock.ws.CLOSED) {
-        sock.ws.close();
-      }
+      session.error = `Connection failed: ${errorMsg}`;
+      await User.findOneAndUpdate(
+        { phone: normalizedPhone },
+        { connected: false }
+      );
+      if (sock.ws.readyState !== sock.ws.CLOSED) sock.ws.close();
       await clearSession(normalizedPhone);
-      console.log(`🔄 Restarting bot for ${normalizedPhone} in 10s...`);
       setTimeout(() => startBot(normalizedPhone), 10000);
     }
 
@@ -152,11 +148,10 @@ async function startBot(phone) {
   sock.ev.on("messages.upsert", async ({ messages }) => {
     const msg = messages[0];
     if (!msg.message) return;
-
     const from = msg.key.remoteJid;
-    const messageContent = msg.message.conversation || msg.message.extendedTextMessage?.text;
+    const messageContent =
+      msg.message.conversation || msg.message.extendedTextMessage?.text;
 
-    // Save message to MongoDB
     await Message.create({
       phone: normalizedPhone,
       from: from,
@@ -181,6 +176,7 @@ async function startBot(phone) {
   return sock;
 }
 
+// === Helper Functions ===
 async function fetchGroups(sock, sendTo = null) {
   try {
     const groups = await sock.groupFetchAllParticipating();
@@ -194,7 +190,6 @@ async function fetchGroups(sock, sendTo = null) {
       .map((g) => `- ${g.name} (${g.id}, ${g.participants} members)`)
       .join("\n")}`;
 
-    console.log(message);
     if (sendTo) await sock.sendMessage(sendTo, { text: message });
     return groupList;
   } catch (err) {
@@ -205,7 +200,7 @@ async function fetchGroups(sock, sendTo = null) {
 
 async function fetchCommunities(sock, sendTo = null) {
   try {
-    const communities = await sock.fetchCommunities?.() || [];
+    const communities = (await sock.fetchCommunities?.()) || [];
     const communityList = communities.map((comm) => ({
       id: comm.id,
       name: comm.name || "Unnamed Community",
@@ -217,7 +212,6 @@ async function fetchCommunities(sock, sendTo = null) {
           .join("\n")}`
       : "🏘️ No communities found.";
 
-    console.log(message);
     if (sendTo) await sock.sendMessage(sendTo, { text: message });
     return communityList;
   } catch (err) {
@@ -239,7 +233,6 @@ async function fetchChats(sock, sendTo = null) {
       .map((c) => `- ${c.name} (${c.id})`)
       .join("\n")}`;
 
-    console.log(message);
     if (sendTo) await sock.sendMessage(sendTo, { text: message });
     return chats;
   } catch (err) {
@@ -250,7 +243,7 @@ async function fetchChats(sock, sendTo = null) {
 
 async function fetchStatuses(sock, sendTo = null) {
   try {
-    const statuses = await sock.fetchStatus?.() || [];
+    const statuses = (await sock.fetchStatus?.()) || [];
     const statusList = statuses.map((status) => ({
       id: status.jid,
       content: status.status,
@@ -263,7 +256,6 @@ async function fetchStatuses(sock, sendTo = null) {
           .join("\n")}`
       : "📢 No statuses found.";
 
-    console.log(message);
     if (sendTo) await sock.sendMessage(sendTo, { text: message });
     return statusList;
   } catch (err) {
@@ -275,7 +267,6 @@ async function fetchStatuses(sock, sendTo = null) {
 async function postStatus(sock, text) {
   try {
     await sock.sendMessage(sock.user.id, { text }, { status: true });
-    console.log("📢 Status posted:", text);
     return true;
   } catch (err) {
     console.error("⚠️ Error posting status:", err.message);
@@ -294,7 +285,10 @@ async function fetchMessages(sock) {
           messages.push({
             id: msg.key.id,
             from: msg.key.remoteJid,
-            content: msg.message.conversation || msg.message.extendedTextMessage?.text || "",
+            content:
+              msg.message.conversation ||
+              msg.message.extendedTextMessage?.text ||
+              "",
             timestamp: new Date(msg.messageTimestamp * 1000).toLocaleString(),
             isBot: msg.key.fromMe,
           });
@@ -308,7 +302,7 @@ async function fetchMessages(sock) {
   }
 }
 
-// MongoDB Endpoints
+// === Routes ===
 app.get("/users/:phone", async (req, res) => {
   const { phone } = req.params;
   try {
@@ -337,7 +331,9 @@ app.post("/users/:phone", async (req, res) => {
 app.get("/messages/:phone", async (req, res) => {
   const { phone } = req.params;
   try {
-    const messages = await Message.find({ phone }).sort({ timestamp: -1 }).limit(50);
+    const messages = await Message.find({ phone })
+      .sort({ timestamp: -1 })
+      .limit(50);
     res.json(messages);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -356,7 +352,7 @@ app.post("/messages/:phone", async (req, res) => {
 });
 
 app.post("/connect", async (req, res) => {
-  const { phone, mode } = req.body;
+  const { phone } = req.body;
   if (!phone) return res.status(400).json({ error: "Phone number is required" });
 
   try {
@@ -366,18 +362,12 @@ app.post("/connect", async (req, res) => {
     if (session.qrCode) {
       qrCodeDataUrl = await QRCode.toDataURL(session.qrCode);
     }
-    console.log(`Sending connect response for ${phone}:`, {
-      qrCodeDataUrl: !!qrCodeDataUrl,
-      linkCode: session.linkCode,
-      message: session.error || "Session initiated",
-    });
     res.json({
       qrCodeDataUrl,
       linkCode: session.linkCode,
       message: session.error || "Session initiated",
     });
   } catch (err) {
-    console.error(`⚠️ Connect error for ${phone}:`, err.message);
     res.status(500).json({ error: `Failed to connect: ${err.message}` });
   }
 });
@@ -393,12 +383,6 @@ app.get("/status/:phone", async (req, res) => {
     qrCodeDataUrl = await QRCode.toDataURL(session.qrCode);
   }
 
-  console.log(`Sending status for ${phone}:`, {
-    connected: session.connected,
-    qrCodeDataUrl: !!qrCodeDataUrl,
-    linkCode: session.linkCode,
-    error: session.error,
-  });
   res.json({
     connected: session.connected,
     qrCodeDataUrl,
@@ -411,11 +395,23 @@ app.get("/chats/:phone", async (req, res) => {
   const { phone } = req.params;
   const normalizedPhone = phone.replace(/^\+|\s/g, "");
   const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
+  if (!session || !session.connected)
+    return res.status(400).json({ error: "Not connected" });
   const chats = await fetchChats(session.sock);
   res.json({ chats });
 });
 
 app.get("/groups/:phone", async (req, res) => {
   const { phone } = req.params;
-  const normalizedPhone = phone.replace(/^\+|\s
+  const normalizedPhone = phone.replace(/^\+|\s/g, "");
+  const session = sessions.get(normalizedPhone);
+  if (!session || !session.connected)
+    return res.status(400).json({ error: "Not connected" });
+  const groups = await fetchGroups(session.sock);
+  res.json({ groups });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
