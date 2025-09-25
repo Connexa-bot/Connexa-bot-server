@@ -124,6 +124,9 @@ async function startBot(phone) {
     const { qr, connection, lastDisconnect } = update;
     const session = sessions.get(normalizedPhone);
 
+    // FIX: Avoid session bug after clear
+    if (!session) return;
+
     if (qr && !state.creds.registered) {
       qrAttempts++;
       session.qrCode = qr;
@@ -147,8 +150,8 @@ async function startBot(phone) {
           await logoutFromWhatsApp(sock, normalizedPhone);
           sock.ws.close();
         }
+        // FIX: No endless restart, just clear session and set error
         await clearSession(normalizedPhone);
-        setTimeout(() => startBot(normalizedPhone), 10000);
         return;
       }
     }
@@ -174,7 +177,8 @@ async function startBot(phone) {
         sock.ws.close();
       }
       await clearSession(normalizedPhone);
-      setTimeout(() => startBot(normalizedPhone), 10000);
+      // FIX: Don't auto-restart; let user retry from frontend.
+      return;
     }
 
     sessions.set(normalizedPhone, session);
@@ -182,6 +186,8 @@ async function startBot(phone) {
 
   setTimeout(async () => {
     const session = sessions.get(normalizedPhone);
+    // FIX: Defensive: session may have been cleared already
+    if (!session) return;
     if (!session.connected) {
       session.error = `Connection failed: Timeout after ${CONNECTION_TIMEOUT_MS / 1000}s`;
       if (sock.ws.readyState !== sock.ws.CLOSED) {
@@ -189,7 +195,8 @@ async function startBot(phone) {
         sock.ws.close();
       }
       await clearSession(normalizedPhone);
-      setTimeout(() => startBot(normalizedPhone), 10000);
+      // Don't auto-restart; let user retry from frontend
+      return;
     }
   }, CONNECTION_TIMEOUT_MS);
 
@@ -330,9 +337,11 @@ async function fetchMessages(sock) {
           messages.push({
             id: msg.key.id,
             from: msg.key.remoteJid,
+            to: msg.key.participant || msg.key.remoteJid,
             content: msg.message.conversation || msg.message.extendedTextMessage?.text || "",
             timestamp: new Date(msg.messageTimestamp * 1000).toLocaleString(),
             isBot: msg.key.fromMe,
+            phone: msg.key.fromMe ? chat.jid : undefined, // For frontend filtering by sender
           });
         }
       });
@@ -379,13 +388,13 @@ app.post("/connect", async (req, res) => {
     await startBot(phone);
     const session = sessions.get(phone.replace(/^\+|\s/g, ""));
     let qrCodeDataUrl = null;
-    if (session.qrCode) {
+    if (session && session.qrCode) {
       qrCodeDataUrl = await QRCode.toDataURL(session.qrCode);
     }
     res.json({
       qrCodeDataUrl,
-      linkCode: session.linkCode,
-      message: session.error || "Session initiated",
+      linkCode: session?.linkCode,
+      message: session?.error || "Session initiated",
     });
   } catch (err) {
     res.status(500).json({ error: `Failed to connect: ${err.message}` });
@@ -410,12 +419,11 @@ app.get("/status/:phone", async (req, res) => {
 
 // Messaging
 app.get("/messages/:phone", async (req, res) => {
-  try {
-    const messages = await Message.find({ phone: req.params.phone }).sort({ timestamp: -1 }).limit(50);
-    res.json(messages);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
+  const session = sessions.get(normalizedPhone);
+  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
+  const messages = await fetchMessages(session.sock);
+  res.json({ messages });
 });
 app.post("/messages/:phone", async (req, res) => {
   try {
