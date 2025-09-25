@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import {
   makeWASocket,
   useMultiFileAuthState,
@@ -15,6 +16,9 @@ import path from "path";
 dotenv.config();
 
 const app = express();
+app.use(cors());
+app.use(express.json());
+
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
 const AUTH_BASE_DIR = "./auth";
@@ -22,6 +26,7 @@ const sessions = new Map();
 const MAX_QR_ATTEMPTS = 3;
 const CONNECTION_TIMEOUT_MS = 60000;
 
+// Models
 const userSchema = new mongoose.Schema({
   phone: { type: String, unique: true, required: true },
   connected: { type: Boolean, default: false },
@@ -39,6 +44,7 @@ const messageSchema = new mongoose.Schema({
 });
 const Message = mongoose.model("Message", messageSchema);
 
+// DB Connection
 async function connectMongoDB() {
   try {
     await mongoose.connect(MONGODB_URI);
@@ -50,8 +56,7 @@ async function connectMongoDB() {
 }
 connectMongoDB();
 
-app.use(express.json());
-
+// Helpers
 async function ensureAuthDir(phone) {
   const authDir = path.join(AUTH_BASE_DIR, phone);
   await fs.mkdir(authDir, { recursive: true });
@@ -62,9 +67,9 @@ async function clearSession(phone) {
   try {
     const authDir = path.join(AUTH_BASE_DIR, phone);
     await fs.rm(authDir, { recursive: true, force: true });
-    console.log(`🗑️ Session cleared for ${phone}`);
     sessions.delete(phone);
     await User.findOneAndUpdate({ phone }, { connected: false });
+    console.log(`🗑️ Session cleared for ${phone}`);
   } catch (err) {
     console.error(`⚠️ Error clearing session for ${phone}:`, err.message);
   }
@@ -81,11 +86,10 @@ async function logoutFromWhatsApp(sock, phone) {
 
 async function startBot(phone) {
   const normalizedPhone = phone.replace(/^\+|\s/g, "");
+  // If session exists, clear it first
   if (sessions.has(normalizedPhone)) {
-    console.log(`ℹ️ Session exists for ${normalizedPhone}, closing and clearing...`);
     const session = sessions.get(normalizedPhone);
-    if (session.sock.ws.readyState !== session.sock.ws.CLOSED) {
-      console.log(`🔗 Closing WebSocket for ${normalizedPhone}`);
+    if (session.sock?.ws?.readyState !== session.sock?.ws?.CLOSED) {
       await logoutFromWhatsApp(session.sock, normalizedPhone);
       session.sock.ws.close();
     }
@@ -107,46 +111,37 @@ async function startBot(phone) {
 
   let qrAttempts = 0;
   let pairingCodeRequested = false;
-  sessions.set(normalizedPhone, { sock, qrCode: null, linkCode: null, connected: false, error: null, qrAttempts });
-
-  sock.ws.on("open", () => console.log(`🔗 WebSocket opened for ${normalizedPhone}`));
-  sock.ws.on("close", (code, reason) => console.log(`🔗 WebSocket closed for ${normalizedPhone}, code: ${code}, reason: ${reason}`));
-  sock.ws.on("error", (err) => console.error(`🔗 WebSocket error for ${normalizedPhone}:`, err.message));
-  sock.ws.on("message", (msg) => console.log(`🔗 WebSocket message for ${normalizedPhone}:`, msg.toString()));
+  sessions.set(normalizedPhone, {
+    sock,
+    qrCode: null,
+    linkCode: null,
+    connected: false,
+    error: null,
+    qrAttempts
+  });
 
   sock.ev.on("connection.update", async (update) => {
     const { qr, connection, lastDisconnect } = update;
     const session = sessions.get(normalizedPhone);
 
-    console.log(`Connection update for ${normalizedPhone}:`, {
-      qr: !!qr,
-      connection,
-      statusCode: lastDisconnect?.error?.output?.statusCode,
-      errorMessage: lastDisconnect?.error?.message,
-    });
-
     if (qr && !state.creds.registered) {
       qrAttempts++;
-      console.log(`📌 QR code updated for ${normalizedPhone} (attempt ${qrAttempts}/${MAX_QR_ATTEMPTS}): ${qr}`);
       session.qrCode = qr;
       session.qrAttempts = qrAttempts;
 
+      // Try pairing code only once
       if (!pairingCodeRequested) {
         try {
-          console.log(`Waiting 10s before requesting pairing code...`);
           await delay(10000);
           const code = await sock.requestPairingCode(normalizedPhone);
-          console.log(`🔑 Pairing Code generated for ${normalizedPhone}: ${code}`);
           session.linkCode = code;
           pairingCodeRequested = true;
         } catch (err) {
-          console.error(`⚠️ Could not get pairing code for ${normalizedPhone}:`, err.message);
           session.error = `Pairing code error: ${err.message}`;
         }
       }
 
       if (qrAttempts >= MAX_QR_ATTEMPTS) {
-        console.log(`❌ Max QR attempts reached for ${normalizedPhone}, resetting session...`);
         session.error = `Failed to connect: Max QR attempts reached (${MAX_QR_ATTEMPTS})`;
         if (sock.ws.readyState !== sock.ws.CLOSED) {
           await logoutFromWhatsApp(sock, normalizedPhone);
@@ -159,7 +154,6 @@ async function startBot(phone) {
     }
 
     if (connection === "open") {
-      console.log(`✅ Connected to WhatsApp for ${normalizedPhone}`);
       session.connected = true;
       session.qrCode = null;
       session.linkCode = null;
@@ -172,7 +166,6 @@ async function startBot(phone) {
     if (connection === "close") {
       const statusCode = lastDisconnect?.error?.output?.statusCode;
       const errorMsg = lastDisconnect?.error?.message || "Unknown error";
-      console.log(`❌ Connection closed for ${normalizedPhone}, status code: ${statusCode}, error: ${errorMsg}`);
       session.error = `Connection failed: ${errorMsg} (Code: ${statusCode})`;
       await User.findOneAndUpdate({ phone: normalizedPhone }, { connected: false });
 
@@ -181,7 +174,6 @@ async function startBot(phone) {
         sock.ws.close();
       }
       await clearSession(normalizedPhone);
-      console.log(`🔄 Restarting bot for ${normalizedPhone} in 10s...`);
       setTimeout(() => startBot(normalizedPhone), 10000);
     }
 
@@ -191,7 +183,6 @@ async function startBot(phone) {
   setTimeout(async () => {
     const session = sessions.get(normalizedPhone);
     if (!session.connected) {
-      console.log(`❌ Connection timeout for ${normalizedPhone} after ${CONNECTION_TIMEOUT_MS / 1000}s`);
       session.error = `Connection failed: Timeout after ${CONNECTION_TIMEOUT_MS / 1000}s`;
       if (sock.ws.readyState !== sock.ws.CLOSED) {
         await logoutFromWhatsApp(sock, normalizedPhone);
@@ -218,6 +209,7 @@ async function startBot(phone) {
       isBot: msg.key.fromMe,
     });
 
+    // Command handlers
     if (messageContent === "!groups") {
       await fetchGroups(sock, from);
     } else if (messageContent === "!communities") {
@@ -234,6 +226,7 @@ async function startBot(phone) {
   return sock;
 }
 
+// WhatsApp feature helpers
 async function fetchGroups(sock, sendTo = null) {
   try {
     const groups = await sock.groupFetchAllParticipating();
@@ -247,11 +240,9 @@ async function fetchGroups(sock, sendTo = null) {
       .map((g) => `- ${g.name} (${g.id}, ${g.participants} members)`)
       .join("\n")}`;
 
-    console.log(message);
     if (sendTo) await sock.sendMessage(sendTo, { text: message });
     return groupList;
   } catch (err) {
-    console.error("⚠️ Error fetching groups:", err.message);
     return [];
   }
 }
@@ -270,11 +261,9 @@ async function fetchCommunities(sock, sendTo = null) {
           .join("\n")}`
       : "🏘️ No communities found.";
 
-    console.log(message);
     if (sendTo) await sock.sendMessage(sendTo, { text: message });
     return communityList;
   } catch (err) {
-    console.error("⚠️ Error fetching communities:", err.message);
     return [];
   }
 }
@@ -292,11 +281,9 @@ async function fetchChats(sock, sendTo = null) {
       .map((c) => `- ${c.name} (${c.id})`)
       .join("\n")}`;
 
-    console.log(message);
     if (sendTo) await sock.sendMessage(sendTo, { text: message });
     return chats;
   } catch (err) {
-    console.error("⚠️ Error fetching chats:", err.message);
     return [];
   }
 }
@@ -316,11 +303,9 @@ async function fetchStatuses(sock, sendTo = null) {
           .join("\n")}`
       : "📢 No statuses found.";
 
-    console.log(message);
     if (sendTo) await sock.sendMessage(sendTo, { text: message });
     return statusList;
   } catch (err) {
-    console.error("⚠️ Error fetching statuses:", err.message);
     return [];
   }
 }
@@ -328,10 +313,8 @@ async function fetchStatuses(sock, sendTo = null) {
 async function postStatus(sock, text) {
   try {
     await sock.sendMessage(sock.user.id, { text }, { status: true });
-    console.log("📢 Status posted:", text);
     return true;
   } catch (err) {
-    console.error("⚠️ Error posting status:", err.message);
     return false;
   }
 }
@@ -356,28 +339,30 @@ async function fetchMessages(sock) {
     }
     return messages;
   } catch (err) {
-    console.error("⚠️ Error fetching messages:", err.message);
     return [];
   }
 }
 
+// API routes
+
+app.get("/", (req, res) => {
+  res.send("🚀 ConnexaBot Backend running...");
+});
+
+// User endpoints
 app.get("/users/:phone", async (req, res) => {
-  const { phone } = req.params;
   try {
-    const user = await User.findOne({ phone });
-    res.json(user || { phone, connected: false });
+    const user = await User.findOne({ phone: req.params.phone });
+    res.json(user || { phone: req.params.phone, connected: false });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
 app.post("/users/:phone", async (req, res) => {
-  const { phone } = req.params;
-  const { connected } = req.body;
   try {
     const user = await User.findOneAndUpdate(
-      { phone },
-      { connected },
+      { phone: req.params.phone },
+      { connected: req.body.connected },
       { upsert: true, new: true }
     );
     res.json(user);
@@ -386,31 +371,10 @@ app.post("/users/:phone", async (req, res) => {
   }
 });
 
-app.get("/messages/:phone", async (req, res) => {
-  const { phone } = req.params;
-  try {
-    const messages = await Message.find({ phone }).sort({ timestamp: -1 }).limit(50);
-    res.json(messages);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post("/messages/:phone", async (req, res) => {
-  const { phone } = req.params;
-  const messageData = req.body;
-  try {
-    const message = await Message.create({ phone, ...messageData });
-    res.json(message);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
+// Connection & status
 app.post("/connect", async (req, res) => {
   const { phone } = req.body;
   if (!phone) return res.status(400).json({ error: "Phone number is required" });
-
   try {
     await startBot(phone);
     const session = sessions.get(phone.replace(/^\+|\s/g, ""));
@@ -418,25 +382,17 @@ app.post("/connect", async (req, res) => {
     if (session.qrCode) {
       qrCodeDataUrl = await QRCode.toDataURL(session.qrCode);
     }
-    console.log(`Sending connect response for ${phone}:`, {
-      qrCodeDataUrl: !!qrCodeDataUrl,
-      linkCode: session.linkCode,
-      message: session.error || "Session initiated",
-    });
     res.json({
       qrCodeDataUrl,
       linkCode: session.linkCode,
       message: session.error || "Session initiated",
     });
   } catch (err) {
-    console.error(`⚠️ Connect error for ${phone}:`, err.message);
     res.status(500).json({ error: `Failed to connect: ${err.message}` });
   }
 });
-
 app.get("/status/:phone", async (req, res) => {
-  const { phone } = req.params;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
+  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
   const session = sessions.get(normalizedPhone);
   if (!session) return res.json({ connected: false, error: "No session found" });
 
@@ -444,13 +400,6 @@ app.get("/status/:phone", async (req, res) => {
   if (!session.connected && session.qrCode) {
     qrCodeDataUrl = await QRCode.toDataURL(session.qrCode);
   }
-
-  console.log(`Sending status for ${phone}:`, {
-    connected: session.connected,
-    qrCodeDataUrl: !!qrCodeDataUrl,
-    linkCode: session.linkCode,
-    error: session.error,
-  });
   res.json({
     connected: session.connected,
     qrCodeDataUrl,
@@ -459,60 +408,52 @@ app.get("/status/:phone", async (req, res) => {
   });
 });
 
-app.get("/chats/:phone", async (req, res) => {
-  const { phone } = req.params;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const chats = await fetchChats(session.sock);
-  res.json({ chats });
+// Messaging
+app.get("/messages/:phone", async (req, res) => {
+  try {
+    const messages = await Message.find({ phone: req.params.phone }).sort({ timestamp: -1 }).limit(50);
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+app.post("/messages/:phone", async (req, res) => {
+  try {
+    const message = await Message.create({ phone: req.params.phone, ...req.body });
+    res.json(message);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.get("/groups/:phone", async (req, res) => {
-  const { phone } = req.params;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const groups = await fetchGroups(session.sock);
-  res.json({ groups });
-});
-
-app.get("/communities/:phone", async (req, res) => {
-  const { phone } = req.params;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const communities = await fetchCommunities(session.sock);
-  res.json({ communities });
-});
-
-app.get("/statuses/:phone", async (req, res) => {
-  const { phone } = req.params;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const statuses = await fetchStatuses(session.sock);
-  res.json({ statuses });
+// WhatsApp features (chats, groups, communities, statuses)
+const featureRoutes = [
+  { path: "chats", fetcher: fetchChats },
+  { path: "groups", fetcher: fetchGroups },
+  { path: "communities", fetcher: fetchCommunities },
+  { path: "statuses", fetcher: fetchStatuses },
+];
+featureRoutes.forEach(({ path, fetcher }) => {
+  app.get(`/${path}/:phone`, async (req, res) => {
+    const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
+    const session = sessions.get(normalizedPhone);
+    if (!session || !session.connected) {
+      return res.status(400).json({ error: "Not connected" });
+    }
+    const data = await fetcher(session.sock);
+    res.json({ [path]: data });
+  });
 });
 
 app.post("/poststatus", async (req, res) => {
-  const { phone, text } = req.body;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
+  const normalizedPhone = req.body.phone.replace(/^\+|\s/g, "");
   const session = sessions.get(normalizedPhone);
   if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const success = await postStatus(session.sock, text);
+  const success = await postStatus(session.sock, req.body.text);
   res.json({ success, message: success ? "Status posted successfully" : "Failed to post status" });
 });
 
-app.get("/messages/:phone", async (req, res) => {
-  const { phone } = req.params;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const messages = await fetchMessages(session.sock);
-  res.json({ messages });
-});
-
+// Send message
 app.post("/send-message", async (req, res) => {
   const { phone, to, message } = req.body;
   const normalizedPhone = phone.replace(/^\+|\s/g, "");
@@ -526,20 +467,15 @@ app.post("/send-message", async (req, res) => {
   }
 });
 
+// Logout
 app.post("/logout", async (req, res) => {
-  const { phone } = req.body;
-  if (!phone) return res.status(400).json({ error: "Phone number is required" });
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
+  const normalizedPhone = req.body.phone.replace(/^\+|\s/g, "");
   const session = sessions.get(normalizedPhone);
   if (session && session.sock.ws.readyState !== session.sock.ws.CLOSED) {
     await logoutFromWhatsApp(session.sock, normalizedPhone);
   }
   await clearSession(normalizedPhone);
   res.json({ message: "Session cleared. Please reconnect." });
-});
-
-app.get("/", (req, res) => {
-  res.send("🚀 ConnexaBot Backend running...");
 });
 
 app.listen(PORT, () => {
