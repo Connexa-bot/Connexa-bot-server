@@ -8,22 +8,11 @@ import {
   delay,
   fetchLatestBaileysVersion,
   downloadMediaMessage,
-  makeInMemoryStore,
 } from "baileys";
-import pino from "pino";
+import { makeInMemoryStore } from "@rodrigogs/baileys-store";
 import dotenv from "dotenv";
 import fs from "fs/promises";
 import path from "path";
-
-const logger = pino({
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true,
-      ignore: "pid,hostname",
-    },
-  },
-});
 
 dotenv.config();
 
@@ -105,12 +94,11 @@ async function startBot(phone, isReconnect = false) {
   const { state, saveCreds } = await useMultiFileAuthState(authDir);
   const { version } = await fetchLatestBaileysVersion();
 
-  const store = makeInMemoryStore({ logger });
+  const store = makeInMemoryStore({});
   const storePath = path.join(authDir, "store.json");
   try {
     store.readFromFile(storePath);
   } catch {
-    // if no store exists, create one
     console.log("No store file found, creating a new one.");
   }
   setInterval(() => {
@@ -126,7 +114,6 @@ async function startBot(phone, isReconnect = false) {
     connectTimeoutMs: CONNECTION_TIMEOUT_MS,
     defaultQueryTimeoutMs: 60000,
     keepAliveIntervalMs: 30000,
-    logger,
   });
 
   store.bind(sock.ev);
@@ -154,7 +141,7 @@ async function startBot(phone, isReconnect = false) {
       session.qrAttempts = qrAttempts;
       if (!pairingCodeRequested) {
         try {
-          await delay(5000); // Add a 5-second delay for stabilization
+          await delay(5000);
           const code = await sock.requestPairingCode(normalizedPhone);
           session.linkCode = code;
           pairingCodeRequested = true;
@@ -167,7 +154,6 @@ async function startBot(phone, isReconnect = false) {
         if (sock.ws.readyState !== sock.ws.CLOSED) {
           sock.ws.close();
         }
-        // await clearSession(normalizedPhone); // <-- Let the next attempt clean this up
         return;
       }
     }
@@ -184,8 +170,6 @@ async function startBot(phone, isReconnect = false) {
 
     if (connection === "close") {
       const statusCode = lastDisconnect?.error?.output?.statusCode;
-      // 401 means the user is logged out, and we should not reconnect.
-      // Other errors, like 515 (Stream Error), are recoverable.
       const shouldReconnect = statusCode !== 401;
 
       const errorMsg = lastDisconnect?.error?.message || `Connection closed.`;
@@ -197,8 +181,8 @@ async function startBot(phone, isReconnect = false) {
 
       if (shouldReconnect) {
         console.log("Attempting to reconnect...");
-        await delay(5000); // Wait 5 seconds before reconnecting
-        startBot(normalizedPhone, true); // Reconnect without clearing session
+        await delay(5000);
+        startBot(normalizedPhone, true);
       } else {
         console.log("Connection closed permanently. Clearing session.");
         await clearSession(normalizedPhone);
@@ -374,7 +358,7 @@ app.post("/connect", async (req, res) => {
     await startBot(phone);
     const session = sessions.get(phone.replace(/^\+|\s/g, ""));
     res.json({
-      qrCode: session?.qrCode || null, // ← return raw QR string
+      qrCode: session?.qrCode || null,
       linkCode: session?.linkCode || null,
       message: session?.error || "Session initiated",
       connected: session?.connected,
@@ -392,7 +376,7 @@ app.get("/status/:phone", async (req, res) => {
 
   res.json({
     connected: session.connected,
-    qrCode: !session.connected ? session.qrCode : null, // ← return raw QR string
+    qrCode: !session.connected ? session.qrCode : null,
     linkCode: session.linkCode,
     error: session.error,
   });
