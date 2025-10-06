@@ -1,11 +1,3 @@
-# Logs
-server.log
-*.log
-
-# Dependencies
 node_modules/
-
-# Runtime data
-auth/
-media/
 .env
+auth/
