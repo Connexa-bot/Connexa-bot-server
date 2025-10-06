@@ -8,7 +8,7 @@ import {
   delay,
   fetchLatestBaileysVersion,
   downloadMediaMessage,
-} from "@whiskeysockets/baileys";
+} from "baileys";
 import dotenv from "dotenv";
 import fs from "fs/promises";
 import path from "path";
@@ -212,7 +212,119 @@ async function startBot(phone) {
 }
 
 // --- WhatsApp Data Fetchers ---
-// ... keep all your fetchChats, fetchGroups, fetchMessages, downloadMedia, etc. as-is ...
+const fetchChats = async (sock) => {
+  try {
+    const chats = await sock.ev.emit("chats.set", {
+      chats: sock.chats.all(),
+    });
+    return chats;
+  } catch (err) {
+    console.error("Failed to fetch chats:", err);
+    return [];
+  }
+};
+const fetchGroups = async (sock) => {
+  try {
+    const groups = await sock.groupFetchAllParticipating();
+    return Object.values(groups);
+  } catch (err) {
+    console.error("Failed to fetch groups:", err);
+    return [];
+  }
+};
+const fetchCommunities = async (sock) => {
+  try {
+    const communities = await sock.groupFetchAllParticipating();
+    return Object.values(communities).filter((c) => c.parent === null);
+  } catch (err) {
+    console.error("Failed to fetch communities:", err);
+    return [];
+  }
+};
+const fetchChannels = async (sock) => {
+  try {
+    const channels = await sock.getAllNewsletters();
+    return channels;
+  } catch (err) {
+    console.error("Failed to fetch channels:", err);
+    return [];
+  }
+};
+const fetchStatuses = async (sock) => {
+  try {
+    const statuses = await sock.fetchStatus();
+    return statuses;
+  } catch (err) {
+    console.error("Failed to fetch statuses:", err);
+    return [];
+  }
+};
+const fetchMessages = async (sock, chatId) => {
+  try {
+    const messages = await sock.fetchMessagesFromWA(chatId, { count: 100 });
+    return messages;
+  } catch (err) {
+    console.error(`Failed to fetch messages for ${chatId}:`, err);
+    return [];
+  }
+};
+const downloadMedia = async (sock, chatId, msgId, type, phone) => {
+  try {
+    const msg = await sock.loadMessage(chatId, msgId);
+    if (!msg) return null;
+
+    const mediaDir = await ensureMediaDir(phone);
+    const mediaType =
+      type ||
+      (msg.message?.imageMessage
+        ? "image"
+        : msg.message?.videoMessage
+        ? "video"
+        : msg.message?.audioMessage
+        ? "audio"
+        : "document");
+    const stream = await downloadMediaMessage(msg, "buffer", {}, {});
+    const ext = mediaType === "image" ? "jpeg" : "mp4"; // Basic extension mapping
+    const filePath = path.join(mediaDir, `${msgId}.${ext}`);
+    await fs.writeFile(filePath, stream);
+    return filePath;
+  } catch (err) {
+    console.error("Failed to download media:", err);
+    return null;
+  }
+};
+const addParticipant = async (sock, groupId, jid) => {
+  try {
+    await sock.groupParticipantsUpdate(groupId, [jid], "add");
+  } catch (err) {
+    console.error("Failed to add participant:", err);
+    throw err;
+  }
+};
+const removeParticipant = async (sock, groupId, jid) => {
+  try {
+    await sock.groupParticipantsUpdate(groupId, [jid], "remove");
+  } catch (err) {
+    console.error("Failed to remove participant:", err);
+    throw err;
+  }
+};
+const promoteParticipant = async (sock, groupId, jid) => {
+  try {
+    await sock.groupParticipantsUpdate(groupId, [jid], "promote");
+  } catch (err) {
+    console.error("Failed to promote participant:", err);
+    throw err;
+  }
+};
+const demoteParticipant = async (sock, groupId, jid) => {
+  try {
+    await sock.groupParticipantsUpdate(groupId, [jid], "demote");
+  } catch (err) {
+    console.error("Failed to demote participant:", err);
+    throw err;
+  }
+};
 
 // --- API Endpoints ---
 app.get("/", (req, res) => {
