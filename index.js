@@ -8,10 +8,22 @@ import {
   delay,
   fetchLatestBaileysVersion,
   downloadMediaMessage,
+  makeInMemoryStore,
 } from "baileys";
+import pino from "pino";
 import dotenv from "dotenv";
 import fs from "fs/promises";
 import path from "path";
+
+const logger = pino({
+  transport: {
+    target: "pino-pretty",
+    options: {
+      colorize: true,
+      ignore: "pid,hostname",
+    },
+  },
+});
 
 dotenv.config();
 
@@ -93,6 +105,18 @@ async function startBot(phone, isReconnect = false) {
   const { state, saveCreds } = await useMultiFileAuthState(authDir);
   const { version } = await fetchLatestBaileysVersion();
 
+  const store = makeInMemoryStore({ logger });
+  const storePath = path.join(authDir, "store.json");
+  try {
+    store.readFromFile(storePath);
+  } catch {
+    // if no store exists, create one
+    console.log("No store file found, creating a new one.");
+  }
+  setInterval(() => {
+    store.writeToFile(storePath);
+  }, 10_000);
+
   const sock = makeWASocket({
     version,
     auth: state,
@@ -102,17 +126,21 @@ async function startBot(phone, isReconnect = false) {
     connectTimeoutMs: CONNECTION_TIMEOUT_MS,
     defaultQueryTimeoutMs: 60000,
     keepAliveIntervalMs: 30000,
+    logger,
   });
+
+  store.bind(sock.ev);
 
   let qrAttempts = 0;
   let pairingCodeRequested = false;
   sessions.set(normalizedPhone, {
     sock,
+    store,
     qrCode: null,
     linkCode: null,
     connected: false,
     error: null,
-    qrAttempts
+    qrAttempts,
   });
 
   sock.ev.on("connection.update", async (update) => {
@@ -222,12 +250,9 @@ async function startBot(phone, isReconnect = false) {
 }
 
 // --- WhatsApp Data Fetchers ---
-const fetchChats = async (sock) => {
+const fetchChats = async (store) => {
   try {
-    const chats = await sock.ev.emit("chats.set", {
-      chats: sock.chats.all(),
-    });
-    return chats;
+    return store.chats.all();
   } catch (err) {
     console.error("Failed to fetch chats:", err);
     return [];
@@ -378,7 +403,7 @@ app.get("/chats/:phone", async (req, res) => {
   const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
   const session = sessions.get(normalizedPhone);
   if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const chats = await fetchChats(session.sock);
+  const chats = await fetchChats(session.store);
   res.json({ chats });
 });
 
