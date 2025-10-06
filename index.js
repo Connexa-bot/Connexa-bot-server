@@ -78,9 +78,9 @@ function broadcast(event, data) {
 }
 
 // --- WhatsApp Connection ---
-async function startBot(phone) {
+async function startBot(phone, isReconnect = false) {
   const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  if (sessions.has(normalizedPhone)) {
+  if (!isReconnect && sessions.has(normalizedPhone)) {
     const session = sessions.get(normalizedPhone);
     if (session.sock?.ws?.readyState !== session.sock?.ws?.CLOSED) {
       await logoutFromWhatsApp(session.sock, normalizedPhone);
@@ -126,6 +126,7 @@ async function startBot(phone) {
       session.qrAttempts = qrAttempts;
       if (!pairingCodeRequested) {
         try {
+          await delay(5000); // Add a 5-second delay for stabilization
           const code = await sock.requestPairingCode(normalizedPhone);
           session.linkCode = code;
           pairingCodeRequested = true;
@@ -155,16 +156,22 @@ async function startBot(phone) {
 
     if (connection === "close") {
       const statusCode = lastDisconnect?.error?.output?.statusCode;
-      const shouldReconnect = statusCode !== 401; // 401 means "Logged Out"
-      const errorMsg =
-        lastDisconnect?.error?.message || `Connection closed. Reconnecting: ${shouldReconnect}`;
+      // 401 means the user is logged out, and we should not reconnect.
+      // Other errors, like 515 (Stream Error), are recoverable.
+      const shouldReconnect = statusCode !== 401;
 
+      const errorMsg = lastDisconnect?.error?.message || `Connection closed.`;
       session.connected = false;
       session.error = `Connection failed: ${errorMsg} (Code: ${statusCode})`;
+
+      console.log(`Connection closed: ${errorMsg}`);
       broadcast("status", { phone: normalizedPhone, connected: false, error: session.error });
 
-      // Only clear session if we are explicitly logged out
-      if (!shouldReconnect) {
+      if (shouldReconnect) {
+        console.log("Attempting to reconnect...");
+        await delay(5000); // Wait 5 seconds before reconnecting
+        startBot(normalizedPhone, true); // Reconnect without clearing session
+      } else {
         console.log("Connection closed permanently. Clearing session.");
         await clearSession(normalizedPhone);
       }
