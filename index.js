@@ -9,7 +9,6 @@ import {
   fetchLatestBaileysVersion,
   downloadMediaMessage,
 } from "@whiskeysockets/baileys";
-import QRCode from "qrcode";
 import dotenv from "dotenv";
 import fs from "fs/promises";
 import path from "path";
@@ -213,144 +212,23 @@ async function startBot(phone) {
 }
 
 // --- WhatsApp Data Fetchers ---
-async function fetchChats(sock) {
-  try {
-    const chats = Object.values(sock.chats || {});
-    return chats.map(chat => ({
-      id: chat.id || chat.jid,
-      name: chat.name || jidDecode(chat.jid)?.user || "Unknown",
-      unread: chat.unreadCount,
-      isGroup: chat.id?.endsWith("@g.us") || false,
-    }));
-  } catch {
-    return [];
-  }
-}
-async function fetchGroups(sock) {
-  try {
-    const groups = await sock.groupFetchAllParticipating();
-    return Object.values(groups).map(group => ({
-      id: group.id,
-      name: group.subject,
-      participants: group.participants.length,
-      owner: group.owner
-    }));
-  } catch {
-    return [];
-  }
-}
-async function fetchCommunities(sock) {
-  try {
-    const communities = await sock.fetchCommunities?.() || [];
-    return communities.map(comm => ({
-      id: comm.id,
-      name: comm.name || "Unnamed Community",
-    }));
-  } catch {
-    return [];
-  }
-}
-async function fetchChannels(sock) {
-  try {
-    const channels = await sock.getChannels?.() || [];
-    return channels.map(chan => ({
-      id: chan.id,
-      name: chan.name || "Unnamed Channel",
-      description: chan.description,
-      participants: chan.participants?.length
-    }));
-  } catch {
-    return [];
-  }
-}
-async function fetchStatuses(sock) {
-  try {
-    const statuses = await sock.fetchStatus?.() || [];
-    return statuses.map(status => ({
-      id: status.jid,
-      content: status.status,
-      timestamp: new Date(status.timestamp * 1000).toLocaleString(),
-    }));
-  } catch {
-    return [];
-  }
-}
-async function fetchMessages(sock, chatId) {
-  try {
-    const history = await sock.fetchMessagesFromWA(chatId, 30);
-    return history.map(msg => {
-      const mediaType = msg.message?.imageMessage
-        ? "image"
-        : msg.message?.videoMessage
-        ? "video"
-        : msg.message?.audioMessage
-        ? "audio"
-        : msg.message?.documentMessage
-        ? "document"
-        : msg.message?.stickerMessage
-        ? "sticker"
-        : undefined;
-      return {
-        id: msg.key.id,
-        from: msg.key.remoteJid,
-        to: msg.key.participant || msg.key.remoteJid,
-        content: msg.message?.conversation || msg.message?.extendedTextMessage?.text || "",
-        timestamp: msg.messageTimestamp ? new Date(msg.messageTimestamp * 1000).toLocaleString() : "",
-        isBot: msg.key.fromMe,
-        mediaType,
-        hasMedia: !!mediaType
-      };
-    });
-  } catch {
-    return [];
-  }
-}
-async function downloadMedia(sock, chatId, msgId, type, phone) {
-  const history = await sock.fetchMessagesFromWA(chatId, 30);
-  const msg = history.find(m => m.key.id === msgId);
-  if (!msg) return null;
-  const stream = await downloadMediaMessage(msg, "buffer", {});
-  if (!stream) return null;
-  const mediaDir = await ensureMediaDir(phone);
-  const ext = type || "bin";
-  const filename = `${msgId}.${ext}`;
-  const filePath = path.join(mediaDir, filename);
-  await fs.writeFile(filePath, stream);
-  return filePath;
-}
-
-// --- Group/Community/Channel Management (basic examples) ---
-async function addParticipant(sock, groupId, jid) {
-  return await sock.groupAdd(groupId, [jid]);
-}
-async function removeParticipant(sock, groupId, jid) {
-  return await sock.groupRemove(groupId, [jid]);
-}
-async function promoteParticipant(sock, groupId, jid) {
-  return await sock.groupMakeAdmin(groupId, [jid]);
-}
-async function demoteParticipant(sock, groupId, jid) {
-  return await sock.groupDemoteAdmin(groupId, [jid]);
-}
+// ... keep all your fetchChats, fetchGroups, fetchMessages, downloadMedia, etc. as-is ...
 
 // --- API Endpoints ---
 app.get("/", (req, res) => {
   res.send("🚀 WhatsApp Bot Backend running...");
 });
 
+// --- UPDATED /connect ---
 app.post("/connect", async (req, res) => {
   const { phone } = req.body;
   if (!phone) return res.status(400).json({ error: "Phone number is required" });
   try {
     await startBot(phone);
     const session = sessions.get(phone.replace(/^\+|\s/g, ""));
-    let qrCodeDataUrl = null;
-    if (session && session.qrCode) {
-      qrCodeDataUrl = await QRCode.toDataURL(session.qrCode);
-    }
     res.json({
-      qrCodeDataUrl,
-      linkCode: session?.linkCode,
+      qrCode: session?.qrCode || null, // ← return raw QR string
+      linkCode: session?.linkCode || null,
       message: session?.error || "Session initiated",
       connected: session?.connected,
     });
@@ -359,23 +237,21 @@ app.post("/connect", async (req, res) => {
   }
 });
 
+// --- UPDATED /status/:phone ---
 app.get("/status/:phone", async (req, res) => {
   const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
+  const session = sessions.get(normalizedPhonse);
   if (!session) return res.json({ connected: false, error: "No session found" });
 
-  let qrCodeDataUrl = null;
-  if (!session.connected && session.qrCode) {
-    qrCodeDataUrl = await QRCode.toDataURL(session.qrCode);
-  }
   res.json({
     connected: session.connected,
-    qrCodeDataUrl,
+    qrCode: !session.connected ? session.qrCode : null, // ← return raw QR string
     linkCode: session.linkCode,
     error: session.error,
   });
 });
 
+// --- keep all other endpoints unchanged ---
 app.get("/chats/:phone", async (req, res) => {
   const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
   const session = sessions.get(normalizedPhone);
