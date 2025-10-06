@@ -8,3 +8,4 @@ node_modules/
 # Runtime data
 auth/
 media/
+.env
