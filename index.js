@@ -8,7 +8,7 @@ import {
   delay,
   fetchLatestBaileysVersion,
   downloadMediaMessage,
-} from "@whiskeysockets/baileys";
+} from "baileys";
 import dotenv from "dotenv";
 import fs from "fs/promises";
 import path from "path";
