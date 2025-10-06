@@ -39,6 +39,10 @@ async function ensureMediaDir(phone) {
   return mediaDir;
 }
 async function clearSession(phone) {
+  const session = sessions.get(phone);
+  if (session?.intervalId) {
+    clearInterval(session.intervalId);
+  }
   try {
     const authDir = path.join(AUTH_BASE_DIR, phone);
     await fs.rm(authDir, { recursive: true, force: true });
@@ -81,14 +85,6 @@ function broadcast(event, data) {
 // --- WhatsApp Connection ---
 async function startBot(phone, isReconnect = false) {
   const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  if (!isReconnect && sessions.has(normalizedPhone)) {
-    const session = sessions.get(normalizedPhone);
-    if (session.sock?.ws?.readyState !== session.sock?.ws?.CLOSED) {
-      await logoutFromWhatsApp(session.sock, normalizedPhone);
-      session.sock.ws.close();
-    }
-    await clearSession(normalizedPhone);
-  }
 
   const authDir = await ensureAuthDir(normalizedPhone);
   const { state, saveCreds } = await useMultiFileAuthState(authDir);
@@ -101,7 +97,7 @@ async function startBot(phone, isReconnect = false) {
   } catch {
     console.log("No store file found, creating a new one.");
   }
-  setInterval(() => {
+  const intervalId = setInterval(() => {
     store.writeToFile(storePath);
   }, 10_000);
 
@@ -128,6 +124,7 @@ async function startBot(phone, isReconnect = false) {
     connected: false,
     error: null,
     qrAttempts,
+    intervalId,
   });
 
   sock.ev.on("connection.update", async (update) => {
@@ -353,10 +350,16 @@ app.get("/", (req, res) => {
 // --- UPDATED /connect ---
 app.post("/connect", async (req, res) => {
   const { phone } = req.body;
+  const normalizedPhone = phone.replace(/^\+|\s/g, "");
   if (!phone) return res.status(400).json({ error: "Phone number is required" });
+
   try {
-    await startBot(phone);
-    const session = sessions.get(phone.replace(/^\+|\s/g, ""));
+    if (sessions.has(normalizedPhone)) {
+      await clearSession(normalizedPhone);
+    }
+
+    await startBot(normalizedPhone);
+    const session = sessions.get(normalizedPhone);
     res.json({
       qrCode: session?.qrCode || null,
       linkCode: session?.linkCode || null,
