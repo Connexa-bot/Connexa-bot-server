@@ -240,7 +240,7 @@ app.post("/connect", async (req, res) => {
 // --- UPDATED /status/:phone ---
 app.get("/status/:phone", async (req, res) => {
   const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhonse);
+  const session = sessions.get(normalizedPhone);
   if (!session) return res.json({ connected: false, error: "No session found" });
 
   res.json({
