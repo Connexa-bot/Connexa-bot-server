@@ -357,14 +357,40 @@ app.post("/connect", async (req, res) => {
       await clearSession(normalizedPhone);
     }
 
-    await startBot(normalizedPhone);
-    const session = sessions.get(normalizedPhone);
-    res.json({
-      qrCode: session?.qrCode || null,
-      linkCode: session?.linkCode || null,
-      message: session?.error || "Session initiated",
-      connected: session?.connected,
+    // Start the bot, but don't wait for the function to finish,
+    // as the codes are generated via async events.
+    startBot(normalizedPhone).catch((err) => {
+      console.error(`Error starting bot for ${normalizedPhone}:`, err);
     });
+
+    // Poll for the session data until codes are available or we time out.
+    let attempts = 0;
+    const maxAttempts = 30; // Wait for 30 seconds max
+    const interval = setInterval(() => {
+      const session = sessions.get(normalizedPhone);
+      attempts++;
+
+      // If we have data, or an error, or we're connected, or we've tried too many times
+      if (
+        session &&
+        (session.qrCode ||
+          session.linkCode ||
+          session.connected ||
+          session.error ||
+          attempts > maxAttempts)
+      ) {
+        clearInterval(interval);
+        if (attempts > maxAttempts && !session.connected && !session.error) {
+          session.error = "Connection timed out. Please try again.";
+        }
+        res.json({
+          qrCode: session?.qrCode || null,
+          linkCode: session?.linkCode || null,
+          message: session?.error || "Session initiated",
+          connected: session?.connected || false,
+        });
+      }
+    }, 1000);
   } catch (err) {
     res.status(500).json({ error: `Failed to connect: ${err.message}` });
   }
