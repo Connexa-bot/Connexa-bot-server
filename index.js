@@ -276,7 +276,8 @@ const fetchStatuses = async (sock) => {
 };
 const fetchMessages = async (sock, chatId) => {
   try {
-    const messages = await sock.fetchMessagesFromWA(chatId, { count: 100 });
+    // Corrected function call based on Baileys documentation
+    const messages = await sock.fetchMessageHistory(chatId, { count: 100 });
     return messages;
   } catch (err) {
     console.error(`Failed to fetch messages for ${chatId}:`, err);
