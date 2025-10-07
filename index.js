@@ -138,7 +138,6 @@ async function startBot(phone, isReconnect = false) {
       session.qrAttempts = qrAttempts;
       if (!pairingCodeRequested) {
         try {
-          await delay(5000);
           const code = await sock.requestPairingCode(normalizedPhone);
           session.linkCode = code;
           pairingCodeRequested = true;
