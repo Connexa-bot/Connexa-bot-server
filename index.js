@@ -1,421 +1,110 @@
+// ===============================
+// 🌐 ConnexaBot Entry Point
+// ===============================
 import express from "express";
+import http from "http";
+import { Server } from "socket.io";
 import cors from "cors";
-import {
-  makeWASocket,
-  useMultiFileAuthState,
-  Browsers,
-  jidDecode,
-  delay,
-  fetchLatestBaileysVersion,
-  downloadMediaMessage,
-} from "@whiskeysockets/baileys";
 import dotenv from "dotenv";
-import fs from "fs/promises";
+import morgan from "morgan";
 import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 
+// 🧩 Route Imports
+import apiRoutes from "./routes/api.js";
+import contactRoutes from "./routes/contacts.js";
+import groupRoutes from "./routes/groups.js";
+import messageRoutes from "./routes/messages.js";
+import presenceRoutes from "./routes/presence.js";
+import profileRoutes from "./routes/profile.js";
+import websocketRoutes from "./routes/websocket.js";
+
+// 🤖 Bot Helper
+import { startBot, clearSession } from "./helpers/whatsapp.js";
+
+// ===============================
+// ⚙️ Setup & Configuration
+// ===============================
 dotenv.config();
-
 const app = express();
-app.use(cors());
-app.use(express.json({ limit: "50mb" })); // For media base64
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*" } });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 5000;
-const AUTH_BASE_DIR = "./auth";
-const MEDIA_BASE_DIR = "./media";
-const sessions = new Map();
-const MAX_QR_ATTEMPTS = 3;
-const CONNECTION_TIMEOUT_MS = 60000;
+const AUTH_DIR = process.env.AUTH_DIR || "./auth";
+const SERVER_URL = process.env.SERVER_URL || `http://localhost:${PORT}`;
 
-// --- Helpers ---
-async function ensureAuthDir(phone) {
-  const authDir = path.join(AUTH_BASE_DIR, phone);
-  await fs.mkdir(authDir, { recursive: true });
-  return authDir;
-}
-async function ensureMediaDir(phone) {
-  const mediaDir = path.join(MEDIA_BASE_DIR, phone);
-  await fs.mkdir(mediaDir, { recursive: true });
-  return mediaDir;
-}
-async function clearSession(phone) {
-  try {
-    const authDir = path.join(AUTH_BASE_DIR, phone);
-    await fs.rm(authDir, { recursive: true, force: true });
-    sessions.delete(phone);
-    console.log(`🗑️ Session cleared for ${phone}`);
-  } catch (err) {
-    console.error(`⚠️ Error clearing session for ${phone}:`, err.message);
-  }
-}
-async function logoutFromWhatsApp(sock, phone) {
-  try {
-    await sock.logout();
-    console.log(`🔑 Logged out from WhatsApp for ${phone}`);
-  } catch (err) {
-    console.error(`⚠️ Error logging out for ${phone}:`, err.message);
-  }
-}
+// Ensure base directories exist
+fs.mkdirSync(AUTH_DIR, { recursive: true });
+fs.mkdirSync("./media", { recursive: true });
 
-// --- WebSocket support ---
-import { WebSocketServer } from "ws";
-const server = app.listen(PORT, () => {
-  console.log(`🌍 Backend running on http://localhost:${PORT}`);
-});
-const wss = new WebSocketServer({ server });
-let wsClients = [];
-wss.on("connection", (ws) => {
-  wsClients.push(ws);
-  ws.on("close", () => {
-    wsClients = wsClients.filter((c) => c !== ws);
-  });
-});
+// ===============================
+// 🧠 Middleware
+// ===============================
+app.use(cors());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan("dev"));
+
+// Serve static files (media, etc.)
+app.use("/media", express.static(path.join(__dirname, "media")));
+
+// ===============================
+// 🛠️ API Routes
+// ===============================
+app.use("/api", apiRoutes);
+app.use("/api/contacts", contactRoutes);
+app.use("/api/groups", groupRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/presence", presenceRoutes);
+app.use("/api/profile", profileRoutes);
+
+// ===============================
+// ⚡ WebSocket Integration
+// ===============================
+let wsClients = new Map();
+
+// Broadcast helper for WhatsApp events
 function broadcast(event, data) {
-  wsClients.forEach((ws) => {
-    if (ws.readyState === ws.OPEN) {
-      ws.send(JSON.stringify({ event, data }));
-    }
-  });
+  io.emit(event, data);
 }
 
-// --- WhatsApp Connection ---
-async function startBot(phone) {
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  if (sessions.has(normalizedPhone)) {
-    const session = sessions.get(normalizedPhone);
-    if (session.sock?.ws?.readyState !== session.sock?.ws?.CLOSED) {
-      await logoutFromWhatsApp(session.sock, normalizedPhone);
-      session.sock.ws.close();
+// WebSocket handlers
+io.on("connection", (socket) => {
+  console.log(`🟢 Client connected: ${socket.id}`);
+  wsClients.set(socket.id, socket);
+
+  socket.on("disconnect", () => {
+    wsClients.delete(socket.id);
+    console.log(`🔴 Client disconnected: ${socket.id}`);
+  });
+
+  socket.on("connect-whatsapp", async (phone) => {
+    console.log(`📲 Starting connection for ${phone}`);
+    try {
+      await startBot(phone, broadcast);
+      socket.emit("status", { phone, status: "connecting" });
+    } catch (err) {
+      console.error(`❌ Connection failed for ${phone}:`, err);
+      socket.emit("status", { phone, error: err.message });
     }
-    await clearSession(normalizedPhone);
-  }
-
-  const authDir = await ensureAuthDir(normalizedPhone);
-  const { state, saveCreds } = await useMultiFileAuthState(authDir);
-  const { version } = await fetchLatestBaileysVersion();
-
-  const sock = makeWASocket({
-    version,
-    auth: state,
-    printQRInTerminal: false,
-    browser: Browsers.ubuntu("Chrome"),
-    syncFullHistory: false,
-    connectTimeoutMs: CONNECTION_TIMEOUT_MS,
-    defaultQueryTimeoutMs: 60000,
-    keepAliveIntervalMs: 30000,
   });
 
-  let qrAttempts = 0;
-  let pairingCodeRequested = false;
-  sessions.set(normalizedPhone, {
-    sock,
-    qrCode: null,
-    linkCode: null,
-    connected: false,
-    error: null,
-    qrAttempts
-  });
-
-  sock.ev.on("connection.update", async (update) => {
-    const { qr, connection, lastDisconnect } = update;
-    const session = sessions.get(normalizedPhone);
-    if (!session) return;
-
-    if (qr && !state.creds.registered) {
-      qrAttempts++;
-      session.qrCode = qr;
-      session.qrAttempts = qrAttempts;
-      if (!pairingCodeRequested) {
-        try {
-          await delay(10000);
-          const code = await sock.requestPairingCode(normalizedPhone);
-          session.linkCode = code;
-          pairingCodeRequested = true;
-        } catch (err) {
-          session.error = `Pairing code error: ${err.message}`;
-        }
-      }
-      if (qrAttempts >= MAX_QR_ATTEMPTS) {
-        session.error = `Failed to connect: Max QR attempts reached (${MAX_QR_ATTEMPTS})`;
-        if (sock.ws.readyState !== sock.ws.CLOSED) {
-          await logoutFromWhatsApp(sock, normalizedPhone);
-          sock.ws.close();
-        }
-        await clearSession(normalizedPhone);
-        return;
-      }
-    }
-
-    if (connection === "open") {
-      session.connected = true;
-      session.qrCode = null;
-      session.linkCode = null;
-      session.error = null;
-      session.qrAttempts = 0;
-      pairingCodeRequested = false;
-      broadcast("status", { phone: normalizedPhone, connected: true });
-    }
-
-    if (connection === "close") {
-      const statusCode = lastDisconnect?.error?.output?.statusCode;
-      const errorMsg = lastDisconnect?.error?.message || "Unknown error";
-      session.error = `Connection failed: ${errorMsg} (Code: ${statusCode})`;
-      if (sock.ws.readyState !== sock.ws.CLOSED) {
-        await logoutFromWhatsApp(sock, normalizedPhone);
-        sock.ws.close();
-      }
-      await clearSession(normalizedPhone);
-      broadcast("status", { phone: normalizedPhone, connected: false });
-      return;
-    }
-
-    sessions.set(normalizedPhone, session);
-  });
-
-  setTimeout(async () => {
-    const session = sessions.get(normalizedPhone);
-    if (!session) return;
-    if (!session.connected) {
-      session.error = `Connection failed: Timeout after ${CONNECTION_TIMEOUT_MS / 1000}s`;
-      if (sock.ws.readyState !== sock.ws.CLOSED) {
-        await logoutFromWhatsApp(sock, normalizedPhone);
-        sock.ws.close();
-      }
-      await clearSession(normalizedPhone);
-      broadcast("status", { phone: normalizedPhone, connected: false });
-      return;
-    }
-  }, CONNECTION_TIMEOUT_MS);
-
-  sock.ev.on("creds.update", saveCreds);
-
-  sock.ev.on("messages.upsert", async ({ messages }) => {
-    const msg = messages[0];
-    if (!msg.message) return;
-    const from = msg.key.remoteJid;
-    const content = msg.message?.conversation || msg.message?.extendedTextMessage?.text || "[non-text]";
-    broadcast("new_message", { from, content, msg });
-  });
-
-  sock.ev.on("groups.update", (update) => {
-    broadcast("groups_update", update);
-  });
-
-  sock.ev.on("chats.update", (update) => {
-    broadcast("chats_update", update);
-  });
-
-  sock.ev.on("contacts.update", (update) => {
-    broadcast("contacts_update", update);
-  });
-
-  return sock;
-}
-
-// --- WhatsApp Data Fetchers ---
-// ... keep all your fetchChats, fetchGroups, fetchMessages, downloadMedia, etc. as-is ...
-
-// --- API Endpoints ---
-app.get("/", (req, res) => {
-  res.send("🚀 WhatsApp Bot Backend running...");
-});
-
-// --- UPDATED /connect ---
-app.post("/connect", async (req, res) => {
-  const { phone } = req.body;
-  if (!phone) return res.status(400).json({ error: "Phone number is required" });
-  try {
-    await startBot(phone);
-    const session = sessions.get(phone.replace(/^\+|\s/g, ""));
-    res.json({
-      qrCode: session?.qrCode || null, // ← return raw QR string
-      linkCode: session?.linkCode || null,
-      message: session?.error || "Session initiated",
-      connected: session?.connected,
-    });
-  } catch (err) {
-    res.status(500).json({ error: `Failed to connect: ${err.message}` });
-  }
-});
-
-// --- UPDATED /status/:phone ---
-app.get("/status/:phone", async (req, res) => {
-  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session) return res.json({ connected: false, error: "No session found" });
-
-  res.json({
-    connected: session.connected,
-    qrCode: !session.connected ? session.qrCode : null, // ← return raw QR string
-    linkCode: session.linkCode,
-    error: session.error,
+  socket.on("logout-whatsapp", async (phone) => {
+    console.log(`🚪 Logging out ${phone}`);
+    await clearSession(phone);
+    socket.emit("status", { phone, status: "disconnected" });
   });
 });
 
-// --- keep all other endpoints unchanged ---
-app.get("/chats/:phone", async (req, res) => {
-  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const chats = await fetchChats(session.sock);
-  res.json({ chats });
-});
-
-app.get("/groups/:phone", async (req, res) => {
-  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const groups = await fetchGroups(session.sock);
-  res.json({ groups });
-});
-
-app.get("/communities/:phone", async (req, res) => {
-  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const communities = await fetchCommunities(session.sock);
-  res.json({ communities });
-});
-
-app.get("/channels/:phone", async (req, res) => {
-  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const channels = await fetchChannels(session.sock);
-  res.json({ channels });
-});
-
-app.get("/statuses/:phone", async (req, res) => {
-  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const statuses = await fetchStatuses(session.sock);
-  res.json({ statuses });
-});
-
-app.get("/messages/:phone/:chatId", async (req, res) => {
-  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-  const chatId = req.params.chatId;
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  const messages = await fetchMessages(session.sock, chatId);
-  res.json({ messages });
-});
-
-// --- Media download ---
-app.get("/media/:phone/:chatId/:msgId/:type?", async (req, res) => {
-  const { phone, chatId, msgId, type } = req.params;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  try {
-    const filePath = await downloadMedia(session.sock, chatId, msgId, type, normalizedPhone);
-    if (!filePath) return res.status(404).json({ error: "Media not found" });
-    res.sendFile(path.resolve(filePath));
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// --- Send message (text/media/status) ---
-app.post("/send-message", async (req, res) => {
-  const { phone, to, message, type, base64, mimetype, caption } = req.body;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  try {
-    let sendOpts = {};
-    if (type === "image" && base64) {
-      sendOpts = { image: Buffer.from(base64, "base64"), mimetype: mimetype || "image/jpeg", caption: caption || "" };
-    } else if (type === "video" && base64) {
-      sendOpts = { video: Buffer.from(base64, "base64"), mimetype: mimetype || "video/mp4", caption: caption || "" };
-    } else if (type === "audio" && base64) {
-      sendOpts = { audio: Buffer.from(base64, "base64"), mimetype: mimetype || "audio/mp3" };
-    } else if (type === "document" && base64) {
-      sendOpts = { document: Buffer.from(base64, "base64"), mimetype: mimetype || "application/pdf", fileName: caption || "file" };
-    } else {
-      sendOpts = { text: message };
-    }
-    await session.sock.sendMessage(to, sendOpts);
-    res.json({ success: true, message: "Message sent successfully" });
-  } catch (err) {
-    res.status(500).json({ error: `Failed to send message: ${err.message}` });
-  }
-});
-
-app.post("/poststatus", async (req, res) => {
-  const { phone, text, base64, type, mimetype } = req.body;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  try {
-    let opts = {};
-    if (base64 && type === "image") {
-      opts = { image: Buffer.from(base64, "base64"), mimetype: mimetype || "image/jpeg", caption: text || "" };
-    } else if (base64 && type === "video") {
-      opts = { video: Buffer.from(base64, "base64"), mimetype: mimetype || "video/mp4", caption: text || "" };
-    } else {
-      opts = { text: text || "" };
-    }
-    await session.sock.sendMessage(session.sock.user.id, opts, { status: true });
-    res.json({ success: true, message: "Status posted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: `Failed to post status: ${err.message}` });
-  }
-});
-
-// --- Group/Community/Channel admin actions ---
-app.post("/group/add", async (req, res) => {
-  const { phone, groupId, jid } = req.body;
-  const session = sessions.get(phone.replace(/^\+|\s/g, ""));
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  try {
-    await addParticipant(session.sock, groupId, jid);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-app.post("/group/remove", async (req, res) => {
-  const { phone, groupId, jid } = req.body;
-  const session = sessions.get(phone.replace(/^\+|\s/g, ""));
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  try {
-    await removeParticipant(session.sock, groupId, jid);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-app.post("/group/promote", async (req, res) => {
-  const { phone, groupId, jid } = req.body;
-  const session = sessions.get(phone.replace(/^\+|\s/g, ""));
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  try {
-    await promoteParticipant(session.sock, groupId, jid);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-app.post("/group/demote", async (req, res) => {
-  const { phone, groupId, jid } = req.body;
-  const session = sessions.get(phone.replace(/^\+|\s/g, ""));
-  if (!session || !session.connected) return res.status(400).json({ error: "Not connected" });
-  try {
-    await demoteParticipant(session.sock, groupId, jid);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post("/logout", async (req, res) => {
-  const { phone } = req.body;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
-  const session = sessions.get(normalizedPhone);
-  if (session && session.sock.ws.readyState !== session.sock.ws.CLOSED) {
-    await logoutFromWhatsApp(session.sock, normalizedPhone);
-  }
-  await clearSession(normalizedPhone);
-  res.json({ message: "Session cleared. Please reconnect." });
+// ===============================
+// 🚀 Start Server
+// ===============================
+server.listen(PORT, () => {
+  console.log(`✅ ConnexaBot server running on port ${PORT}`);
+  console.log(`🌐 API Base: ${SERVER_URL}/api`);
 });
