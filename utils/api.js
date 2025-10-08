@@ -73,7 +73,7 @@ export const API_ENDPOINTS = {
           id: "1234567890@s.whatsapp.net",
           name: "Contact Name",
           unreadCount: 2,
-          lastMessage: {...}
+          lastMessage: {}
         }
       ]
     }
@@ -90,7 +90,7 @@ export const API_ENDPOINTS = {
       get: {
         description: "Get all contacts",
         request: { phone: "1234567890", action: "get" },
-        response: { contacts: [...] }
+        response: { contacts: [] }
       },
       block: {
         description: "Block a contact",
@@ -113,7 +113,7 @@ export const API_ENDPOINTS = {
       blocked: {
         description: "Get list of blocked contacts",
         request: { phone: "1234567890", action: "blocked" },
-        response: { blocked: [...] }
+        response: { blocked: [] }
       }
     }
   },
@@ -131,7 +131,7 @@ export const API_ENDPOINTS = {
         {
           id: "123456789@g.us",
           subject: "Group Name",
-          participants: [...]
+          participants: []
         }
       ]
     }
@@ -151,7 +151,7 @@ export const API_ENDPOINTS = {
           name: "My Group",
           participants: ["9876543210@s.whatsapp.net", "5555555555@s.whatsapp.net"]
         },
-        response: { success: true, group: {...} }
+        response: { success: true, group: {} }
       },
       add: {
         description: "Add participants to group",
@@ -257,7 +257,7 @@ export const API_ENDPOINTS = {
           action: "acceptInvite",
           inviteCode: "INVITE_CODE"
         },
-        response: { result: {...} }
+        response: { result: {} }
       },
       getMetadata: {
         description: "Get group metadata/info",
@@ -266,7 +266,7 @@ export const API_ENDPOINTS = {
           action: "getMetadata",
           groupId: "123456789@g.us"
         },
-        response: { metadata: {...} }
+        response: { metadata: {} }
       }
     }
   },
