@@ -39,6 +39,17 @@ export async function forwardMessage(phone, to, message) {
 }
 
 /**
+ * Star a message
+ */
+export async function starMessage(phone, chatId, messageKey, star = true) {
+    const client = getClient(phone);
+    if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+    await client.updateMessage(chatId, messageKey, { star });
+    return { success: true };
+}
+
+/**
  * React to a message
  */
 export async function reactToMessage(phone, chatId, messageKey, emoji) {

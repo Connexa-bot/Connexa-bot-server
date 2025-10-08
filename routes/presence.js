@@ -1,5 +1,5 @@
 import express from "express";
-import { sessions } from "../index.js";
+import { sessions } from "../helpers/whatsapp.js";
 import { presenceActions } from "../controllers/presence.js";
 
 const router = express.Router();

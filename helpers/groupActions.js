@@ -17,9 +17,9 @@ export async function createGroup(phone, name, participants) {
 }
 
 /**
- * Add participants to a group
+ * Add a participant to a group
  */
-export async function addParticipants(phone, groupId, jids) {
+export async function addParticipant(phone, groupId, jids) {
   const client = getClient(phone);
   if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
 
@@ -28,9 +28,9 @@ export async function addParticipants(phone, groupId, jids) {
 }
 
 /**
- * Remove participants from a group
+ * Remove a participant from a group
  */
-export async function removeParticipants(phone, groupId, jids) {
+export async function removeParticipant(phone, groupId, jids) {
   const client = getClient(phone);
   if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
 
@@ -39,9 +39,9 @@ export async function removeParticipants(phone, groupId, jids) {
 }
 
 /**
- * Promote participants
+ * Promote a participant
  */
-export async function promoteParticipants(phone, groupId, jids) {
+export async function promoteParticipant(phone, groupId, jids) {
   const client = getClient(phone);
   if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
 
@@ -50,14 +50,69 @@ export async function promoteParticipants(phone, groupId, jids) {
 }
 
 /**
- * Demote participants
+ * Demote a participant
  */
-export async function demoteParticipants(phone, groupId, jids) {
+export async function demoteParticipant(phone, groupId, jids) {
   const client = getClient(phone);
   if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
 
   await client.groupParticipantsUpdate(groupId, Array.isArray(jids) ? jids : [jids], "demote");
   return { success: true, groupId };
+}
+
+/**
+ * Update group settings
+ */
+export async function updateGroupSettings(phone, groupId, settings) {
+    const client = getClient(phone);
+    if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+    await client.groupSettingUpdate(groupId, settings);
+    return { success: true, groupId };
+}
+
+/**
+ * Get group invite code
+ */
+export async function getGroupInviteCode(phone, groupId) {
+    const client = getClient(phone);
+    if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+    const code = await client.groupInviteCode(groupId);
+    return { success: true, code };
+}
+
+/**
+ * Revoke group invite code
+ */
+export async function revokeGroupInviteCode(phone, groupId) {
+    const client = getClient(phone);
+    if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+    await client.groupRevokeInvite(groupId);
+    return { success: true };
+}
+
+/**
+ * Accept group invite
+ */
+export async function acceptGroupInvite(phone, code) {
+    const client = getClient(phone);
+    if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+    await client.groupAcceptInvite(code);
+    return { success: true };
+}
+
+/**
+ * Get group metadata
+ */
+export async function getGroupMetadata(phone, groupId) {
+    const client = getClient(phone);
+    if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+    const metadata = await client.groupMetadata(groupId);
+    return { success: true, metadata };
 }
 
 /**

@@ -1,4 +1,4 @@
-import { downloadMedia } from "../helpers/fetchers.js";
+import { downloadMedia } from "../helpers/whatsapp.js";
 import { deleteMessage, forwardMessage, starMessage, reactToMessage, editMessage } from "../helpers/messageActions.js";
 
 export async function fetchMedia(session, chatId, msgId, type, phone) {
