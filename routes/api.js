@@ -1,8 +1,5 @@
 import express from "express";
-import { sessions } from "../index.js"; // main sessions map
-import { startBot, logoutFromWhatsApp } from "../helpers/whatsapp.js";
-import { clearSession } from "../helpers/file.js";
-import { PORT } from "../config.js";
+import { sessions, startBot, logoutFromWhatsApp, clearSession } from "../helpers/whatsapp.js"; // main sessions map & helpers
 
 import * as chatCtrl from "../controllers/chats.js";
 import * as groupCtrl from "../controllers/groups.js";

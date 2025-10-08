@@ -18,7 +18,6 @@ import groupRoutes from "./routes/groups.js";
 import messageRoutes from "./routes/messages.js";
 import presenceRoutes from "./routes/presence.js";
 import profileRoutes from "./routes/profile.js";
-import websocketRoutes from "./routes/websocket.js";
 
 // 🤖 Bot Helper
 import { startBot, clearSession } from "./helpers/whatsapp.js";

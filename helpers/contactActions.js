@@ -6,7 +6,7 @@ import { fetchContacts as fetchContactsFromStore } from './fetchers.js';
  * @param {object} store - Baileys in-memory store
  * @returns {Array} - Array of contacts
  */
-export const getAllContacts = async (store) => {
+export const getContacts = async (store) => {
   try {
     const contacts = await fetchContactsFromStore(store);
     return contacts;
@@ -17,44 +17,44 @@ export const getAllContacts = async (store) => {
 };
 
 /**
- * Block a contact
+ * Block a user
  * @param {object} sock - Baileys socket instance
- * @param {string} jid - JID of contact to block
+ * @param {string} jid - JID of user to block
  */
-export const blockContact = async (sock, jid) => {
+export const blockUser = async (sock, jid) => {
   try {
     await sock.updateBlockStatus(jid, 'block');
   } catch (err) {
-    console.error(`Failed to block contact ${jid}:`, err);
+    console.error(`Failed to block user ${jid}:`, err);
     throw err;
   }
 };
 
 /**
- * Unblock a contact
+ * Unblock a user
  * @param {object} sock - Baileys socket instance
- * @param {string} jid - JID of contact to unblock
+ * @param {string} jid - JID of user to unblock
  */
-export const unblockContact = async (sock, jid) => {
+export const unblockUser = async (sock, jid) => {
   try {
     await sock.updateBlockStatus(jid, 'unblock');
   } catch (err) {
-    console.error(`Failed to unblock contact ${jid}:`, err);
+    console.error(`Failed to unblock user ${jid}:`, err);
     throw err;
   }
 };
 
 /**
- * Get blocked contacts
+ * Get blocked users
  * @param {object} sock - Baileys socket instance
- * @returns {Array} - Array of blocked contacts
+ * @returns {Array} - Array of blocked users
  */
-export const getBlockedContacts = async (sock) => {
+export const getBlockedUsers = async (sock) => {
   try {
     const blocked = await sock.fetchBlocklist();
     return blocked;
   } catch (err) {
-    console.error('Failed to fetch blocked contacts:', err);
+    console.error('Failed to fetch blocked users:', err);
     return [];
   }
 };

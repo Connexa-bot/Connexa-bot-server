@@ -17,18 +17,6 @@ export async function sendMessage(phone, chatId, message) {
 }
 
 /**
- * Delete a message from a chat
- */
-export async function deleteMessage(phone, chatId, messageId) {
-  const client = getClient(phone);
-  if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
-
-  const chat = await client.getChatById(chatId);
-  await chat.deleteMessage(messageId, false);
-  return { success: true, messageId };
-}
-
-/**
  * Mark a chat as read
  */
 export async function markChatRead(phone, chatId) {
@@ -41,9 +29,57 @@ export async function markChatRead(phone, chatId) {
 }
 
 /**
+ * Mark a chat as unread
+ */
+export async function markChatUnread(phone, chatId) {
+  const client = getClient(phone);
+  if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+  const chat = await client.getChatById(chatId);
+  await chat.markUnread();
+  return { success: true, chatId };
+}
+
+/**
+ * Archive a chat
+ */
+export async function archiveChat(phone, chatId, archive = true) {
+  const client = getClient(phone);
+  if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+  const chat = await client.getChatById(chatId);
+  await chat.archive(archive);
+  return { success: true, chatId, archived: archive };
+}
+
+/**
+ * Mute a chat
+ */
+export async function muteChat(phone, chatId, duration) {
+  const client = getClient(phone);
+  if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+  const chat = await client.getChatById(chatId);
+  await chat.mute(duration);
+  return { success: true, chatId, duration };
+}
+
+/**
+ * Delete a chat
+ */
+export async function deleteChat(phone, chatId) {
+  const client = getClient(phone);
+  if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+  const chat = await client.getChatById(chatId);
+  await chat.delete();
+  return { success: true, chatId };
+}
+
+/**
  * Pin or unpin a chat
  */
-export async function togglePinChat(phone, chatId, pin = true) {
+export async function pinChat(phone, chatId, pin = true) {
   const client = getClient(phone);
   if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
 
