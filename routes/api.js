@@ -20,7 +20,13 @@ router.post("/connect", async (req, res) => {
 
   try {
     if (sessions.has(normalizedPhone)) await clearSession(normalizedPhone, sessions);
-    startBot(normalizedPhone, sessions).catch(console.error);
+    
+    // Broadcast function for this session
+    const broadcast = (event, data) => {
+      console.log(`Broadcasting ${event}:`, data);
+    };
+    
+    startBot(normalizedPhone, broadcast).catch(console.error);
 
     let attempts = 0;
     const maxAttempts = 30;

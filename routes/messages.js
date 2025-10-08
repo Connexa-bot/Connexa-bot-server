@@ -1,8 +1,23 @@
 import express from "express";
 import { sessions } from "../helpers/whatsapp.js";
 import * as msgCtrl from "../controllers/messages.js";
+import { sendMessage } from "../helpers/messageActions.js";
 
 const router = express.Router();
+
+// Send text message
+router.post("/send", async (req, res) => {
+  const { phone, to, text } = req.body;
+  const session = sessions.get(phone.replace(/^\+|\s/g, ""));
+  if (!session?.connected) return res.status(400).json({ error: "Not connected" });
+
+  try {
+    const msg = await sendMessage(phone, to, text);
+    res.json({ success: true, messageId: msg.key.id });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Download media
 router.post("/download", async (req, res) => {
