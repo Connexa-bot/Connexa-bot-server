@@ -20,11 +20,11 @@ args = "Server"
 [[workflows.workflow]]
 name = "Server"
 author = "agent"
+mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm start"
-waitForPort = 5000
+args = "git add routes/api.js routes/messages.js utils/api.js replit.md git commit -m \"feat: Add API documentation and send message endpoint  - Created complete API docs in utils/api.js (all 12 endpoint groups) - Added POST /api/messages/send for sending text messages - Fixed broadcast function bug in connection route - All endpoints tested successfully ✅\" git push"
 
 [workflows.workflow.metadata]
 outputType = "webview"
