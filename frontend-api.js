@@ -153,6 +153,101 @@ export const getStatusUpdates = async (phone) => {
   return response.data;
 };
 
+/**
+ * Post a text status update
+ * POST /api/status/post
+ * @param {string} phone - User's phone number
+ * @param {string} text - Status text content
+ * @param {Array<string>} statusJidList - Array of contact JIDs who can see this status (optional, defaults to all contacts)
+ * @param {object} options - Additional options (backgroundColor, font)
+ * @returns {Promise} { success, data: { messageId, type, posted } }
+ */
+export const postTextStatus = async (phone, text, statusJidList = [], options = {}) => {
+  const response = await api.post('/status/post', {
+    phone,
+    type: 'text',
+    content: text,
+    statusJidList,
+    options
+  });
+  return response.data;
+};
+
+/**
+ * Post an image status update
+ * POST /api/status/post
+ * @param {string} phone - User's phone number
+ * @param {string|Buffer} image - Image URL, path, or buffer
+ * @param {string} caption - Optional caption for the image
+ * @param {Array<string>} statusJidList - Array of contact JIDs who can see this status (optional)
+ * @param {object} options - Additional options (backgroundColor, font)
+ * @returns {Promise} { success, data: { messageId, type, posted } }
+ */
+export const postImageStatus = async (phone, image, caption = '', statusJidList = [], options = {}) => {
+  const response = await api.post('/status/post', {
+    phone,
+    type: 'image',
+    content: image,
+    caption,
+    statusJidList,
+    options
+  });
+  return response.data;
+};
+
+/**
+ * Post a video status update
+ * POST /api/status/post
+ * @param {string} phone - User's phone number
+ * @param {string|Buffer} video - Video URL, path, or buffer
+ * @param {string} caption - Optional caption for the video
+ * @param {Array<string>} statusJidList - Array of contact JIDs who can see this status (optional)
+ * @param {object} options - Additional options
+ * @returns {Promise} { success, data: { messageId, type, posted } }
+ */
+export const postVideoStatus = async (phone, video, caption = '', statusJidList = [], options = {}) => {
+  const response = await api.post('/status/post', {
+    phone,
+    type: 'video',
+    content: video,
+    caption,
+    statusJidList,
+    options
+  });
+  return response.data;
+};
+
+/**
+ * Post an audio status update (voice note)
+ * POST /api/status/post
+ * @param {string} phone - User's phone number
+ * @param {string|Buffer} audio - Audio URL, path, or buffer
+ * @param {Array<string>} statusJidList - Array of contact JIDs who can see this status (optional)
+ * @param {object} options - Additional options
+ * @returns {Promise} { success, data: { messageId, type, posted } }
+ */
+export const postAudioStatus = async (phone, audio, statusJidList = [], options = {}) => {
+  const response = await api.post('/status/post', {
+    phone,
+    type: 'audio',
+    content: audio,
+    statusJidList,
+    options
+  });
+  return response.data;
+};
+
+/**
+ * Get contacts for status privacy list
+ * GET /api/status/contacts/:phone
+ * @param {string} phone - User's phone number
+ * @returns {Promise} { success, data: { contacts: [...] } }
+ */
+export const getStatusContacts = async (phone) => {
+  const response = await api.get(`/status/contacts/${phone}`);
+  return response.data;
+};
+
 // ===============================
 // 📢 CHANNEL ENDPOINTS
 // ===============================
