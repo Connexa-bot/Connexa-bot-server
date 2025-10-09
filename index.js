@@ -18,6 +18,7 @@ import groupRoutes from "./routes/groups.js";
 import messageRoutes from "./routes/messages.js";
 import presenceRoutes from "./routes/presence.js";
 import profileRoutes from "./routes/profile.js";
+import aiRoutes from "./routes/ai.js";
 
 // 🤖 Bot Helper
 import { startBot, clearSession } from "./helpers/whatsapp.js";
@@ -61,6 +62,7 @@ app.use("/api/groups", groupRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/presence", presenceRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/ai", aiRoutes);
 
 // ===============================
 // ⚡ WebSocket Integration
