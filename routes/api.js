@@ -70,7 +70,7 @@ router.post("/logout", async (req, res) => {
 // ============= CHATS =============
 router.get("/chats/:phone", async (req, res) => {
   const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
-  if (!session?.connected) return res.status(400).json({ error: "Not connected" });
+  if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
   const chats = await chatCtrl.getChats(session);
   res.json({ success: true, data: { chats } });
 });
