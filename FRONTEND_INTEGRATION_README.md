@@ -142,6 +142,10 @@ All functions are imported from `./services/api`:
 - `getChats(phone)` - Get all chats
 - `getMessages(phone, chatId)` - Get message history
 - `sendMessage(phone, to, text)` - Send message
+- `postTextStatus(phone, text, statusJidList)` - Post text status
+- `postImageStatus(phone, image, caption, statusJidList)` - Post image status
+- `postVideoStatus(phone, video, caption, statusJidList)` - Post video status
+- `postAudioStatus(phone, audio, statusJidList)` - Post audio status
 - And many more...
 
 ## Complete Feature List
@@ -163,8 +167,9 @@ All functions are imported from `./services/api`:
 - Add/remove members
 
 ### 📞 Calls & Status
-- Call history
-- Status updates (stories)
+- Call history (view only - making calls not supported)
+- View status updates (stories)
+- Post status updates (text/image/video/audio)
 - Channels
 - Communities
 
@@ -263,6 +268,10 @@ node test-ai-endpoints.js
 - `AI_FEATURES_SUMMARY.md` - AI features overview
 - `BACKEND_SUMMARY.md` - Backend implementation summary
 - `replit.md` - Project documentation
+
+## ⚠️ Known Limitations
+
+**Voice/Video Calls**: The Baileys library only supports viewing call history. Making or answering calls is **NOT supported** by the underlying WhatsApp library.
 
 ## Need Help?
 

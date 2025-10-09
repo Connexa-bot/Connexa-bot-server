@@ -50,12 +50,25 @@ Implemented all 6 missing endpoints required by your frontend:
    - Get user profile information
    - Returns: `{ success: true, data: { name, phone, status, picture } }`
 
-### 3. **Updated Core Files** ✓
+### 3. **Added Status Posting** ✓
+Implemented status/story posting capabilities:
+
+1. **POST `/api/status/post`**
+   - Post text, image, video, or audio status updates
+   - Support for status privacy (statusJidList)
+   - Optional styling (backgroundColor, font)
+   - Returns: `{ success: true, data: { messageId, type, posted } }`
+
+2. **GET `/api/status/contacts/:phone`**
+   - Get list of contacts for status privacy settings
+   - Returns: `{ success: true, data: { contacts: [...] } }`
+
+### 4. **Updated Core Files** ✓
 - **helpers/fetchers.js** - Rewritten to properly work with Baileys store API
 - **routes/api.js** - Added all missing endpoints with proper error handling
 - **frontend-api.js** - Complete API documentation for frontend integration
 
-### 4. **Testing & Verification** ✓
+### 5. **Testing & Verification** ✓
 - Created comprehensive test suite (test-endpoints.js)
 - All 10 endpoint tests passing ✅
 - Server running successfully on port 5000
@@ -81,6 +94,15 @@ Implemented all 6 missing endpoints required by your frontend:
 - Port: 5000
 - Base URL: http://localhost:5000/api
 - All endpoints tested and working
+
+## ⚠️ Known Limitations
+
+**Voice/Video Calls**: The Baileys WhatsApp library does NOT support making or answering calls. The backend can only:
+- ✅ View call history (`GET /api/calls/:phone`)
+- ❌ Make outbound calls (not supported by Baileys)
+- ❌ Answer/reject incoming calls (not supported by Baileys)
+
+This is a limitation of the underlying WhatsApp library, not the backend implementation.
 
 ## 📖 How to Use with Frontend
 

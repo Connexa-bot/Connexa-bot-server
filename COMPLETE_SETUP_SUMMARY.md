@@ -16,11 +16,15 @@ Your WhatsApp backend server with **advanced AI automation** is fully operationa
 
 ### ✅ Missing Endpoints Added (6 New)
 1. **GET `/api/messages/:phone/:chatId`** - Message history
-2. **GET `/api/calls/:phone`** - Call history
-3. **GET `/api/status-updates/:phone`** - Status/stories
+2. **GET `/api/calls/:phone`** - Call history (view only)
+3. **GET `/api/status-updates/:phone`** - Get status/stories
 4. **GET `/api/channels/:phone`** - Channel subscriptions
 5. **GET `/api/communities/:phone`** - Communities
 6. **GET `/api/profile/:phone`** - User profile
+
+### ✅ Status Posting Added (2 New)
+1. **POST `/api/status/post`** - Post status (text/image/video/audio)
+2. **GET `/api/status/contacts/:phone`** - Get contacts for status privacy
 
 ### ✅ AI Automation System (9 Endpoints)
 1. **POST `/api/ai/generate-response`** - Generate AI responses
@@ -150,6 +154,8 @@ Required variables (already configured):
 ✅ Group management  
 ✅ Contact management  
 ✅ Presence indicators  
+✅ Status posting (text/image/video/audio)  
+❌ Voice/Video calls (library limitation)  
 
 ### AI Automation
 ✅ Auto-reply with context  
@@ -226,12 +232,17 @@ await autoReplyAI(phone, chatId, message, settings);
 
 ## 📊 Project Stats
 
-- **Total Endpoints**: 30+
+- **Total Endpoints**: 32+
 - **AI Endpoints**: 9
+- **Status Endpoints**: 2
 - **Documentation Files**: 6
-- **Code Files**: 15+
-- **Lines of Code**: 2000+
+- **Code Files**: 18+
+- **Lines of Code**: 2200+
 - **Test Coverage**: 100%
+
+## ⚠️ Known Limitations
+
+**Voice/Video Calls**: The Baileys WhatsApp library does NOT support making or answering calls. The backend can only view call history. This is a limitation of the underlying library, not the backend implementation.
 
 ---
 

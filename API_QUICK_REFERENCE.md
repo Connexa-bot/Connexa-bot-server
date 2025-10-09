@@ -26,8 +26,10 @@ POST /api/groups/action                   // Group management
 
 ## Other Features
 ```javascript
-GET  /api/calls/:phone                    // Call history
-GET  /api/status-updates/:phone           // Status/stories
+GET  /api/calls/:phone                    // Call history (view only)
+GET  /api/status-updates/:phone           // Get status/stories
+POST /api/status/post                     // Post status (text/image/video/audio)
+GET  /api/status/contacts/:phone          // Get contacts for status privacy
 GET  /api/channels/:phone                 // Channels
 GET  /api/communities/:phone              // Communities
 GET  /api/profile/:phone                  // User profile
@@ -73,5 +75,21 @@ const { data } = await getSmartReplies(phone, chatId, {
 const { data } = await analyzeImageAI(phone, base64Image);
 // Returns detailed image description
 ```
+
+### Post Status Update
+```javascript
+// Text status
+await postTextStatus(phone, 'Hello World!', statusJidList);
+
+// Image status
+await postImageStatus(phone, imageUrl, 'Check this out!', statusJidList);
+
+// Video status
+await postVideoStatus(phone, videoUrl, 'Amazing!', statusJidList);
+```
+
+## ⚠️ Limitations
+
+**Voice/Video Calls**: The Baileys library only supports viewing call history. Making or answering calls is **NOT supported** by the underlying WhatsApp library.
 
 See `frontend-api.js` for complete API documentation.
