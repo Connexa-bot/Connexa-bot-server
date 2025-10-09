@@ -37,7 +37,14 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 5000;
 const AUTH_DIR = process.env.AUTH_DIR || "./auth";
-const SERVER_URL = process.env.SERVER_URL || `http://localhost:${PORT}`;
+
+// Auto-detect Replit domain or use environment variable
+let SERVER_URL = process.env.SERVER_URL;
+if (!SERVER_URL && process.env.REPLIT_DEV_DOMAIN) {
+  SERVER_URL = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+} else if (!SERVER_URL) {
+  SERVER_URL = `http://localhost:${PORT}`;
+}
 
 // Ensure base directories exist
 fs.mkdirSync(AUTH_DIR, { recursive: true });
@@ -108,7 +115,7 @@ io.on("connection", (socket) => {
 // ===============================
 // 🚀 Start Server
 // ===============================
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ ConnexaBot server running on port ${PORT}`);
   console.log(`🌐 API Base: ${SERVER_URL}/api`);
 });
