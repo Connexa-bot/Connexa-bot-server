@@ -81,12 +81,19 @@ This backend is designed to work with the ConnexaBot mobile app (Expo/React Nati
 2. Use WebSocket for real-time updates
 3. Handle QR code display for WhatsApp authentication
 
-## Recent Changes (2024-10-09)
+## Recent Changes (2025-10-09)
 - ✅ Configured for Replit environment
-- ✅ Auto-detection of Replit domain
-- ✅ Server listening on 0.0.0.0:5000
+- ✅ Auto-detection of Replit and Render domains
+- ✅ Server listening on 0.0.0.0:5000 (configurable via HOST env)
 - ✅ Workflow configured for automatic startup
 - ✅ Media directory added to .gitignore
+- ✅ **Link code (pairing code) support added** - Users can now authenticate using 8-digit codes
+- ✅ **Improved connection stability**:
+  - Increased timeout and retry settings
+  - Better error handling and logging
+  - Auto-reconnect on network issues
+  - Detailed error messages for debugging
+- ✅ Render deployment ready with full guide
 
 ## Troubleshooting
 

@@ -88,6 +88,10 @@ export async function startBot(phone, broadcast) {
     syncFullHistory: false,
     connectTimeoutMs: CONNECTION_TIMEOUT_MS,
     keepAliveIntervalMs: 30000,
+    defaultQueryTimeoutMs: 60000,
+    retryRequestDelayMs: 250,
+    markOnlineOnConnect: true,
+    emitOwnEvents: false,
   });
 
   store.bind(sock.ev);
@@ -143,16 +147,19 @@ export async function startBot(phone, broadcast) {
     // Closed
     if (connection === "close") {
       const code = lastDisconnect?.error?.output?.statusCode;
-      const shouldReconnect = code !== 401;
+      const reason = lastDisconnect?.error?.output?.payload?.message || 'Unknown';
+      const shouldReconnect = code !== 401 && code !== 403;
       session.connected = false;
-      session.error = `Connection closed (code: ${code})`;
+      session.error = `Connection closed (code: ${code}, reason: ${reason})`;
+      console.log(`❌ Connection closed for ${normalizedPhone}: ${session.error}`);
       broadcast("status", { phone: normalizedPhone, connected: false, error: session.error });
 
       if (shouldReconnect) {
-        console.log(`🔁 Reconnecting ${phone}...`);
+        console.log(`🔁 Reconnecting ${normalizedPhone} in 5 seconds...`);
         await delay(5000);
         startBot(normalizedPhone, broadcast);
       } else {
+        console.log(`🚫 Not reconnecting ${normalizedPhone} (logout required)`);
         await clearSession(normalizedPhone);
       }
     }

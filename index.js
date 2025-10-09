@@ -38,12 +38,16 @@ const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 5000;
 const AUTH_DIR = process.env.AUTH_DIR || "./auth";
 
-// Auto-detect Replit domain or use environment variable
+// Auto-detect server URL based on environment
 let SERVER_URL = process.env.SERVER_URL;
-if (!SERVER_URL && process.env.REPLIT_DEV_DOMAIN) {
-  SERVER_URL = `https://${process.env.REPLIT_DEV_DOMAIN}`;
-} else if (!SERVER_URL) {
-  SERVER_URL = `http://localhost:${PORT}`;
+if (!SERVER_URL) {
+  if (process.env.REPLIT_DEV_DOMAIN) {
+    SERVER_URL = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+  } else if (process.env.RENDER) {
+    SERVER_URL = `https://connexa-bot-server.onrender.com`;
+  } else {
+    SERVER_URL = `http://localhost:${PORT}`;
+  }
 }
 
 // Ensure base directories exist
@@ -115,7 +119,9 @@ io.on("connection", (socket) => {
 // ===============================
 // 🚀 Start Server
 // ===============================
-server.listen(PORT, '0.0.0.0', () => {
+const HOST = process.env.HOST || '0.0.0.0';
+
+server.listen(PORT, HOST, () => {
   console.log(`✅ ConnexaBot server running on port ${PORT}`);
   console.log(`🌐 API Base: ${SERVER_URL}/api`);
 });
