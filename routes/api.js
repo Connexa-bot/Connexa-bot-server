@@ -8,25 +8,21 @@ import * as profileCtrl from "../controllers/profile.js";
 import * as contactCtrl from "../controllers/contacts.js";
 import * as presenceCtrl from "../controllers/presence.js";
 
-const router = express.Router();
+export function createApiRoutes(broadcast) {
+  const router = express.Router();
 
-router.get("/", (req, res) => res.send("🚀 WhatsApp Bot Backend running..."));
+  router.get("/", (req, res) => res.send("🚀 WhatsApp Bot Backend running..."));
 
-// ============= CONNECTION =============
-router.post("/connect", async (req, res) => {
-  const { phone } = req.body;
-  const normalizedPhone = phone?.replace(/^\+|\s/g, "");
-  if (!phone) return res.status(400).json({ error: "Phone number is required" });
+  // ============= CONNECTION =============
+  router.post("/connect", async (req, res) => {
+    const { phone } = req.body;
+    const normalizedPhone = phone?.replace(/^\+|\s/g, "");
+    if (!phone) return res.status(400).json({ error: "Phone number is required" });
 
-  try {
-    if (sessions.has(normalizedPhone)) await clearSession(normalizedPhone, sessions);
-    
-    // Broadcast function for this session
-    const broadcast = (event, data) => {
-      console.log(`Broadcasting ${event}:`, data);
-    };
-    
-    startBot(normalizedPhone, broadcast).catch(console.error);
+    try {
+      if (sessions.has(normalizedPhone)) await clearSession(normalizedPhone, sessions);
+      
+      startBot(normalizedPhone, broadcast).catch(console.error);
 
     let attempts = 0;
     const maxAttempts = 30;
@@ -169,4 +165,7 @@ router.get("/profile/:phone", async (req, res) => {
   }
 });
 
-export default router;
+  return router;
+}
+
+export default createApiRoutes;

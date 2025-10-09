@@ -12,7 +12,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 
 // 🧩 Route Imports
-import apiRoutes from "./routes/api.js";
+import { createApiRoutes } from "./routes/api.js";
 import contactRoutes from "./routes/contacts.js";
 import groupRoutes from "./routes/groups.js";
 import messageRoutes from "./routes/messages.js";
@@ -55,18 +55,6 @@ app.use(morgan("dev"));
 app.use("/media", express.static(path.join(__dirname, "media")));
 
 // ===============================
-// 🛠️ API Routes
-// ===============================
-app.use("/api", apiRoutes);
-app.use("/api/contacts", contactRoutes);
-app.use("/api/groups", groupRoutes);
-app.use("/api/messages", messageRoutes);
-app.use("/api/presence", presenceRoutes);
-app.use("/api/profile", profileRoutes);
-app.use("/api/ai", aiRoutes);
-app.use("/api/status", statusRoutes);
-
-// ===============================
 // ⚡ WebSocket Integration
 // ===============================
 let wsClients = new Map();
@@ -75,6 +63,19 @@ let wsClients = new Map();
 function broadcast(event, data) {
   io.emit(event, data);
 }
+
+// ===============================
+// 🛠️ API Routes
+// ===============================
+const apiRoutes = createApiRoutes(broadcast);
+app.use("/api", apiRoutes);
+app.use("/api/contacts", contactRoutes);
+app.use("/api/groups", groupRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/presence", presenceRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/ai", aiRoutes);
+app.use("/api/status", statusRoutes);
 
 // WebSocket handlers
 io.on("connection", (socket) => {
