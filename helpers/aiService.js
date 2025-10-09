@@ -3,7 +3,9 @@ import fs from "fs/promises";
 import path from "path";
 
 // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = process.env.OPENAI_API_KEY 
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
 
 const CHAT_HISTORY_DIR = "./chat_history";
 const MAX_HISTORY_MESSAGES = 50;
@@ -34,6 +36,10 @@ export async function addMessageToHistory(phone, chatId, role, content) {
 }
 
 export async function generateAIResponse(phone, chatId, userMessage, options = {}) {
+  if (!openai) {
+    throw new Error("OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.");
+  }
+
   const {
     systemPrompt = "You are a helpful WhatsApp assistant. Respond naturally and conversationally.",
     maxTokens = 500,
@@ -72,6 +78,10 @@ export async function generateAIResponse(phone, chatId, userMessage, options = {
 }
 
 export async function analyzeImageWithAI(base64Image, prompt = "Describe this image in detail") {
+  if (!openai) {
+    throw new Error("OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.");
+  }
+
   const response = await openai.chat.completions.create({
     model: "gpt-5",
     messages: [
@@ -93,6 +103,10 @@ export async function analyzeImageWithAI(base64Image, prompt = "Describe this im
 }
 
 export async function transcribeAudioWithAI(audioFilePath) {
+  if (!openai) {
+    throw new Error("OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.");
+  }
+
   const audioReadStream = await fs.readFile(audioFilePath);
   const audioBuffer = Buffer.from(audioReadStream);
 
@@ -108,6 +122,10 @@ export async function transcribeAudioWithAI(audioFilePath) {
 }
 
 export async function analyzeSentiment(text) {
+  if (!openai) {
+    throw new Error("OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.");
+  }
+
   const response = await openai.chat.completions.create({
     model: "gpt-5",
     messages: [
@@ -124,6 +142,10 @@ export async function analyzeSentiment(text) {
 }
 
 export async function generateSmartReply(phone, chatId, context = {}) {
+  if (!openai) {
+    throw new Error("OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.");
+  }
+
   const {
     lastMessage,
     messageType = "text",
@@ -150,6 +172,10 @@ Respond with JSON: { "suggestions": ["reply1", "reply2", "reply3"] }`;
 }
 
 export async function autoReplyToMessage(phone, chatId, message, settings = {}) {
+  if (!openai) {
+    throw new Error("OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.");
+  }
+
   const {
     autoReplyEnabled = true,
     personality = "friendly and helpful",
@@ -191,6 +217,10 @@ Keep responses brief and natural (1-3 sentences max).`;
 }
 
 export async function summarizeConversation(phone, chatId, messageCount = 20) {
+  if (!openai) {
+    throw new Error("OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.");
+  }
+
   const history = await getChatHistory(phone, chatId);
   const messages = history.slice(-messageCount);
 

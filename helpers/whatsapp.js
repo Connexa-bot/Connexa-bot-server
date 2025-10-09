@@ -195,3 +195,13 @@ export function getClient(phone) {
   if (!session) throw new Error(`No active session for ${phone}`);
   return session.sock;
 }
+
+// ===============================
+// 🟢 Helper to get the store for a phone
+// ===============================
+export function getStore(phone) {
+  const normalized = phone.replace(/^\+|\s/g, "");
+  const session = sessions.get(normalized);
+  if (!session) return null;
+  return session.store;
+}
