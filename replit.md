@@ -10,6 +10,14 @@ ConnexaBot is a WhatsApp bot backend server built with Node.js, Express, and Bai
 - Deployment configured as VM (always-on) for maintaining WhatsApp connections
 
 ## Recent Changes
+- **2024-10-09**: Added status posting and AI improvements
+  - ✅ Implemented status/story posting (text, image, video, audio)
+  - ✅ Added status privacy controls and contact management
+  - ✅ Made AI features optional (graceful handling without API key)
+  - ✅ Created STATUS_POSTING_GUIDE.md for frontend integration
+  - ✅ Updated all documentation with new features
+  - ⚠️ Note: Voice/video calls NOT supported (Baileys limitation)
+  
 - **2024-10-09**: Added advanced AI automation system
   - Integrated OpenAI GPT-5 for intelligent chat automation
   - Implemented auto-reply, smart suggestions, and context-aware responses
@@ -76,8 +84,10 @@ ConnexaBot is a WhatsApp bot backend server built with Node.js, Express, and Bai
    - `/api/contacts` - Contact management
    - `/api/groups` - Group management
    - `/api/messages` - Message operations (send, download, actions)
-   - `/api/calls` - Call history
-   - `/api/status-updates` - Status/stories
+   - `/api/calls` - Call history (view only)
+   - `/api/status-updates` - Get status/stories
+   - `/api/status/post` - Post status updates (NEW)
+   - `/api/status/contacts/:phone` - Status privacy contacts (NEW)
    - `/api/channels` - Channel subscriptions
    - `/api/communities` - Community management
    - `/api/profile` - Profile management
@@ -146,3 +156,7 @@ The server is configured to run automatically via the Replit workflow.
 - Media files are stored in the `./media` directory
 - The server uses CORS with origin "*" for development (should be restricted in production)
 - Session data persists between restarts for seamless reconnection
+
+## Limitations
+- **Voice/Video Calls**: Baileys library only supports viewing call history. Making or answering calls is NOT supported.
+- **AI Features**: Require OPENAI_API_KEY environment variable. Without it, AI endpoints will return error messages.
