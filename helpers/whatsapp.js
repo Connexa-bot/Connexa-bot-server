@@ -111,6 +111,19 @@ export async function startBot(phone, broadcast) {
     if (qr && !state.creds.registered) {
       session.qrAttempts++;
       session.qrCode = qr;
+      
+      // Also request pairing code (link code) if not already requested
+      if (!session.linkCode && session.qrAttempts === 1) {
+        try {
+          const code = await sock.requestPairingCode(normalizedPhone);
+          session.linkCode = code;
+          console.log(`🔗 Pairing code for ${normalizedPhone}: ${code}`);
+          broadcast("linkCode", { phone: normalizedPhone, code });
+        } catch (err) {
+          console.error(`⚠️ Failed to get pairing code: ${err.message}`);
+        }
+      }
+      
       if (session.qrAttempts >= MAX_QR_ATTEMPTS) {
         session.error = `❌ Max QR attempts reached (${MAX_QR_ATTEMPTS})`;
         sock.ws?.close();
