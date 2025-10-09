@@ -334,6 +334,126 @@ export const presenceAction = async (phone, action, to = null) => {
  *    await logout('1234567890');
  */
 
+// ===============================
+// 🤖 AI AUTOMATION ENDPOINTS
+// ===============================
+
+/**
+ * Generate AI response to a message
+ * POST /api/ai/generate-response
+ * @param {string} phone - User's phone number
+ * @param {string} chatId - Chat ID
+ * @param {string} message - User's message
+ * @param {object} options - Optional settings (systemPrompt, maxTokens, includeHistory)
+ * @returns {Promise} { success, data: { reply, usage, model } }
+ */
+export const generateAIResponse = async (phone, chatId, message, options = {}) => {
+  const response = await api.post('/ai/generate-response', { phone, chatId, message, options });
+  return response.data;
+};
+
+/**
+ * Analyze an image with AI
+ * POST /api/ai/analyze-image
+ * @param {string} phone - User's phone number
+ * @param {string} base64Image - Base64 encoded image
+ * @param {string} prompt - Analysis prompt (optional)
+ * @returns {Promise} { success, data: { analysis } }
+ */
+export const analyzeImageAI = async (phone, base64Image, prompt = "Describe this image") => {
+  const response = await api.post('/ai/analyze-image', { phone, base64Image, prompt });
+  return response.data;
+};
+
+/**
+ * Transcribe audio with AI
+ * POST /api/ai/transcribe-audio
+ * @param {string} phone - User's phone number
+ * @param {string} audioFilePath - Path to audio file
+ * @returns {Promise} { success, data: { text, duration } }
+ */
+export const transcribeAudioAI = async (phone, audioFilePath) => {
+  const response = await api.post('/ai/transcribe-audio', { phone, audioFilePath });
+  return response.data;
+};
+
+/**
+ * Analyze sentiment of text
+ * POST /api/ai/analyze-sentiment
+ * @param {string} phone - User's phone number
+ * @param {string} text - Text to analyze
+ * @returns {Promise} { success, data: { sentiment, score, emotions } }
+ */
+export const analyzeSentimentAI = async (phone, text) => {
+  const response = await api.post('/ai/analyze-sentiment', { phone, text });
+  return response.data;
+};
+
+/**
+ * Get smart reply suggestions
+ * POST /api/ai/smart-replies
+ * @param {string} phone - User's phone number
+ * @param {string} chatId - Chat ID
+ * @param {object} context - Context (lastMessage, messageType, senderName, relationship)
+ * @returns {Promise} { success, data: { suggestions: [...] } }
+ */
+export const getSmartReplies = async (phone, chatId, context) => {
+  const response = await api.post('/ai/smart-replies', { phone, chatId, context });
+  return response.data;
+};
+
+/**
+ * Auto-reply to a message
+ * POST /api/ai/auto-reply
+ * @param {string} phone - User's phone number
+ * @param {string} chatId - Chat ID
+ * @param {string} message - Incoming message
+ * @param {object} settings - Auto-reply settings (personality, language, etc.)
+ * @returns {Promise} { success, data: { reply, confidence, shouldSend } }
+ */
+export const autoReplyAI = async (phone, chatId, message, settings = {}) => {
+  const response = await api.post('/ai/auto-reply', { phone, chatId, message, settings });
+  return response.data;
+};
+
+/**
+ * Summarize conversation history
+ * POST /api/ai/summarize
+ * @param {string} phone - User's phone number
+ * @param {string} chatId - Chat ID
+ * @param {number} messageCount - Number of messages to summarize (default: 20)
+ * @returns {Promise} { success, data: { summary } }
+ */
+export const summarizeConversation = async (phone, chatId, messageCount = 20) => {
+  const response = await api.post('/ai/summarize', { phone, chatId, messageCount });
+  return response.data;
+};
+
+/**
+ * Get AI chat history
+ * GET /api/ai/chat-history/:phone/:chatId
+ * @param {string} phone - User's phone number
+ * @param {string} chatId - Chat ID
+ * @returns {Promise} { success, data: { history: [...] } }
+ */
+export const getAIChatHistory = async (phone, chatId) => {
+  const response = await api.get(`/ai/chat-history/${phone}/${chatId}`);
+  return response.data;
+};
+
+/**
+ * Clear AI chat history
+ * DELETE /api/ai/chat-history/:phone/:chatId?
+ * @param {string} phone - User's phone number
+ * @param {string} chatId - Chat ID (optional, clears all if not provided)
+ * @returns {Promise} { success, data: { cleared } }
+ */
+export const clearAIChatHistory = async (phone, chatId = null) => {
+  const url = chatId ? `/ai/chat-history/${phone}/${chatId}` : `/ai/chat-history/${phone}`;
+  const response = await api.delete(url);
+  return response.data;
+};
+
 export default {
   connectWhatsApp,
   checkStatus,
@@ -354,4 +474,14 @@ export default {
   getGroups,
   groupAction,
   presenceAction,
+  // AI Endpoints
+  generateAIResponse,
+  analyzeImageAI,
+  transcribeAudioAI,
+  analyzeSentimentAI,
+  getSmartReplies,
+  autoReplyAI,
+  summarizeConversation,
+  getAIChatHistory,
+  clearAIChatHistory,
 };
