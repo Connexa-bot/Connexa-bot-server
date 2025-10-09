@@ -68,12 +68,105 @@ router.post("/logout", async (req, res) => {
 });
 
 // ============= CHATS =============
-// Example: get chats
 router.get("/chats/:phone", async (req, res) => {
   const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
   if (!session?.connected) return res.status(400).json({ error: "Not connected" });
   const chats = await chatCtrl.getChats(session);
-  res.json({ chats });
+  res.json({ success: true, data: { chats } });
+});
+
+// ============= MESSAGES =============
+router.get("/messages/:phone/:chatId", async (req, res) => {
+  const { phone, chatId } = req.params;
+  const { limit } = req.query;
+  const session = sessions.get(phone.replace(/^\+|\s/g, ""));
+  if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+  
+  try {
+    const { fetchMessages } = await import("../helpers/fetchers.js");
+    const messages = await fetchMessages(session.store, chatId, parseInt(limit) || 50);
+    res.json({ success: true, data: { messages } });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ============= CALLS =============
+router.get("/calls/:phone", async (req, res) => {
+  const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
+  if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+  
+  try {
+    const { fetchCalls } = await import("../helpers/fetchers.js");
+    const calls = await fetchCalls(session.store);
+    res.json({ success: true, data: { calls } });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ============= STATUS UPDATES =============
+router.get("/status-updates/:phone", async (req, res) => {
+  const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
+  if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+  
+  try {
+    const { fetchStatusUpdates } = await import("../helpers/fetchers.js");
+    const statuses = await fetchStatusUpdates(session.store);
+    res.json({ success: true, data: { statuses } });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ============= CHANNELS =============
+router.get("/channels/:phone", async (req, res) => {
+  const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
+  if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+  
+  try {
+    const channels = [];
+    res.json({ success: true, data: { channels } });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ============= COMMUNITIES =============
+router.get("/communities/:phone", async (req, res) => {
+  const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
+  if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+  
+  try {
+    const communities = [];
+    res.json({ success: true, data: { communities } });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ============= PROFILE =============
+router.get("/profile/:phone", async (req, res) => {
+  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
+  const session = sessions.get(normalizedPhone);
+  if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+  
+  try {
+    const { fetchProfile } = await import("../helpers/fetchers.js");
+    const jid = normalizedPhone + '@s.whatsapp.net';
+    const profile = await fetchProfile(session.sock, jid);
+    
+    const userData = {
+      name: session.sock.user?.name || normalizedPhone,
+      phone: normalizedPhone,
+      status: profile.status || '',
+      picture: profile.profilePicUrl || null,
+    };
+    
+    res.json({ success: true, data: userData });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 export default router;
