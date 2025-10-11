@@ -48,10 +48,53 @@ export function createApiRoutes(broadcast) {
 
 router.get("/status/:phone", async (req, res) => {
   const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
+  
+  console.log('='.repeat(50));
+  console.log(`🔍 STATUS CHECK for ${normalizedPhone}`);
+  console.log(`📊 Total sessions in Map: ${sessions.size}`);
+  console.log(`📊 All session keys:`, Array.from(sessions.keys()));
+  
   const session = sessions.get(normalizedPhone);
-  if (!session) return res.json({ connected: false, error: "No session found" });
+  console.log(`📊 Session exists: ${!!session}`);
+  
+  if (!session) {
+    console.log(`❌ No session found for ${normalizedPhone}`);
+    console.log('='.repeat(50));
+    return res.json({ 
+      connected: false, 
+      status: 'not_found',
+      error: "No session found" 
+    });
+  }
 
-  res.json({ connected: session.connected, qrCode: !session.connected ? session.qrCode : null, linkCode: session.linkCode, error: session.error });
+  const isConnected = session.connected === true || 
+                     session.sock?.user?.id || 
+                     false;
+  
+  console.log(`📊 Session details:`, {
+    connected: session.connected,
+    hasSocket: !!session.sock,
+    hasUser: !!session.sock?.user,
+    userId: session.sock?.user?.id,
+    linkCode: session.linkCode,
+    qrCode: session.qrCode ? 'present' : 'null',
+    error: session.error
+  });
+  console.log(`📊 Final isConnected status: ${isConnected}`);
+  console.log('='.repeat(50));
+
+  res.json({ 
+    connected: isConnected,
+    status: isConnected ? 'connected' : 'waiting',
+    authenticated: isConnected,
+    ready: isConnected,
+    isConnected: isConnected,
+    qrCode: !isConnected ? session.qrCode : null, 
+    linkCode: !isConnected ? session.linkCode : null, 
+    user: session.sock?.user || null,
+    phone: normalizedPhone,
+    error: session.error 
+  });
 });
 
 router.post("/logout", async (req, res) => {
