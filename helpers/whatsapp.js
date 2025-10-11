@@ -111,10 +111,20 @@ export async function startBot(phone, broadcast) {
     const session = sessions.get(normalizedPhone);
     if (!session) return;
 
+    console.log(`📊 Connection update for ${normalizedPhone}:`, { 
+      connection, 
+      hasQR: !!qr,
+      registered: state.creds.registered 
+    });
+
     // Handle QR codes
     if (qr && !state.creds.registered) {
       session.qrAttempts++;
       session.qrCode = qr;
+      console.log(`📱 QR Code generated for ${normalizedPhone} (attempt ${session.qrAttempts})`);
+      
+      // ✅ UPDATE SESSION IMMEDIATELY
+      sessions.set(normalizedPhone, session);
       
       // Also request pairing code (link code) if not already requested
       if (!session.linkCode && session.qrAttempts === 1) {
@@ -122,6 +132,9 @@ export async function startBot(phone, broadcast) {
           const code = await sock.requestPairingCode(normalizedPhone);
           session.linkCode = code;
           console.log(`🔗 Pairing code for ${normalizedPhone}: ${code}`);
+          
+          // ✅ UPDATE SESSION WITH LINK CODE
+          sessions.set(normalizedPhone, session);
           broadcast("linkCode", { phone: normalizedPhone, code });
         } catch (err) {
           console.error(`⚠️ Failed to get pairing code: ${err.message}`);
@@ -130,17 +143,25 @@ export async function startBot(phone, broadcast) {
       
       if (session.qrAttempts >= MAX_QR_ATTEMPTS) {
         session.error = `❌ Max QR attempts reached (${MAX_QR_ATTEMPTS})`;
+        sessions.set(normalizedPhone, session);
         sock.ws?.close();
         return;
       }
       broadcast("qr", { phone: normalizedPhone, qr });
     }
 
-    // Connected
+    // ✅ Connected - THIS IS THE KEY FIX
     if (connection === "open") {
+      console.log(`✅ Connection OPEN for ${normalizedPhone}`);
       session.connected = true;
       session.error = null;
       session.qrCode = null;
+      session.linkCode = null;
+      
+      // ✅ CRITICAL: Update the session in the Map IMMEDIATELY
+      sessions.set(normalizedPhone, session);
+      
+      console.log(`✅ Session updated - connected: ${session.connected}`);
       broadcast("status", { phone: normalizedPhone, connected: true });
     }
 
@@ -151,6 +172,10 @@ export async function startBot(phone, broadcast) {
       const shouldReconnect = code !== 401 && code !== 403;
       session.connected = false;
       session.error = `Connection closed (code: ${code}, reason: ${reason})`;
+      
+      // ✅ UPDATE SESSION IMMEDIATELY
+      sessions.set(normalizedPhone, session);
+      
       console.log(`❌ Connection closed for ${normalizedPhone}: ${session.error}`);
       broadcast("status", { phone: normalizedPhone, connected: false, error: session.error });
 
@@ -163,8 +188,6 @@ export async function startBot(phone, broadcast) {
         await clearSession(normalizedPhone);
       }
     }
-
-    sessions.set(normalizedPhone, session);
   });
 
   // Timeout auto-disconnect
@@ -172,6 +195,7 @@ export async function startBot(phone, broadcast) {
     const session = sessions.get(normalizedPhone);
     if (session && !session.connected) {
       session.error = "⏳ Connection timeout";
+      sessions.set(normalizedPhone, session);
       sock.ws?.close();
       await clearSession(normalizedPhone);
       broadcast("status", { phone: normalizedPhone, connected: false });
