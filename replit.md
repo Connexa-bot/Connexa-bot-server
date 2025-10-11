@@ -6,8 +6,11 @@ ConnexaBot is a WhatsApp bot backend built with Node.js, Express, and Baileys (W
 **Current State**: Backend server is running successfully on port 5000 in Replit environment.
 
 ## Recent Changes (October 11, 2025)
-- **Enhanced Status Endpoint**: Added comprehensive debug logging to `/api/status/:phone` endpoint to fix connection status detection issues
-- **Improved Status Response**: Status endpoint now returns multiple status fields (connected, authenticated, ready, isConnected) to ensure frontend compatibility
+- **Phone Number Normalization Fix**: Fixed critical bug where frontend and backend used different phone number formats, causing connection status detection to fail
+- **Backend Normalization**: Added `normalizePhone()` function to `/api/connect`, `/api/status/:phone`, and `/api/logout` endpoints to strip all non-digit characters
+- **Frontend Normalization**: Added `cleanPhone` state to `LinkDeviceScreen` to store normalized phone number for consistent polling and storage
+- **Enhanced Status Endpoint**: Added comprehensive debug logging to `/api/status/:phone` endpoint
+- **Improved Status Response**: Status endpoint returns multiple status fields (connected, authenticated, ready, isConnected) for frontend compatibility
 - **Session Validation**: Added better session existence checks and detailed logging for troubleshooting
 - **Replit Setup**: Configured workflow to run backend server with proper logging
 
@@ -78,8 +81,9 @@ ConnexaBot is a WhatsApp bot backend built with Node.js, Express, and Baileys (W
 ## Session Management
 - Sessions are stored in-memory using a `Map` in `helpers/whatsapp.js`
 - Each session includes: socket, store, connection status, QR code, link code, error state
-- Sessions are keyed by normalized phone number (without + or spaces)
+- Sessions are keyed by normalized phone number (digits only: `phone.replace(/\D/g, '')`)
 - Session data is persisted to disk in the `auth/` directory
+- **Critical**: All endpoints use consistent phone normalization to ensure session lookup works correctly
 
 ## Status Detection Fix
 The `/api/status/:phone` endpoint was enhanced with:
