@@ -21,6 +21,7 @@ import { storage } from '../utils/storage';
 
 export default function LinkDeviceScreen() {
   const [phone, setPhone] = useState('');
+  const [cleanPhone, setCleanPhone] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
   const [showLinkScreen, setShowLinkScreen] = useState(false);
   const [linkMethod, setLinkMethod] = useState('qr');
@@ -52,13 +53,13 @@ export default function LinkDeviceScreen() {
   useEffect(() => {
     let statusInterval;
 
-    if (showLinkScreen && phone) {
-      console.log('🔄 Starting polling for connection status for phone:', phone);
+    if (showLinkScreen && cleanPhone) {
+      console.log('🔄 Starting polling for connection status for phone:', cleanPhone);
 
       statusInterval = setInterval(async () => {
         try {
-          console.log('🔍 Polling getConnectionStatus for', phone);
-          const response = await getConnectionStatus(phone);
+          console.log('🔍 Polling getConnectionStatus for', cleanPhone);
+          const response = await getConnectionStatus(cleanPhone);
           const data = response?.data;
           console.log('📊 Connection status response:', data);
 
@@ -71,9 +72,9 @@ export default function LinkDeviceScreen() {
           // Check if connected
           if (data?.status === 'connected' || data?.connected === true) {
             console.log('✅ Device connected successfully!');
-            await storage.setItem('userPhone', phone);
+            await storage.setItem('userPhone', cleanPhone);
             updateConnectionStatus('connected');
-            setUser({ phone });
+            setUser({ phone: cleanPhone });
             clearInterval(statusInterval);
           }
         } catch (error) {
@@ -88,7 +89,7 @@ export default function LinkDeviceScreen() {
         clearInterval(statusInterval);
       }
     };
-  }, [showLinkScreen, phone]);
+  }, [showLinkScreen, cleanPhone]);
 
   const handleConnect = async () => {
     if (!phone.trim()) {
@@ -96,16 +97,19 @@ export default function LinkDeviceScreen() {
       return;
     }
 
-    const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length < 10) {
+    const normalized = phone.replace(/\D/g, '');
+    if (normalized.length < 10) {
       Alert.alert('Error', 'Please enter a valid phone number');
       return;
     }
 
-    console.log('📞 Attempting to connect for phone:', cleanPhone);
+    console.log('📞 Original phone:', phone);
+    console.log('📞 Normalized phone:', normalized);
+    
+    setCleanPhone(normalized);
 
     setIsConnecting(true);
-    const result = await login(cleanPhone);
+    const result = await login(normalized);
     setIsConnecting(false);
 
     console.log('📋 Login result:', JSON.stringify(result));
@@ -145,6 +149,7 @@ export default function LinkDeviceScreen() {
     setShowLinkScreen(false);
     updateConnectionStatus('disconnected');
     setPhone('');
+    setCleanPhone('');
     setPairingCode('');
   };
 

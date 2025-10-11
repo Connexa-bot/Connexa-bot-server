@@ -11,13 +11,18 @@ import * as presenceCtrl from "../controllers/presence.js";
 export function createApiRoutes(broadcast) {
   const router = express.Router();
 
+  const normalizePhone = (phone) => {
+    if (!phone) return '';
+    return String(phone).replace(/\D/g, '');
+  };
+
   router.get("/", (req, res) => res.send("🚀 WhatsApp Bot Backend running..."));
 
   // ============= CONNECTION =============
   router.post("/connect", async (req, res) => {
     const { phone } = req.body;
-    const normalizedPhone = phone?.replace(/^\+|\s/g, "");
-    if (!phone) return res.status(400).json({ error: "Phone number is required" });
+    const normalizedPhone = normalizePhone(phone);
+    if (!normalizedPhone) return res.status(400).json({ error: "Phone number is required" });
 
     try {
       if (sessions.has(normalizedPhone)) await clearSession(normalizedPhone, sessions);
@@ -47,7 +52,7 @@ export function createApiRoutes(broadcast) {
 });
 
 router.get("/status/:phone", async (req, res) => {
-  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
+  const normalizedPhone = normalizePhone(req.params.phone);
   
   console.log('='.repeat(50));
   console.log(`🔍 STATUS CHECK for ${normalizedPhone}`);
@@ -99,7 +104,7 @@ router.get("/status/:phone", async (req, res) => {
 
 router.post("/logout", async (req, res) => {
   const { phone } = req.body;
-  const normalizedPhone = phone.replace(/^\+|\s/g, "");
+  const normalizedPhone = normalizePhone(phone);
   const session = sessions.get(normalizedPhone);
   if (session && session.sock.ws?.readyState !== 3) await logoutFromWhatsApp(session.sock, normalizedPhone);
   await clearSession(normalizedPhone, sessions);
