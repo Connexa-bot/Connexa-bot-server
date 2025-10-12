@@ -156,6 +156,7 @@ export async function startBot(phone, broadcast) {
       
       // ✅ UPDATE SESSION IMMEDIATELY
       sessions.set(normalizedPhone, session);
+      broadcast("qr", { phone: normalizedPhone, qr });
       
       // Also request pairing code (link code) if not already requested
       if (!session.linkCode && session.qrAttempts === 1) {
@@ -178,7 +179,6 @@ export async function startBot(phone, broadcast) {
         sock.ws?.close();
         return;
       }
-      broadcast("qr", { phone: normalizedPhone, qr });
     }
 
     // ✅ Connected - THIS IS THE KEY FIX
