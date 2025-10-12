@@ -1,0 +1,9 @@
+✅ ConnexaBot server running on port 5000
+🌐 API Base: https://connexa-bot-server.onrender.com/api
+📊 Connection update for 2349154347487: { connection: 'connecting', hasQR: false, registered: false }
+{"level":30,"time":"2025-10-12T10:28:37.844Z","pid":6782,"hostname":"devbox","class":"baileys","browser":["Ubuntu","Chrome","22.04.4"],"helloMsg":{"clientHello":{"ephemeral":"PcGdT4DeVZfNCXUBdiZnnYArtOQ6UOMsh0v8KhSBeWs="}},"msg":"connected to WA"}
+{"level":30,"time":"2025-10-12T10:28:37.942Z","pid":6782,"hostname":"devbox","class":"baileys","node":{"passive":false,"userAgent":{"platform":"WEB","appVersion":{"primary":2,"secondary":3000,"tertiary":1023223821},"mcc":"000","mnc":"000","osVersion":"0.1","device":"Desktop","osBuildNumber":"0.1","releaseChannel":"RELEASE","localeLanguageIso6391":"en","localeCountryIso31661Alpha2":"US"},"webInfo":{"webSubPlatform":"WEB_BROWSER"},"connectType":"WIFI_UNKNOWN","connectReason":"USER_ACTIVATED","devicePairingData":{"eRegid":"AAAAwg==","eKeytype":"BQ==","eIdent":"aBnaveO+b6x4o5STo/ui8x3zu3FceNdY4MqwrpAdPBk=","eSkeyId":"AAAB","eSkeyVal":"h51WF/9mVW86ulLC2iAo0vudc3jxK24n0mKMzM/m52o=","eSkeySig":"R8+IB1ccrmXCZzc6B+yaYeJm3AMtHed7NyAeSQMC+zi03AUKQ2bmTifgvn4jDWp6lumGuTh60RDi46CGGDTjgQ==","buildHash":"c9lQeUMlTdrMrIi/+YcPiA==","deviceProps":"CgZVYnVudHUYASAA"},"pull":false},"msg":"not logged in, attempting registration..."}
+📊 Connection update for 2349154347487: { connection: undefined, hasQR: true, registered: false }
+📱 QR Code generated for 2349154347487 (attempt 1)
+🔗 Pairing code for 2349154347487: 2EYPY276
+[0mPOST /api/connect [32m200[0m 1004.518 ms - 320[0m

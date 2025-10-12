@@ -167,24 +167,33 @@ export async function startBot(phone, broadcast) {
 
     // Closed
     if (connection === "close") {
-      const code = lastDisconnect?.error?.output?.statusCode;
-      const reason = lastDisconnect?.error?.output?.payload?.message || 'Unknown';
-      const shouldReconnect = code !== 401 && code !== 403;
+      const statusCode = lastDisconnect?.error?.output?.statusCode;
+      const reason = lastDisconnect?.error?.message || 'Unknown';
+      
+      console.error(`❌ Connection closed for ${normalizedPhone}.`, {
+        reason: reason,
+        statusCode: statusCode,
+        lastDisconnect: lastDisconnect,
+      });
+
+      const shouldReconnect = statusCode !== 401 && statusCode !== 403 && statusCode !== 428;
       session.connected = false;
-      session.error = `Connection closed (code: ${code}, reason: ${reason})`;
-      
-      // ✅ UPDATE SESSION IMMEDIATELY
+      session.error = `Connection closed (Code: ${statusCode}, Reason: ${reason})`;
       sessions.set(normalizedPhone, session);
-      
-      console.log(`❌ Connection closed for ${normalizedPhone}: ${session.error}`);
-      broadcast("status", { phone: normalizedPhone, connected: false, error: session.error });
+
+      broadcast("status", {
+        phone: normalizedPhone,
+        connected: false,
+        error: session.error,
+        details: lastDisconnect,
+      });
 
       if (shouldReconnect) {
         console.log(`🔁 Reconnecting ${normalizedPhone} in 5 seconds...`);
         await delay(5000);
         startBot(normalizedPhone, broadcast);
       } else {
-        console.log(`🚫 Not reconnecting ${normalizedPhone} (logout required)`);
+        console.log(`🚫 Not reconnecting ${normalizedPhone}. A new QR scan or link code is required.`);
         await clearSession(normalizedPhone);
       }
     }
