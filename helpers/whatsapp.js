@@ -126,7 +126,7 @@ export async function startBot(phone, broadcast) {
   });
 
   store.bind(sock.ev);
-  sessions.set(normalizedPhone, {
+  const initialSession = {
     sock,
     store,
     connected: false,
@@ -135,6 +135,13 @@ export async function startBot(phone, broadcast) {
     error: null,
     intervalId,
     qrAttempts: 0,
+  };
+  
+  sessions.set(normalizedPhone, initialSession);
+  console.log(`🎯 Initial session created for ${normalizedPhone}:`, {
+    hasSocket: !!initialSession.sock,
+    hasStore: !!initialSession.store,
+    connected: initialSession.connected
   });
 
   sock.ev.on("connection.update", async (update) => {
@@ -149,7 +156,7 @@ export async function startBot(phone, broadcast) {
     });
 
     // Handle QR codes
-    if (qr && !state.creds.registered) {
+    if (qr) {
       session.qrAttempts++;
       session.qrCode = qr;
       console.log(`📱 QR Code generated for ${normalizedPhone} (attempt ${session.qrAttempts})`);
@@ -158,18 +165,20 @@ export async function startBot(phone, broadcast) {
       sessions.set(normalizedPhone, session);
       broadcast("qr", { phone: normalizedPhone, qr });
       
-      // Also request pairing code (link code) if not already requested
+      // Request pairing code (link code) - always try on first attempt
       if (!session.linkCode && session.qrAttempts === 1) {
         try {
+          console.log(`🔗 Requesting pairing code for ${normalizedPhone}...`);
           const code = await sock.requestPairingCode(normalizedPhone);
           session.linkCode = code;
-          console.log(`🔗 Pairing code for ${normalizedPhone}: ${code}`);
+          console.log(`✅ Pairing code for ${normalizedPhone}: ${code}`);
           
           // ✅ UPDATE SESSION WITH LINK CODE
           sessions.set(normalizedPhone, session);
           broadcast("linkCode", { phone: normalizedPhone, code });
         } catch (err) {
-          console.error(`⚠️ Failed to get pairing code: ${err.message}`);
+          console.error(`❌ Failed to get pairing code for ${normalizedPhone}: ${err.message}`);
+          // Don't fail completely, QR is still available
         }
       }
       

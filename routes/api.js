@@ -35,46 +35,70 @@ export function createApiRoutes(broadcast) {
     if (!normalizedPhone) return res.status(400).json({ error: "Phone number is required" });
 
     try {
-      if (sessions.has(normalizedPhone)) await clearSession(normalizedPhone, sessions);
+      if (sessions.has(normalizedPhone)) await clearSession(normalizedPhone);
 
+      // Start bot connection
       await startBot(normalizedPhone, broadcast);
 
       // Wait for session to be initialized and get QR/link code
       let attempts = 0;
-      const maxAttempts = 60; // Increased timeout
+      const maxAttempts = 120; // 120 * 500ms = 60 seconds max wait
+      const checkInterval = 500;
 
       const checkSession = () => new Promise((resolve) => {
         const interval = setInterval(() => {
           const session = sessions.get(normalizedPhone);
           attempts++;
 
-          console.log(`🔍 Connect check attempt ${attempts}: session exists=${!!session}, qrCode=${!!session?.qrCode}, linkCode=${!!session?.linkCode}, connected=${session?.connected}, error=${session?.error}`);
+          console.log(`🔍 Connect check attempt ${attempts}/${maxAttempts}: session=${!!session}, qr=${!!session?.qrCode}, link=${!!session?.linkCode}, connected=${session?.connected}, error=${session?.error}`);
 
-          if (session && (session.qrCode || session.linkCode || session.connected || session.error || attempts > maxAttempts)) {
+          // Success conditions: we have QR, link code, connection, or error
+          if (session && (session.qrCode || session.linkCode || session.connected || session.error)) {
             clearInterval(interval);
 
-            if (attempts > maxAttempts && !session.connected && !session.qrCode && !session.linkCode && !session.error) {
-              session.error = "Connection timed out. Please try again.";
-              sessions.set(normalizedPhone, session);
-            }
-
             const result = {
-              qrCode: session?.qrCode || null,
-              linkCode: session?.linkCode || null,
-              message: session?.error || "Session initiated",
-              connected: session?.connected || false
+              success: true,
+              qrCode: session.qrCode || null,
+              linkCode: session.linkCode || null,
+              message: session.error || (session.connected ? "Connected" : "Scan QR code or use link code"),
+              connected: session.connected || false
             };
 
             console.log(`✅ Connect returning:`, result);
             resolve(result);
+            return;
           }
-        }, 500); // Check more frequently (every 500ms)
+
+          // Timeout condition
+          if (attempts >= maxAttempts) {
+            clearInterval(interval);
+            
+            const result = {
+              success: false,
+              qrCode: null,
+              linkCode: null,
+              message: "Connection timeout. Please try again.",
+              connected: false,
+              error: "Timeout waiting for QR/link code"
+            };
+
+            console.log(`⏱️ Connect timeout:`, result);
+            resolve(result);
+          }
+        }, checkInterval);
       });
 
       const result = await checkSession();
       res.json(result);
     } catch (err) {
-      res.status(500).json({ error: `Failed to connect: ${err.message}` });
+      console.error(`❌ Connect error for ${normalizedPhone}:`, err);
+      res.status(500).json({ 
+        success: false,
+        error: `Failed to connect: ${err.message}`,
+        qrCode: null,
+        linkCode: null,
+        connected: false
+      });
     }
   });
 
