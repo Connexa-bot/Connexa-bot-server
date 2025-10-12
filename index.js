@@ -38,16 +38,16 @@ const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 5000;
 const AUTH_DIR = process.env.AUTH_DIR || "./auth";
 
-// Auto-detect server URL based on environment
-let SERVER_URL = process.env.SERVER_URL;
-if (!SERVER_URL) {
-  if (process.env.REPLIT_DEV_DOMAIN) {
-    SERVER_URL = `https://${process.env.REPLIT_DEV_DOMAIN}`;
-  } else if (process.env.RENDER) {
-    SERVER_URL = `https://connexa-bot-server.onrender.com`;
-  } else {
-    SERVER_URL = `http://localhost:${PORT}`;
-  }
+// Auto-detect server URL based on environment (prioritize Replit/Render detection)
+let SERVER_URL;
+if (process.env.REPLIT_DEV_DOMAIN) {
+  SERVER_URL = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+} else if (process.env.RENDER) {
+  SERVER_URL = `https://connexa-bot-server.onrender.com`;
+} else if (process.env.SERVER_URL) {
+  SERVER_URL = process.env.SERVER_URL;
+} else {
+  SERVER_URL = `http://localhost:${PORT}`;
 }
 
 // Ensure base directories exist
