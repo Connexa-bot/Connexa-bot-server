@@ -9,13 +9,43 @@ import { jidNormalizedUser } from "baileys";
  * @returns {Array} - An array of formatted chat objects.
  */
 export const fetchChats = async (store) => {
-  const chats = store.chats.all();
-  return chats.map(chat => ({
-    id: chat.id,
-    name: chat.name || chat.id,
-    unreadCount: chat.unreadCount,
-    lastMessage: chat.conversationTimestamp, // Keep as timestamp
-  }));
+  try {
+    const chats = store.chats.all();
+    
+    return chats.map(chat => {
+      // Get the last message from this chat
+      const chatMessages = store.messages[chat.id];
+      const lastMsg = chatMessages?.array?.slice(-1)[0];
+      
+      return {
+        id: chat.id,
+        name: chat.name || chat.id,
+        unreadCount: chat.unreadCount || 0,
+        lastMessageTimestamp: chat.conversationTimestamp,
+        lastMessage: lastMsg ? {
+          text: lastMsg.message?.conversation || 
+                lastMsg.message?.extendedTextMessage?.text || 
+                lastMsg.message?.imageMessage?.caption ||
+                lastMsg.message?.videoMessage?.caption ||
+                '[Media]',
+          timestamp: lastMsg.messageTimestamp,
+          fromMe: lastMsg.key?.fromMe || false
+        } : null,
+        isGroup: chat.id.endsWith('@g.us'),
+        isArchived: chat.archived || false,
+        isPinned: chat.pinned || false,
+        isMuted: chat.mute ? chat.mute > Date.now() : false,
+      };
+    }).sort((a, b) => {
+      // Sort by last message timestamp, most recent first
+      const timeA = a.lastMessageTimestamp || 0;
+      const timeB = b.lastMessageTimestamp || 0;
+      return timeB - timeA;
+    });
+  } catch (error) {
+    console.error('Error fetching chats:', error);
+    return [];
+  }
 };
 
 /**

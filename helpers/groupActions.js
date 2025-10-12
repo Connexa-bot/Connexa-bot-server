@@ -147,3 +147,67 @@ export async function leaveGroup(phone, groupId) {
   await client.groupLeave(groupId);
   return { success: true, groupId };
 }
+
+/**
+ * Update group picture
+ */
+export async function updateGroupPicture(phone, groupId, image) {
+  const client = getClient(phone);
+  if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+  let imageData;
+  if (typeof image === 'string' && !image.startsWith('http')) {
+    const fs = await import('fs/promises');
+    imageData = await fs.readFile(image);
+  } else {
+    imageData = image;
+  }
+
+  await client.updateProfilePicture(groupId, imageData);
+  return { success: true, groupId };
+}
+
+/**
+ * Get group invite info without joining
+ */
+export async function getGroupInviteInfo(phone, inviteCode) {
+  const client = getClient(phone);
+  if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+  const info = await client.groupGetInviteInfo(inviteCode);
+  return { success: true, info };
+}
+
+/**
+ * Get all group participants
+ */
+export async function getGroupParticipants(phone, groupId) {
+  const client = getClient(phone);
+  if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+  const metadata = await client.groupMetadata(groupId);
+  return { success: true, participants: metadata.participants };
+}
+
+/**
+ * Send message to group
+ */
+export async function sendGroupMessage(phone, groupId, message) {
+  const client = getClient(phone);
+  if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+  const msg = await client.sendMessage(groupId, message);
+  return { success: true, messageId: msg.key.id };
+}
+
+/**
+ * Get group admins
+ */
+export async function getGroupAdmins(phone, groupId) {
+  const client = getClient(phone);
+  if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+  const metadata = await client.groupMetadata(groupId);
+  const admins = metadata.participants.filter(p => p.admin === 'admin' || p.admin === 'superadmin');
+  return { success: true, admins };
+}

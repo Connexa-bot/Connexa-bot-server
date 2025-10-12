@@ -20,6 +20,9 @@ import presenceRoutes from "./routes/presence.js";
 import profileRoutes from "./routes/profile.js";
 import aiRoutes from "./routes/ai.js";
 import statusRoutes from "./routes/status.js";
+import channelRoutes from "./routes/channels.js";
+import callRoutes from "./routes/calls.js";
+import chatRoutes from "./routes/chats.js";
 
 // 🤖 Bot Helper
 import { startBot, clearSession } from "./helpers/whatsapp.js";
@@ -97,6 +100,9 @@ app.use("/api/presence", presenceRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/status", statusRoutes);
+app.use("/api/channels", channelRoutes);
+app.use("/api/calls", callRoutes);
+app.use("/api/chats", chatRoutes);
 
 // WebSocket handlers
 io.on("connection", (socket) => {
