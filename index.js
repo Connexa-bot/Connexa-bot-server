@@ -78,6 +78,16 @@ function broadcast(event, data) {
 // ===============================
 // 🛠️ API Routes
 // ===============================
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.json({ 
+    status: "ok", 
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    serverUrl: SERVER_URL
+  });
+});
+
 const apiRoutes = createApiRoutes(broadcast);
 app.use("/api", apiRoutes);
 app.use("/api/contacts", contactRoutes);

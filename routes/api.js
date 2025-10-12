@@ -1,5 +1,5 @@
 import express from "express";
-import { sessions, startBot, logoutFromWhatsApp, clearSession } from "../helpers/whatsapp.js"; // main sessions map & helpers
+import { sessions, startBot, logoutFromWhatsApp, clearSession, clearSessionState } from "../helpers/whatsapp.js"; // main sessions map & helpers
 
 import * as chatCtrl from "../controllers/chats.js";
 import * as groupCtrl from "../controllers/groups.js";
@@ -17,6 +17,16 @@ export function createApiRoutes(broadcast) {
   };
 
   router.get("/", (req, res) => res.send("🚀 WhatsApp Bot Backend running..."));
+
+  // ============= HEALTH CHECK =============
+  router.get("/health", (req, res) => {
+    res.json({ 
+      status: "ok", 
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+      activeSessions: sessions.size
+    });
+  });
 
   // ============= CONNECTION =============
   router.post("/connect", async (req, res) => {
@@ -111,12 +121,52 @@ router.post("/logout", async (req, res) => {
   res.json({ message: "Session cleared. Please reconnect." });
 });
 
+// ============= CLEAR STATE =============
+router.post("/clear-state/:phoneNumber", async (req, res) => {
+  const normalizedPhone = normalizePhone(req.params.phoneNumber);
+  const { fullReset } = req.query;
+  
+  const success = await clearSessionState(normalizedPhone, fullReset === 'true');
+  
+  if (success) {
+    if (fullReset === 'true') {
+      sessions.delete(normalizedPhone);
+    }
+    res.json({ success: true, message: 'State cleared successfully' });
+  } else {
+    res.status(500).json({ success: false, message: 'Failed to clear state' });
+  }
+});
+
 // ============= CHATS =============
 router.get("/chats/:phone", async (req, res) => {
-  const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
-  if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
-  const chats = await chatCtrl.getChats(session);
-  res.json({ success: true, data: { chats } });
+  try {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const session = sessions.get(normalizedPhone);
+    
+    if (!session?.connected) {
+      return res.status(200).json({ 
+        success: false,
+        chats: [],
+        message: 'No active session'
+      });
+    }
+    
+    const chats = await chatCtrl.getChats(session);
+    res.json({ 
+      success: true, 
+      chats: chats || [],
+      count: chats ? chats.length : 0,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Chats endpoint error:', error);
+    res.status(500).json({ 
+      success: false,
+      chats: [],
+      error: error.message
+    });
+  }
 });
 
 // ============= MESSAGES =============
@@ -151,15 +201,39 @@ router.get("/calls/:phone", async (req, res) => {
 
 // ============= STATUS UPDATES =============
 router.get("/status-updates/:phone", async (req, res) => {
-  const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
-  if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
-  
   try {
-    const { fetchStatusUpdates } = await import("../helpers/fetchers.js");
-    const statuses = await fetchStatusUpdates(session.store);
-    res.json({ success: true, data: { statuses } });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const session = sessions.get(normalizedPhone);
+    
+    if (!session?.sock) {
+      return res.status(200).json({ 
+        success: true,
+        statusUpdates: [],
+        message: 'No active session'
+      });
+    }
+    
+    let statusUpdates = [];
+    try {
+      const { fetchStatusUpdates } = await import("../helpers/fetchers.js");
+      statusUpdates = await fetchStatusUpdates(session.store) || [];
+    } catch (err) {
+      console.error('Status fetch error:', err);
+    }
+    
+    res.json({ 
+      success: true,
+      statusUpdates,
+      count: statusUpdates.length
+    });
+    
+  } catch (error) {
+    console.error('Status updates endpoint error:', error);
+    res.status(200).json({ 
+      success: false,
+      statusUpdates: [],
+      error: error.message
+    });
   }
 });
 

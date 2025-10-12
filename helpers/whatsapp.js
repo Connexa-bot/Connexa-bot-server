@@ -52,6 +52,37 @@ export async function clearSession(phone) {
   }
 }
 
+export async function clearSessionState(phoneNumber, fullReset = false) {
+  try {
+    const sessionDir = path.join(AUTH_BASE_DIR, phoneNumber);
+    
+    if (fullReset) {
+      await fs.rm(sessionDir, { recursive: true, force: true });
+      sessions.delete(phoneNumber);
+      console.log(`🗑️ Full session cleared for ${phoneNumber}`);
+      return true;
+    } else {
+      try {
+        const files = await fs.readdir(sessionDir);
+        for (const file of files) {
+          if (file.startsWith('app-state-sync-')) {
+            await fs.unlink(path.join(sessionDir, file));
+            console.log(`🗑️ Deleted sync file: ${file}`);
+          }
+        }
+        console.log(`🧹 Sync state cleared for ${phoneNumber}`);
+        return true;
+      } catch (err) {
+        console.log(`⚠️ No sync files found for ${phoneNumber}`);
+        return true;
+      }
+    }
+  } catch (error) {
+    console.error('Clear state error:', error.message);
+    return false;
+  }
+}
+
 export async function logoutFromWhatsApp(sock, phone) {
   try {
     await sock.logout();

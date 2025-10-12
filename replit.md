@@ -76,9 +76,22 @@ To update the frontend API endpoint, modify `/frontend/src/config.js`.
 
 ## Recent Changes (Oct 12, 2025)
 
+### Initial Setup & Configuration
 1. **Environment Auto-Detection**: Fixed server URL detection to prioritize Replit environment over .env file configuration
 2. **Gitignore**: Updated with comprehensive Node.js ignore patterns
 3. **Deployment**: Configured for VM deployment (always-on for WebSocket connections)
+
+### Backend Fixes & Improvements
+4. **State Synchronization**: Added `clearSessionState()` helper function to handle both partial (sync files only) and full (complete session) resets
+5. **Error Handling**: Improved error handling across all endpoints:
+   - Status updates endpoint now returns 200 status with empty array on errors
+   - Chats endpoint returns consistent response format with better error handling
+   - All endpoints handle missing sessions gracefully
+6. **Health Check**: Added health check endpoints at `/health` and `/api/health` for monitoring
+7. **Clear State Endpoint**: Added `/api/clear-state/:phoneNumber?fullReset=true` for manual state management
+8. **API Documentation**: Created comprehensive `API.js` file documenting all endpoints with usage examples
+9. **Test Script**: Created `test-endpoints.sh` for automated endpoint testing
+10. **Cleanup**: Removed unnecessary markdown files and deployment configs (render.yaml)
 
 ## Development Workflow
 
