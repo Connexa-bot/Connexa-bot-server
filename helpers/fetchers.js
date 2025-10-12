@@ -1,142 +1,124 @@
-import { sessions } from "./whatsapp.js";
+// ===============================
+// 🚀 Baileys Data Fetchers
+// ===============================
+import { jidNormalizedUser } from "baileys";
 
-export async function fetchChats(store) {
-  if (!store) throw new Error("Store not available");
-  
+/**
+ * Fetches and formats all chats from the store.
+ * @param {object} store - The Baileys data store.
+ * @returns {Array} - An array of formatted chat objects.
+ */
+export const fetchChats = async (store) => {
   const chats = store.chats.all();
   return chats.map(chat => ({
     id: chat.id,
-    name: chat.name || chat.id.split('@')[0],
-    conversationTimestamp: chat.conversationTimestamp || Date.now(),
-    unreadCount: chat.unreadCount || 0,
-    lastMessage: chat.lastMessage || null,
-    isGroup: chat.id.endsWith('@g.us'),
-  })).sort((a, b) => b.conversationTimestamp - a.conversationTimestamp);
-}
-
-export async function fetchMessages(store, chatId, limit = 50) {
-  if (!store) throw new Error("Store not available");
-  
-  const messages = store.messages[chatId];
-  if (!messages) return [];
-  
-  const msgArray = messages.all();
-  return msgArray.slice(-limit).map(msg => ({
-    id: msg.key.id,
-    chatId: msg.key.remoteJid,
-    fromMe: msg.key.fromMe,
-    text: msg.message?.conversation || 
-          msg.message?.extendedTextMessage?.text || 
-          msg.message?.imageMessage?.caption ||
-          msg.message?.videoMessage?.caption || '',
-    timestamp: msg.messageTimestamp,
-    type: Object.keys(msg.message || {})[0] || 'text',
-    hasMedia: !!(msg.message?.imageMessage || msg.message?.videoMessage || msg.message?.audioMessage || msg.message?.documentMessage),
+    name: chat.name || chat.id,
+    unreadCount: chat.unreadCount,
+    lastMessage: chat.conversationTimestamp, // Keep as timestamp
   }));
-}
+};
 
-export async function fetchContacts(store) {
-  if (!store) throw new Error("Store not available");
-  
-  const contacts = store.contacts;
-  if (!contacts) return [];
-  
-  const contactsObj = contacts;
-  return Object.keys(contactsObj).map(jid => {
-    const contact = contactsObj[jid];
-    return {
-      id: jid,
-      name: contact.name || contact.notify || contact.verifiedName || jid.split('@')[0],
-      number: jid.split('@')[0],
-      isBlocked: contact.isBlocked || false,
-    };
-  }).filter(c => c.id.includes('@s.whatsapp.net'));
-}
-
-export async function fetchGroups(store) {
-  if (!store) throw new Error("Store not available");
-  
-  const chats = store.chats.all();
-  return chats
-    .filter(chat => chat.id.endsWith('@g.us'))
-    .map(group => ({
-      id: group.id,
-      name: group.name || group.id.split('@')[0],
-      participantsCount: group.participants?.length || 0,
-      subject: group.subject || group.name,
-      description: group.desc || '',
-      owner: group.owner || null,
-    }));
-}
-
-export async function fetchProfile(sock, jid) {
-  try {
-    const status = await sock.fetchStatus(jid);
-    let profilePicUrl = null;
-    try {
-      profilePicUrl = await sock.profilePictureUrl(jid, 'image');
-    } catch {}
-    
-    return {
-      jid,
-      status: status?.status || '',
-      setAt: status?.setAt || null,
-      profilePicUrl,
-    };
-  } catch (err) {
-    console.error('Error fetching profile:', err.message);
-    return {
-      jid,
-      status: '',
-      setAt: null,
-      profilePicUrl: null,
-    };
-  }
-}
-
-export async function fetchCalls(store) {
-  if (!store) return [];
-  
-  const chats = store.chats.all();
-  const calls = [];
-  
-  for (const chat of chats) {
-    const messages = store.messages[chat.id];
-    if (!messages) continue;
-    
-    const msgArray = messages.all();
-    for (const msg of msgArray) {
-      if (msg.message?.call) {
-        calls.push({
-          id: msg.key.id,
-          name: chat.name || chat.id.split('@')[0],
-          timestamp: msg.messageTimestamp,
-          type: msg.key.fromMe ? 'outgoing' : 'incoming',
-          missed: msg.message.call.callType === 'missed',
-          video: msg.message.call.isVideo || false,
-        });
-      }
-    }
-  }
-  
-  return calls.sort((a, b) => b.timestamp - a.timestamp);
-}
-
-export async function fetchStatusUpdates(store) {
-  if (!store) return [];
-  
-  const statusChat = store.chats.all().find(chat => chat.id === 'status@broadcast');
-  if (!statusChat) return [];
-  
-  const messages = store.messages['status@broadcast'];
-  if (!messages) return [];
-  
-  const msgArray = messages.all();
-  return msgArray.map(msg => ({
+/**
+ * Fetches and formats messages for a specific chat.
+ * @param {object} store - The Baileys data store.
+ * @param {string} chatId - The ID of the chat.
+ * @param {number} limit - The maximum number of messages to fetch.
+ * @returns {Array} - An array of formatted message objects.
+ */
+export const fetchMessages = async (store, chatId, limit = 50) => {
+  const messages = store.messages[chatId]?.array || [];
+  return messages.slice(-limit).map(msg => ({
     id: msg.key.id,
-    participant: msg.key.participant || msg.key.remoteJid,
+    fromMe: msg.key.fromMe,
+    text: msg.message?.conversation || msg.message?.extendedTextMessage?.text,
     timestamp: msg.messageTimestamp,
-    media: msg.message?.imageMessage || msg.message?.videoMessage || null,
-    viewed: false,
-  })).sort((a, b) => b.timestamp - a.timestamp);
-}
+  }));
+};
+
+/**
+ * Fetches and formats all calls from the store.
+ * @param {object} store - The Baileys data store.
+ * @returns {Array} - An array of formatted call objects.
+ */
+export const fetchCalls = async (store) => {
+    const allMessages = Object.values(store.messages).flatMap(m => m.array);
+    const callMessages = allMessages.filter(msg => msg.message?.call);
+
+    return callMessages.map(msg => {
+        const call = msg.message.call;
+        // The call JID can be in different places depending on the call type
+        const callJid = call.callKey?.remoteJid || msg.key.remoteJid;
+        return {
+            id: msg.key.id,
+            from: jidNormalizedUser(msg.key.fromMe ? sock.user.id : callJid),
+            timestamp: msg.messageTimestamp,
+            duration: call.duration,
+            isVideo: call.isVideo,
+            isGroup: call.isGroup,
+            status: call.isMissed ? 'missed' : 'answered',
+        };
+    });
+};
+
+
+/**
+ * Fetches and formats all status updates from the store.
+ * @param {object} store - The Baileys data store.
+ * @returns {Array} - An array of formatted status update objects.
+ */
+export const fetchStatusUpdates = async (store) => {
+  const statuses = store.contacts.all().filter(c => c.status);
+  return statuses.map(contact => ({
+    id: contact.id,
+    name: contact.name || contact.id,
+    status: contact.status,
+  }));
+};
+
+/**
+ * Fetches the profile information for a user.
+ * @param {object} sock - The Baileys socket instance.
+ * @param {string} jid - The JID of the user.
+ * @returns {object} - The user's profile information.
+ */
+export const fetchProfile = async (sock, jid) => {
+  try {
+    const profilePicUrl = await sock.profilePictureUrl(jid, 'image');
+    const status = await sock.fetchStatus(jid);
+    return { profilePicUrl, status: status?.status };
+  } catch (error) {
+    console.error(`Failed to fetch profile for ${jid}:`, error);
+    return { profilePicUrl: null, status: null };
+  }
+};
+
+/**
+ * Fetches and formats all groups from the socket.
+ * @param {object} sock - The Baileys socket instance.
+ * @returns {Array} - An array of formatted group objects.
+ */
+export const fetchGroups = async (sock) => {
+  const groups = await sock.groupFetchAllParticipating();
+  return Object.values(groups).map(group => ({
+    id: group.id,
+    subject: group.subject,
+    size: group.size,
+    creation: group.creation,
+    owner: group.owner,
+  }));
+};
+
+/**
+ * Fetches and formats all contacts from the store.
+ * @param {object} store - The Baileys data store.
+ * @returns {Array} - An array of formatted contact objects.
+ */
+export const fetchContacts = async (store) => {
+    const contacts = store.contacts.all();
+    return contacts.map(contact => ({
+        id: contact.id,
+        name: contact.name || contact.id,
+        notify: contact.notify,
+        verifiedName: contact.verifiedName,
+    }));
+};
