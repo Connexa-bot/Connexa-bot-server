@@ -112,24 +112,26 @@ To update the frontend API endpoint, modify `/frontend/src/config.js`.
 1. **Environment Auto-Detection**: Fixed server URL detection to prioritize Replit environment over .env file configuration
 2. **Gitignore**: Updated with comprehensive Node.js ignore patterns
 3. **Deployment**: Configured for VM deployment (always-on for WebSocket connections)
+4. **Port Standardization**: Unified all port configurations to 5000 (config.js, index.js, workflow)
 
 ### Backend Enhancements
-4. **Complete API Endpoints**: Created comprehensive `API.js` file with all endpoints for frontend integration
-5. **Advanced Baileys Features**: Added missing endpoints:
-   - Privacy settings (get/update)
+5. **Complete API Endpoints**: Created comprehensive `API.js` file with all endpoints for frontend integration
+6. **Advanced Baileys Features**: Added missing endpoints:
+   - Privacy settings (get/update with validation)
    - Blocked contacts (list/block/unblock)
    - Disappearing messages
    - Business profile retrieval
-6. **Enhanced Test Script**: Updated `test-endpoints.sh` with comprehensive testing for all endpoints
-7. **AI Integration**: Full OpenAI integration for:
+7. **Privacy Settings Fix**: Updated privacy settings to use proper Baileys options object format with input validation
+8. **Enhanced Test Script**: Updated `test-endpoints.sh` with comprehensive testing for all endpoints including new privacy section
+9. **AI Integration**: Full OpenAI integration (GPT-5) for:
    - Smart replies and auto-reply
    - Sentiment analysis
    - Image and audio analysis
    - Translation and content moderation
    - Message improvement and composition
-8. **New Privacy Routes**: Added `/api/privacy/*` endpoints for advanced privacy controls
-9. **Health Monitoring**: Added health check endpoints at `/health` and `/api/health`
-10. **Documentation**: Updated API documentation with all new endpoints and examples
+10. **New Privacy Routes**: Added `/api/privacy/*` endpoints for advanced privacy controls
+11. **Health Monitoring**: Added health check endpoints at `/health` and `/api/health`
+12. **Documentation**: Updated API documentation with all new endpoints and examples
 
 ## Development Workflow
 
