@@ -44,26 +44,58 @@ The server auto-detects the environment and configures URLs accordingly:
 
 ### Connection Management
 - `POST /api/connect` - Connect WhatsApp session
-- `GET /api/qr/:phoneNumber` - Get QR code for authentication
-- `GET /api/status/:phoneNumber` - Check connection status
-- `POST /api/disconnect/:phoneNumber` - Disconnect session
+- `GET /api/status/:phone` - Check connection status
+- `POST /api/logout` - Logout and clear session
+- `POST /api/clear-state/:phone` - Clear session state
 
 ### Data Retrieval
-- `GET /api/chats/:phoneNumber` - Get all chats
-- `GET /api/messages/:phoneNumber/:chatId` - Get messages from chat
-- `GET /api/contacts/:phoneNumber` - Get contacts
-- `GET /api/groups/:phoneNumber` - Get groups
-- `GET /api/status-updates/:phoneNumber` - Get status updates
+- `GET /api/chats/:phone` - Get all chats
+- `GET /api/messages/:phone/:chatId` - Get messages from chat
+- `GET /api/contacts/:phone` - Get contacts
+- `GET /api/groups/:phone` - Get groups
+- `GET /api/status-updates/:phone` - Get status updates
+- `GET /api/channels/:phone` - Get channels
+- `GET /api/calls/:phone` - Get call history
+- `GET /api/profile/:phone` - Get profile
 
-### Actions
-- `POST /api/messages/send` - Send message
-- `POST /api/groups/create` - Create group
-- `POST /api/profile/update` - Update profile
+### Messaging
+- `POST /api/messages/send` - Send text message
+- `POST /api/messages/send-image` - Send image
+- `POST /api/messages/send-video` - Send video
+- `POST /api/messages/send-audio` - Send audio
+- `POST /api/messages/send-document` - Send document
+- `POST /api/messages/send-location` - Send location
+- `POST /api/messages/send-poll` - Send poll
+- `POST /api/messages/send-broadcast` - Broadcast message
 
-### AI Features
+### Chat Actions
+- `POST /api/chats/archive` - Archive/unarchive chat
+- `POST /api/chats/pin` - Pin/unpin chat
+- `POST /api/chats/mute` - Mute/unmute chat
+- `POST /api/chats/mark-read` - Mark as read
+- `POST /api/chats/delete` - Delete chat
+
+### Privacy & Security
+- `GET /api/privacy/settings/:phone` - Get privacy settings
+- `POST /api/privacy/settings/update` - Update privacy settings
+- `GET /api/privacy/blocked/:phone` - Get blocked contacts
+- `POST /api/privacy/block` - Block user
+- `POST /api/privacy/unblock` - Unblock user
+- `POST /api/privacy/disappearing-messages` - Set disappearing messages
+- `GET /api/privacy/business-profile/:phone/:jid` - Get business profile
+
+### AI Features (Requires OPENAI_API_KEY)
 - `POST /api/ai/smart-reply` - Generate smart reply suggestions
-- `POST /api/ai/translate` - Translate messages
-- `POST /api/ai/summarize` - Summarize conversations
+- `POST /api/ai/auto-reply` - Auto-reply with AI
+- `POST /api/ai/generate` - Generate AI response
+- `POST /api/ai/sentiment` - Analyze sentiment
+- `POST /api/ai/analyze-image` - Analyze image with AI
+- `POST /api/ai/transcribe` - Transcribe audio
+- `POST /api/ai/translate` - Translate text
+- `POST /api/ai/improve` - Improve message quality
+- `POST /api/ai/moderate` - Content moderation
+- `POST /api/ai/summarize` - Summarize conversation
+- `POST /api/ai/compose` - Smart compose message
 
 ## Frontend Integration
 
@@ -81,17 +113,23 @@ To update the frontend API endpoint, modify `/frontend/src/config.js`.
 2. **Gitignore**: Updated with comprehensive Node.js ignore patterns
 3. **Deployment**: Configured for VM deployment (always-on for WebSocket connections)
 
-### Backend Fixes & Improvements
-4. **State Synchronization**: Added `clearSessionState()` helper function to handle both partial (sync files only) and full (complete session) resets
-5. **Error Handling**: Improved error handling across all endpoints:
-   - Status updates endpoint now returns 200 status with empty array on errors
-   - Chats endpoint returns consistent response format with better error handling
-   - All endpoints handle missing sessions gracefully
-6. **Health Check**: Added health check endpoints at `/health` and `/api/health` for monitoring
-7. **Clear State Endpoint**: Added `/api/clear-state/:phoneNumber?fullReset=true` for manual state management
-8. **API Documentation**: Created comprehensive `API.js` file documenting all endpoints with usage examples
-9. **Test Script**: Created `test-endpoints.sh` for automated endpoint testing
-10. **Cleanup**: Removed unnecessary markdown files and deployment configs (render.yaml)
+### Backend Enhancements
+4. **Complete API Endpoints**: Created comprehensive `API.js` file with all endpoints for frontend integration
+5. **Advanced Baileys Features**: Added missing endpoints:
+   - Privacy settings (get/update)
+   - Blocked contacts (list/block/unblock)
+   - Disappearing messages
+   - Business profile retrieval
+6. **Enhanced Test Script**: Updated `test-endpoints.sh` with comprehensive testing for all endpoints
+7. **AI Integration**: Full OpenAI integration for:
+   - Smart replies and auto-reply
+   - Sentiment analysis
+   - Image and audio analysis
+   - Translation and content moderation
+   - Message improvement and composition
+8. **New Privacy Routes**: Added `/api/privacy/*` endpoints for advanced privacy controls
+9. **Health Monitoring**: Added health check endpoints at `/health` and `/api/health`
+10. **Documentation**: Updated API documentation with all new endpoints and examples
 
 ## Development Workflow
 
