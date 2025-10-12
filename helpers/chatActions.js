@@ -96,3 +96,53 @@ export async function removeChatLabel(phone, chatId, labelId) {
     return { success: false, message: 'Labels not supported or not a business account' };
   }
 }
+
+// Set disappearing messages for a chat
+export async function setDisappearingMessages(phone, chatId, duration) {
+  const sock = getClient(phone);
+  try {
+    await sock.sendMessage(chatId, {
+      disappearingMessagesInChat: duration
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to set disappearing messages:', error);
+    throw error;
+  }
+}
+
+// Get privacy settings
+export async function getPrivacySettings(phone) {
+  const sock = getClient(phone);
+  try {
+    const privacy = await sock.fetchPrivacySettings();
+    return { success: true, privacy };
+  } catch (error) {
+    console.error('Failed to fetch privacy settings:', error);
+    throw error;
+  }
+}
+
+// Update privacy settings
+export async function updatePrivacySettings(phone, setting, value) {
+  const sock = getClient(phone);
+  try {
+    await sock.updatePrivacySettings(setting, value);
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to update privacy settings:', error);
+    throw error;
+  }
+}
+
+// Get business profile
+export async function getBusinessProfile(phone, jid) {
+  const sock = getClient(phone);
+  try {
+    const profile = await sock.getBusinessProfile(jid);
+    return { success: true, profile };
+  } catch (error) {
+    console.error('Failed to fetch business profile:', error);
+    return { success: false, message: 'Not a business account or profile unavailable' };
+  }
+}

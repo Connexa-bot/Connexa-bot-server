@@ -1,301 +1,446 @@
-/**
- * CONNEXA-BOT API ENDPOINTS
- * 
- * Base URL (Development): http://localhost:5000
- * Base URL (Production/Replit): Auto-detected from environment
- */
+// ===============================
+// 🌐 ConnexaBot API Endpoints Reference
+// ===============================
+// This file provides a comprehensive listing of all available API endpoints
+// for frontend integration with the WhatsApp backend
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 
                      process.env.SERVER_URL || 
+                     process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` :
                      'http://localhost:5000';
 
 export const API_ENDPOINTS = {
   
-  // ========== HEALTH & STATUS ==========
-  
-  /**
-   * Health Check
-   * GET /health
-   * Returns: { status: string, uptime: number, timestamp: string, serverUrl: string }
-   */
+  // ========== HEALTH & CONNECTION ==========
   HEALTH: () => ({
     url: `${API_BASE_URL}/health`,
     method: 'GET'
   }),
 
-  /**
-   * API Health Check
-   * GET /api/health
-   * Returns: { status: string, uptime: number, timestamp: string, activeSessions: number }
-   */
   API_HEALTH: () => ({
     url: `${API_BASE_URL}/api/health`,
     method: 'GET'
   }),
   
-  // ========== CONNECTION ENDPOINTS ==========
-  
-  /**
-   * Connect WhatsApp Session
-   * POST /api/connect
-   * Body: { phone: string }
-   * Returns: { qrCode?: string, linkCode?: string, message: string, connected: boolean }
-   */
   CONNECT: (phone) => ({
     url: `${API_BASE_URL}/api/connect`,
     method: 'POST',
     body: { phone }
   }),
   
-  /**
-   * Check Connection Status
-   * GET /api/status/:phone
-   * Returns: { connected: boolean, status: string, authenticated: boolean, ready: boolean, 
-   *            qrCode?: string, linkCode?: string, user?: object, phone: string, error?: string }
-   */
   GET_STATUS: (phone) => ({
     url: `${API_BASE_URL}/api/status/${phone}`,
     method: 'GET'
   }),
   
-  /**
-   * Logout Session
-   * POST /api/logout
-   * Body: { phone: string }
-   * Returns: { message: string }
-   */
   LOGOUT: (phone) => ({
     url: `${API_BASE_URL}/api/logout`,
     method: 'POST',
     body: { phone }
   }),
   
-  /**
-   * Clear Session State
-   * POST /api/clear-state/:phoneNumber?fullReset=false
-   * Query: fullReset (boolean) - true for complete reset, false for partial
-   * Returns: { success: boolean, message: string }
-   */
   CLEAR_STATE: (phone, fullReset = false) => ({
     url: `${API_BASE_URL}/api/clear-state/${phone}?fullReset=${fullReset}`,
     method: 'POST'
   }),
   
-  // ========== DATA ENDPOINTS ==========
-  
-  /**
-   * Get All Chats
-   * GET /api/chats/:phone
-   * Returns: { success: boolean, chats: array, count: number, timestamp: string }
-   */
+  // ========== CHATS ==========
   GET_CHATS: (phone) => ({
     url: `${API_BASE_URL}/api/chats/${phone}`,
     method: 'GET'
   }),
+
+  ARCHIVE_CHAT: (phone, chatId, archive = true) => ({
+    url: `${API_BASE_URL}/api/chats/archive`,
+    method: 'POST',
+    body: { phone, chatId, archive }
+  }),
+
+  PIN_CHAT: (phone, chatId, pin = true) => ({
+    url: `${API_BASE_URL}/api/chats/pin`,
+    method: 'POST',
+    body: { phone, chatId, pin }
+  }),
+
+  MUTE_CHAT: (phone, chatId, duration) => ({
+    url: `${API_BASE_URL}/api/chats/mute`,
+    method: 'POST',
+    body: { phone, chatId, duration }
+  }),
+
+  MARK_CHAT_READ: (phone, chatId) => ({
+    url: `${API_BASE_URL}/api/chats/mark-read`,
+    method: 'POST',
+    body: { phone, chatId }
+  }),
+
+  MARK_CHAT_UNREAD: (phone, chatId) => ({
+    url: `${API_BASE_URL}/api/chats/mark-unread`,
+    method: 'POST',
+    body: { phone, chatId }
+  }),
+
+  DELETE_CHAT: (phone, chatId) => ({
+    url: `${API_BASE_URL}/api/chats/delete`,
+    method: 'POST',
+    body: { phone, chatId }
+  }),
+
+  CLEAR_CHAT: (phone, chatId) => ({
+    url: `${API_BASE_URL}/api/chats/clear`,
+    method: 'POST',
+    body: { phone, chatId }
+  }),
+
+  GET_CHAT_LABELS: (phone) => ({
+    url: `${API_BASE_URL}/api/chats/labels/${phone}`,
+    method: 'GET'
+  }),
+
+  ADD_CHAT_LABEL: (phone, chatId, labelId) => ({
+    url: `${API_BASE_URL}/api/chats/label/add`,
+    method: 'POST',
+    body: { phone, chatId, labelId }
+  }),
+
+  REMOVE_CHAT_LABEL: (phone, chatId, labelId) => ({
+    url: `${API_BASE_URL}/api/chats/label/remove`,
+    method: 'POST',
+    body: { phone, chatId, labelId }
+  }),
   
-  /**
-   * Get Messages from Specific Chat
-   * GET /api/messages/:phone/:chatId?limit=50
-   * Query: limit (number) - max messages to fetch
-   * Returns: { success: boolean, data: { messages: array } }
-   */
+  // ========== MESSAGES ==========
   GET_MESSAGES: (phone, chatId, limit = 50) => ({
     url: `${API_BASE_URL}/api/messages/${phone}/${chatId}?limit=${limit}`,
     method: 'GET'
   }),
-  
-  /**
-   * Get Call History
-   * GET /api/calls/:phone
-   * Returns: { success: boolean, data: { calls: array } }
-   */
-  GET_CALLS: (phone) => ({
-    url: `${API_BASE_URL}/api/calls/${phone}`,
-    method: 'GET'
-  }),
-  
-  /**
-   * Get Status Updates
-   * GET /api/status-updates/:phone
-   * Returns: { success: boolean, statusUpdates: array, count: number }
-   */
-  GET_STATUS_UPDATES: (phone) => ({
-    url: `${API_BASE_URL}/api/status-updates/${phone}`,
-    method: 'GET'
-  }),
-  
-  /**
-   * Get Channels
-   * GET /api/channels/:phone
-   * Returns: { success: boolean, data: { channels: array } }
-   */
-  GET_CHANNELS: (phone) => ({
-    url: `${API_BASE_URL}/api/channels/${phone}`,
-    method: 'GET'
-  }),
-  
-  /**
-   * Get Communities
-   * GET /api/communities/:phone
-   * Returns: { success: boolean, data: { communities: array } }
-   */
-  GET_COMMUNITIES: (phone) => ({
-    url: `${API_BASE_URL}/api/communities/${phone}`,
-    method: 'GET'
-  }),
-  
-  /**
-   * Get Profile
-   * GET /api/profile/:phone
-   * Returns: { success: boolean, data: { name: string, phone: string, status: string, picture: string } }
-   */
-  GET_PROFILE: (phone) => ({
-    url: `${API_BASE_URL}/api/profile/${phone}`,
-    method: 'GET'
-  }),
-  
-  /**
-   * Get Contacts
-   * GET /api/contacts/:phone
-   * Returns: { success: boolean, contacts: array }
-   */
-  GET_CONTACTS: (phone) => ({
-    url: `${API_BASE_URL}/api/contacts/${phone}`,
-    method: 'GET'
-  }),
-  
-  /**
-   * Get Groups
-   * GET /api/groups/:phone
-   * Returns: { success: boolean, groups: array }
-   */
-  GET_GROUPS: (phone) => ({
-    url: `${API_BASE_URL}/api/groups/${phone}`,
-    method: 'GET'
-  }),
-  
-  // ========== ACTION ENDPOINTS ==========
-  
-  /**
-   * Send Text Message
-   * POST /api/messages/send
-   * Body: { phone: string, to: string, message: string }
-   * Returns: { success: boolean, messageId?: string }
-   */
-  SEND_MESSAGE: (phone, to, message) => ({
+
+  SEND_MESSAGE: (phone, to, text, mentions = []) => ({
     url: `${API_BASE_URL}/api/messages/send`,
     method: 'POST',
-    body: { phone, to, message }
+    body: { phone, to, text, mentions }
   }),
-  
-  /**
-   * Download Message Media
-   * POST /api/messages/download
-   * Body: { phone: string, messageKey: object }
-   * Returns: { success: boolean, filePath?: string }
-   */
+
+  REPLY_MESSAGE: (phone, to, text, quotedMessage) => ({
+    url: `${API_BASE_URL}/api/messages/reply`,
+    method: 'POST',
+    body: { phone, to, text, quotedMessage }
+  }),
+
+  SEND_IMAGE: (phone, to, imageUrl, caption = '') => ({
+    url: `${API_BASE_URL}/api/messages/send-image`,
+    method: 'POST',
+    body: { phone, to, imageUrl, caption }
+  }),
+
+  SEND_VIDEO: (phone, to, videoUrl, caption = '', gifPlayback = false) => ({
+    url: `${API_BASE_URL}/api/messages/send-video`,
+    method: 'POST',
+    body: { phone, to, videoUrl, caption, gifPlayback }
+  }),
+
+  SEND_AUDIO: (phone, to, audioUrl, ptt = false) => ({
+    url: `${API_BASE_URL}/api/messages/send-audio`,
+    method: 'POST',
+    body: { phone, to, audioUrl, ptt }
+  }),
+
+  SEND_DOCUMENT: (phone, to, documentUrl, fileName, mimetype) => ({
+    url: `${API_BASE_URL}/api/messages/send-document`,
+    method: 'POST',
+    body: { phone, to, documentUrl, fileName, mimetype }
+  }),
+
+  SEND_LOCATION: (phone, to, latitude, longitude, name = '', address = '') => ({
+    url: `${API_BASE_URL}/api/messages/send-location`,
+    method: 'POST',
+    body: { phone, to, latitude, longitude, name, address }
+  }),
+
+  SEND_CONTACT: (phone, to, contacts) => ({
+    url: `${API_BASE_URL}/api/messages/send-contact`,
+    method: 'POST',
+    body: { phone, to, contacts }
+  }),
+
+  SEND_POLL: (phone, to, name, options, selectableCount = 1) => ({
+    url: `${API_BASE_URL}/api/messages/send-poll`,
+    method: 'POST',
+    body: { phone, to, name, options, selectableCount }
+  }),
+
+  SEND_LIST: (phone, to, text, buttonText, sections, footer = '', title = '') => ({
+    url: `${API_BASE_URL}/api/messages/send-list`,
+    method: 'POST',
+    body: { phone, to, text, buttonText, sections, footer, title }
+  }),
+
+  SEND_BROADCAST: (phone, recipients, message) => ({
+    url: `${API_BASE_URL}/api/messages/send-broadcast`,
+    method: 'POST',
+    body: { phone, recipients, message }
+  }),
+
   DOWNLOAD_MEDIA: (phone, messageKey) => ({
     url: `${API_BASE_URL}/api/messages/download`,
     method: 'POST',
     body: { phone, messageKey }
   }),
-  
-  /**
-   * Message Action (delete, forward, star, react, edit)
-   * POST /api/messages/action
-   * Body: { phone: string, action: string, messageKey: object, data?: object }
-   * Returns: { success: boolean }
-   */
-  MESSAGE_ACTION: (phone, action, messageKey, data = {}) => ({
-    url: `${API_BASE_URL}/api/messages/action`,
+
+  DELETE_MESSAGE: (phone, chatId, messageKey) => ({
+    url: `${API_BASE_URL}/api/messages/delete`,
     method: 'POST',
-    body: { phone, action, messageKey, data }
+    body: { phone, chatId, messageKey }
+  }),
+
+  FORWARD_MESSAGE: (phone, to, message) => ({
+    url: `${API_BASE_URL}/api/messages/forward`,
+    method: 'POST',
+    body: { phone, to, message }
+  }),
+
+  REACT_MESSAGE: (phone, chatId, messageKey, emoji) => ({
+    url: `${API_BASE_URL}/api/messages/react`,
+    method: 'POST',
+    body: { phone, chatId, messageKey, emoji }
+  }),
+
+  EDIT_MESSAGE: (phone, chatId, messageKey, newText) => ({
+    url: `${API_BASE_URL}/api/messages/edit`,
+    method: 'POST',
+    body: { phone, chatId, messageKey, newText }
+  }),
+
+  STAR_MESSAGE: (phone, chatId, messageKey, star = true) => ({
+    url: `${API_BASE_URL}/api/messages/star`,
+    method: 'POST',
+    body: { phone, chatId, messageKey, star }
+  }),
+
+  MARK_MESSAGE_READ: (phone, messageKey) => ({
+    url: `${API_BASE_URL}/api/messages/read`,
+    method: 'POST',
+    body: { phone, messageKey }
+  }),
+
+  // ========== STATUS/STORY ==========
+  GET_STATUS_UPDATES: (phone) => ({
+    url: `${API_BASE_URL}/api/status-updates/${phone}`,
+    method: 'GET'
+  }),
+
+  POST_TEXT_STATUS: (phone, text, statusJidList = [], backgroundColor = '', font = '') => ({
+    url: `${API_BASE_URL}/api/status/post-text`,
+    method: 'POST',
+    body: { phone, text, statusJidList, backgroundColor, font }
+  }),
+
+  POST_IMAGE_STATUS: (phone, imageUrl, caption = '', statusJidList = []) => ({
+    url: `${API_BASE_URL}/api/status/post-image`,
+    method: 'POST',
+    body: { phone, imageUrl, caption, statusJidList }
+  }),
+
+  POST_VIDEO_STATUS: (phone, videoUrl, caption = '', statusJidList = []) => ({
+    url: `${API_BASE_URL}/api/status/post-video`,
+    method: 'POST',
+    body: { phone, videoUrl, caption, statusJidList }
+  }),
+
+  POST_AUDIO_STATUS: (phone, audioUrl, statusJidList = []) => ({
+    url: `${API_BASE_URL}/api/status/post-audio`,
+    method: 'POST',
+    body: { phone, audioUrl, statusJidList }
+  }),
+
+  DELETE_STATUS: (phone, statusKey) => ({
+    url: `${API_BASE_URL}/api/status/delete`,
+    method: 'POST',
+    body: { phone, statusKey }
+  }),
+
+  VIEW_STATUS: (phone, statusJid, messageKeys) => ({
+    url: `${API_BASE_URL}/api/status/view`,
+    method: 'POST',
+    body: { phone, statusJid, messageKeys }
+  }),
+
+  GET_STATUS_PRIVACY: (phone) => ({
+    url: `${API_BASE_URL}/api/status/privacy/${phone}`,
+    method: 'GET'
   }),
   
-  /**
-   * Post Status Update
-   * POST /api/status/post
-   * Body: { phone: string, type: string, content: string, contacts?: array }
-   * Returns: { success: boolean }
-   */
-  POST_STATUS: (phone, type, content, contacts = []) => ({
-    url: `${API_BASE_URL}/api/status/post`,
-    method: 'POST',
-    body: { phone, type, content, contacts }
+  // ========== GROUPS ==========
+  GET_GROUPS: (phone) => ({
+    url: `${API_BASE_URL}/api/groups/${phone}`,
+    method: 'GET'
   }),
-  
-  /**
-   * Create Group
-   * POST /api/groups/create
-   * Body: { phone: string, name: string, participants: array }
-   * Returns: { success: boolean, groupId?: string }
-   */
-  CREATE_GROUP: (phone, name, participants) => ({
-    url: `${API_BASE_URL}/api/groups/create`,
+
+  GROUP_ACTION: (phone, action, data = {}) => ({
+    url: `${API_BASE_URL}/api/groups/action`,
     method: 'POST',
-    body: { phone, name, participants }
+    body: { phone, action, ...data }
   }),
-  
-  /**
-   * Update Profile
-   * POST /api/profile/update
-   * Body: { phone: string, name?: string, status?: string, picture?: string }
-   * Returns: { success: boolean }
-   */
-  UPDATE_PROFILE: (phone, updates) => ({
-    url: `${API_BASE_URL}/api/profile/update`,
+
+  // ========== CONTACTS ==========
+  GET_CONTACTS: (phone) => ({
+    url: `${API_BASE_URL}/api/contacts/${phone}`,
+    method: 'GET'
+  }),
+
+  CONTACT_ACTION: (phone, action, data = {}) => ({
+    url: `${API_BASE_URL}/api/contacts/action`,
     method: 'POST',
-    body: { phone, ...updates }
+    body: { phone, action, ...data }
   }),
-  
-  /**
-   * Update Presence (online/offline/typing/recording)
-   * POST /api/presence/update
-   * Body: { phone: string, chatId: string, state: string }
-   * Returns: { success: boolean }
-   */
-  UPDATE_PRESENCE: (phone, chatId, state) => ({
-    url: `${API_BASE_URL}/api/presence/update`,
+
+  // ========== PRESENCE ==========
+  PRESENCE_ACTION: (phone, action, data = {}) => ({
+    url: `${API_BASE_URL}/api/presence/action`,
     method: 'POST',
-    body: { phone, chatId, state }
+    body: { phone, action, ...data }
   }),
-  
-  // ========== AI ENDPOINTS ==========
-  
-  /**
-   * Generate Smart Reply Suggestions
-   * POST /api/ai/smart-reply
-   * Body: { phone: string, context: string }
-   * Returns: { success: boolean, suggestions: array }
-   */
-  AI_SMART_REPLY: (phone, context) => ({
+
+  // ========== PROFILE ==========
+  GET_PROFILE: (phone) => ({
+    url: `${API_BASE_URL}/api/profile/${phone}`,
+    method: 'GET'
+  }),
+
+  PROFILE_ACTION: (phone, action, data = {}) => ({
+    url: `${API_BASE_URL}/api/profile/action`,
+    method: 'POST',
+    body: { phone, action, ...data }
+  }),
+
+  // ========== AI AUTOMATION ==========
+  AI_SMART_REPLY: (phone, chatId, lastMessage, senderName = 'User', relationship = 'friend') => ({
     url: `${API_BASE_URL}/api/ai/smart-reply`,
     method: 'POST',
-    body: { phone, context }
+    body: { phone, chatId, lastMessage, senderName, relationship }
   }),
-  
-  /**
-   * Translate Message
-   * POST /api/ai/translate
-   * Body: { phone: string, text: string, targetLang: string }
-   * Returns: { success: boolean, translation: string }
-   */
+
+  AI_AUTO_REPLY: (phone, chatId, to, message, settings = {}) => ({
+    url: `${API_BASE_URL}/api/ai/auto-reply`,
+    method: 'POST',
+    body: { phone, chatId, to, message, settings }
+  }),
+
+  AI_GENERATE: (phone, chatId, userMessage, systemPrompt = '', maxTokens = 500, includeHistory = true) => ({
+    url: `${API_BASE_URL}/api/ai/generate`,
+    method: 'POST',
+    body: { phone, chatId, userMessage, systemPrompt, maxTokens, includeHistory }
+  }),
+
+  AI_SENTIMENT: (phone, text) => ({
+    url: `${API_BASE_URL}/api/ai/sentiment`,
+    method: 'POST',
+    body: { phone, text }
+  }),
+
+  AI_ANALYZE_IMAGE: (phone, base64Image, prompt = '') => ({
+    url: `${API_BASE_URL}/api/ai/analyze-image`,
+    method: 'POST',
+    body: { phone, base64Image, prompt }
+  }),
+
+  AI_TRANSCRIBE: (phone, audioFilePath) => ({
+    url: `${API_BASE_URL}/api/ai/transcribe`,
+    method: 'POST',
+    body: { phone, audioFilePath }
+  }),
+
+  AI_SUMMARIZE: (phone, chatId, messageCount = 20) => ({
+    url: `${API_BASE_URL}/api/ai/summarize`,
+    method: 'POST',
+    body: { phone, chatId, messageCount }
+  }),
+
   AI_TRANSLATE: (phone, text, targetLang) => ({
     url: `${API_BASE_URL}/api/ai/translate`,
     method: 'POST',
     body: { phone, text, targetLang }
   }),
-  
-  /**
-   * Summarize Conversation
-   * POST /api/ai/summarize
-   * Body: { phone: string, chatId: string, messageCount?: number }
-   * Returns: { success: boolean, summary: string }
-   */
-  AI_SUMMARIZE: (phone, chatId, messageCount = 50) => ({
-    url: `${API_BASE_URL}/api/ai/summarize`,
+
+  AI_COMPOSE: (phone, chatId, context, tone = 'friendly') => ({
+    url: `${API_BASE_URL}/api/ai/compose`,
     method: 'POST',
-    body: { phone, chatId, messageCount }
+    body: { phone, chatId, context, tone }
+  }),
+
+  AI_IMPROVE: (phone, text, improvements = ['grammar', 'clarity', 'tone']) => ({
+    url: `${API_BASE_URL}/api/ai/improve`,
+    method: 'POST',
+    body: { phone, text, improvements }
+  }),
+
+  AI_MODERATE: (phone, text) => ({
+    url: `${API_BASE_URL}/api/ai/moderate`,
+    method: 'POST',
+    body: { phone, text }
+  }),
+
+  AI_BATCH_ANALYZE: (phone, messages) => ({
+    url: `${API_BASE_URL}/api/ai/batch-analyze`,
+    method: 'POST',
+    body: { phone, messages }
+  }),
+
+  AI_GET_HISTORY: (phone, chatId) => ({
+    url: `${API_BASE_URL}/api/ai/history/${phone}/${chatId}`,
+    method: 'GET'
+  }),
+
+  AI_CLEAR_HISTORY: (phone, chatId = null) => ({
+    url: `${API_BASE_URL}/api/ai/history/clear`,
+    method: 'POST',
+    body: { phone, chatId }
+  }),
+
+  // ========== CHANNELS ==========
+  GET_CHANNELS: (phone) => ({
+    url: `${API_BASE_URL}/api/channels/${phone}`,
+    method: 'GET'
+  }),
+
+  FOLLOW_CHANNEL: (phone, channelJid) => ({
+    url: `${API_BASE_URL}/api/channels/follow`,
+    method: 'POST',
+    body: { phone, channelJid }
+  }),
+
+  UNFOLLOW_CHANNEL: (phone, channelJid) => ({
+    url: `${API_BASE_URL}/api/channels/unfollow`,
+    method: 'POST',
+    body: { phone, channelJid }
+  }),
+
+  GET_CHANNEL_METADATA: (phone, channelJid) => ({
+    url: `${API_BASE_URL}/api/channels/metadata/${phone}/${channelJid}`,
+    method: 'GET'
+  }),
+
+  MUTE_CHANNEL: (phone, channelJid, duration) => ({
+    url: `${API_BASE_URL}/api/channels/mute`,
+    method: 'POST',
+    body: { phone, channelJid, duration }
+  }),
+
+  GET_COMMUNITIES: (phone) => ({
+    url: `${API_BASE_URL}/api/channels/communities/${phone}`,
+    method: 'GET'
+  }),
+
+  // ========== CALLS ==========
+  GET_CALLS: (phone) => ({
+    url: `${API_BASE_URL}/api/calls/${phone}`,
+    method: 'GET'
+  }),
+
+  MAKE_CALL: (phone, to, isVideo = false) => ({
+    url: `${API_BASE_URL}/api/calls/make`,
+    method: 'POST',
+    body: { phone, to, isVideo }
   }),
 };
 
@@ -318,16 +463,23 @@ export const callAPI = async (endpoint) => {
   }
 };
 
-// Example usage:
-// import { API_ENDPOINTS, callAPI } from './API';
-// 
-// // Connect to WhatsApp
+// ===============================
+// 📝 USAGE EXAMPLES
+// ===============================
+
+// Example 1: Connect to WhatsApp
 // const result = await callAPI(API_ENDPOINTS.CONNECT('2349154347487'));
-// 
-// // Get chats
+
+// Example 2: Get chats
 // const chats = await callAPI(API_ENDPOINTS.GET_CHATS('2349154347487'));
-// 
-// // Send message
+
+// Example 3: Send message
 // const sent = await callAPI(API_ENDPOINTS.SEND_MESSAGE('2349154347487', '2348012345678@s.whatsapp.net', 'Hello!'));
+
+// Example 4: AI Smart Reply
+// const reply = await callAPI(API_ENDPOINTS.AI_SMART_REPLY('2349154347487', 'chat123', 'How are you?'));
+
+// Example 5: Archive chat
+// const archived = await callAPI(API_ENDPOINTS.ARCHIVE_CHAT('2349154347487', '2348012345678@s.whatsapp.net', true));
 
 export default API_ENDPOINTS;
