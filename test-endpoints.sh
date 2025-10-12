@@ -5,8 +5,8 @@
 # ===============================
 # Comprehensive test script for all WhatsApp backend endpoints
 
-BASE_URL="${BASE_URL:-http://localhost:5000}"
-PHONE="${PHONE:-2349154347487}"
+BASE_URL="${BASE_URL:-https://add3785e-5688-451c-86e6-c4f5d78a754d-00-2qebok86675rr.spock.replit.dev}"
+PHONE="${PHONE:-2348113054793}"
 TEST_RECIPIENT="${TEST_RECIPIENT:-$PHONE@s.whatsapp.net}"
 
 # Colors for output
