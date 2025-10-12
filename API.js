@@ -442,6 +442,46 @@ export const API_ENDPOINTS = {
     method: 'POST',
     body: { phone, to, isVideo }
   }),
+
+  // ========== PRIVACY & SECURITY ==========
+  GET_PRIVACY_SETTINGS: (phone) => ({
+    url: `${API_BASE_URL}/api/privacy/settings/${phone}`,
+    method: 'GET'
+  }),
+
+  UPDATE_PRIVACY_SETTINGS: (phone, setting, value) => ({
+    url: `${API_BASE_URL}/api/privacy/settings/update`,
+    method: 'POST',
+    body: { phone, setting, value }
+  }),
+
+  GET_BLOCKED_CONTACTS: (phone) => ({
+    url: `${API_BASE_URL}/api/privacy/blocked/${phone}`,
+    method: 'GET'
+  }),
+
+  BLOCK_CONTACT: (phone, jid) => ({
+    url: `${API_BASE_URL}/api/privacy/block`,
+    method: 'POST',
+    body: { phone, jid }
+  }),
+
+  UNBLOCK_CONTACT: (phone, jid) => ({
+    url: `${API_BASE_URL}/api/privacy/unblock`,
+    method: 'POST',
+    body: { phone, jid }
+  }),
+
+  SET_DISAPPEARING_MESSAGES: (phone, chatId, duration) => ({
+    url: `${API_BASE_URL}/api/privacy/disappearing-messages`,
+    method: 'POST',
+    body: { phone, chatId, duration }
+  }),
+
+  GET_BUSINESS_PROFILE: (phone, jid) => ({
+    url: `${API_BASE_URL}/api/privacy/business-profile/${phone}/${jid}`,
+    method: 'GET'
+  }),
 };
 
 // Helper function to make API calls

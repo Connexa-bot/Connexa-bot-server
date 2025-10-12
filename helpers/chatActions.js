@@ -127,7 +127,19 @@ export async function getPrivacySettings(phone) {
 export async function updatePrivacySettings(phone, setting, value) {
   const sock = getClient(phone);
   try {
-    await sock.updatePrivacySettings(setting, value);
+    // Validate setting and value
+    const validSettings = ['readreceipts', 'profile', 'status', 'online', 'last', 'groupadd', 'calladd'];
+    const validValues = ['all', 'contacts', 'contact_blacklist', 'none'];
+    
+    if (!validSettings.includes(setting)) {
+      throw new Error(`Invalid setting. Must be one of: ${validSettings.join(', ')}`);
+    }
+    if (!validValues.includes(value)) {
+      throw new Error(`Invalid value. Must be one of: ${validValues.join(', ')}`);
+    }
+    
+    // Baileys expects an options object
+    await sock.updatePrivacySettings({ [setting]: value });
     return { success: true };
   } catch (error) {
     console.error('Failed to update privacy settings:', error);

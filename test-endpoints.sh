@@ -300,26 +300,52 @@ echo -e "\n${YELLOW}10.3 Update Profile (Note: requires actual data)...${NC}"
 echo "Skipped - requires valid profile update data"
 
 # ===============================
-# SECTION 11: ADVANCED FEATURES
+# SECTION 11: PRIVACY & SECURITY
 # ===============================
 echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}⚡ SECTION 11: ADVANCED FEATURES${NC}"
+echo -e "${GREEN}🔒 SECTION 11: PRIVACY & SECURITY${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-echo -e "\n${YELLOW}11.1 Get AI Chat History...${NC}"
+echo -e "\n${YELLOW}11.1 Get Privacy Settings...${NC}"
+curl -s "$BASE_URL/api/privacy/settings/$PHONE" | format_output
+
+echo -e "\n${YELLOW}11.2 Get Blocked Contacts...${NC}"
+curl -s "$BASE_URL/api/privacy/blocked/$PHONE" | format_output
+
+echo -e "\n${YELLOW}11.3 Update Privacy Settings (Status visibility to contacts)...${NC}"
+curl -s -X POST "$BASE_URL/api/privacy/settings/update" \
+  -H "Content-Type: application/json" \
+  -d "{\"phone\":\"$PHONE\",\"setting\":\"status\",\"value\":\"contacts\"}" | format_output
+
+echo -e "\n${YELLOW}11.4 Set Disappearing Messages (24 hours)...${NC}"
+curl -s -X POST "$BASE_URL/api/privacy/disappearing-messages" \
+  -H "Content-Type: application/json" \
+  -d "{\"phone\":\"$PHONE\",\"chatId\":\"$TEST_RECIPIENT\",\"duration\":86400}" | format_output
+
+echo -e "\n${YELLOW}11.5 Get Business Profile (Note: requires business account JID)...${NC}"
+echo "Skipped - requires valid business account JID"
+
+# ===============================
+# SECTION 12: ADVANCED FEATURES
+# ===============================
+echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}⚡ SECTION 12: ADVANCED FEATURES${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+
+echo -e "\n${YELLOW}12.1 Get AI Chat History...${NC}"
 curl -s "$BASE_URL/api/ai/history/$PHONE/test_chat" | format_output
 
-echo -e "\n${YELLOW}11.2 Clear Session State (Partial)...${NC}"
+echo -e "\n${YELLOW}12.2 Clear Session State (Partial)...${NC}"
 curl -s -X POST "$BASE_URL/api/clear-state/$PHONE" | format_output
 
 # ===============================
-# SECTION 12: CLEANUP
+# SECTION 13: CLEANUP
 # ===============================
 echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}🧹 SECTION 12: CLEANUP (OPTIONAL)${NC}"
+echo -e "${GREEN}🧹 SECTION 13: CLEANUP (OPTIONAL)${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-echo -e "\n${YELLOW}12.1 Clear AI Chat History...${NC}"
+echo -e "\n${YELLOW}13.1 Clear AI Chat History...${NC}"
 curl -s -X POST "$BASE_URL/api/ai/history/clear" \
   -H "Content-Type: application/json" \
   -d "{\"phone\":\"$PHONE\",\"chatId\":\"test_chat\"}" | format_output
@@ -328,7 +354,7 @@ echo -e "\n${RED}Would you like to logout? (y/n)${NC}"
 read -r logout_choice
 
 if [ "$logout_choice" = "y" ] || [ "$logout_choice" = "Y" ]; then
-  echo -e "\n${YELLOW}12.2 Logout...${NC}"
+  echo -e "\n${YELLOW}13.2 Logout...${NC}"
   curl -s -X POST "$BASE_URL/api/logout" \
     -H "Content-Type: application/json" \
     -d "{\"phone\":\"$PHONE\"}" | format_output
@@ -354,6 +380,7 @@ echo -e "  ${GREEN}✓${NC} Group Management Tests"
 echo -e "  ${GREEN}✓${NC} AI Features Tests"
 echo -e "  ${GREEN}✓${NC} Channels & Calls Tests"
 echo -e "  ${GREEN}✓${NC} Presence & Profile Tests"
+echo -e "  ${GREEN}✓${NC} Privacy & Security Tests"
 echo -e "  ${GREEN}✓${NC} Advanced Features Tests"
 echo -e "  ${GREEN}✓${NC} Cleanup Tests"
 
