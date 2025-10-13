@@ -7,9 +7,10 @@ ConnexaBot is a WhatsApp bot backend server built with Node.js, Express, and the
 
 ### Backend Server
 - **Entry Point**: `index.js`
-- **Port**: 3000 (backend server, port 5000 reserved for frontend)
+- **Port**: 5000 (backend API server)
 - **Host**: 0.0.0.0 (configured for Replit environment)
 - **Framework**: Express.js with Socket.IO for real-time communication
+- **Database**: MongoDB (with in-memory fallback)
 
 ### Key Components
 1. **WhatsApp Integration**: Uses Baileys library for WhatsApp Web API
@@ -19,12 +20,14 @@ ConnexaBot is a WhatsApp bot backend server built with Node.js, Express, and the
 5. **AI Features**: OpenAI integration for smart replies and automation
 
 ### Directory Structure
-- `/routes` - API route handlers
-- `/helpers` - Core WhatsApp functionality and utilities
-- `/controllers` - Business logic controllers
+- `/routes` - API route handlers (13 route files)
+- `/helpers` - Core WhatsApp functionality and utilities (14 helper files)
+- `/controllers` - Business logic controllers (8 controller files)
+- `/models` - MongoDB schemas (Chat, Contact, Message, Session)
+- `/config` - Configuration files (database connection)
 - `/auth` - WhatsApp session authentication data (gitignored)
 - `/media` - Uploaded/downloaded media files (gitignored)
-- `/frontend` - React Native mobile app (separate from backend)
+- `/chat_history` - AI chat history (gitignored)
 
 ## Environment Configuration
 

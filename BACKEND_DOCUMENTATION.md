@@ -38,7 +38,8 @@ ConnexaBot is a comprehensive WhatsApp automation backend built on top of Bailey
 - **WhatsApp Library:** Baileys
 - **WebSocket:** Socket.io
 - **AI:** OpenAI GPT-5
-- **Storage:** File-based (auth sessions) + In-memory store
+- **Database:** MongoDB (with in-memory fallback)
+- **Storage:** File-based auth sessions + MongoDB persistence
 
 ---
 
@@ -106,6 +107,7 @@ ConnexaBot is a comprehensive WhatsApp automation backend built on top of Bailey
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
+- MongoDB Atlas account (free tier) or MongoDB instance
 - OpenAI API key (optional, for AI features)
 
 ### Installation Steps
@@ -148,9 +150,12 @@ bash test-endpoints.sh
 ### Required Variables
 ```env
 # Server Configuration
-PORT=3000                    # Server port
+PORT=5000                    # Server port
 HOST=0.0.0.0                # Bind address
 NODE_ENV=production         # Environment mode
+
+# Database (Required for production)
+MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/connexabot
 
 # Storage Paths
 AUTH_DIR=./auth             # Session storage
@@ -739,6 +744,64 @@ try {
 
 ## 12. Deployment
 
+### Deployment on Koyeb (Recommended for Production)
+
+#### Prerequisites
+1. GitHub account with your code repository
+2. MongoDB Atlas cluster (free tier works)
+3. Koyeb account (free tier available)
+
+#### Step-by-Step Deployment
+
+1. **Prepare MongoDB**
+   ```bash
+   # Get your MongoDB connection string from Atlas
+   # Format: mongodb+srv://username:password@cluster.mongodb.net/database
+   ```
+
+2. **Push to GitHub**
+   ```bash
+   git init
+   git add .
+   git commit -m "Deploy to Koyeb"
+   git remote add origin <your-repo-url>
+   git push -u origin main
+   ```
+
+3. **Deploy on Koyeb**
+   - Go to [Koyeb Dashboard](https://app.koyeb.com)
+   - Click "Create App"
+   - Select "GitHub" as deployment method
+   - Choose your repository
+   - Koyeb auto-detects Dockerfile
+
+4. **Configure Environment Variables**
+   In Koyeb app settings, add:
+   ```
+   MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/connexabot
+   OPENAI_API_KEY=sk-... (optional)
+   NODE_ENV=production
+   PORT=5000
+   ```
+
+5. **Deploy**
+   - Click "Deploy"
+   - App available at `https://your-app.koyeb.app`
+
+#### Using Koyeb CLI
+```bash
+npm install -g @koyeb/cli
+koyeb login
+
+koyeb app create connexabot \
+  --git https://github.com/you/connexabot-server \
+  --git-branch main \
+  --env MONGODB_URI=<your_mongodb_uri> \
+  --env NODE_ENV=production \
+  --ports 5000:http \
+  --routes /:5000
+```
+
 ### Deployment on Replit
 
 #### Using Autoscale Deployment
@@ -747,12 +810,13 @@ try {
 3. Configure:
    - Machine Power: 0.5 vCPU / 1 GB RAM
    - Max instances: 1-10
-4. Set run command: `PORT=3000 node index.js`
+4. Set run command: `PORT=5000 node index.js`
 5. Click "Deploy"
 
 #### Environment Setup
 ```bash
 # Set in Replit Secrets
+MONGODB_URI=mongodb+srv://...
 OPENAI_API_KEY=sk-...
 NODE_ENV=production
 ```
@@ -763,14 +827,17 @@ NODE_ENV=production
 - Health Check: `https://{domain}/health`
 
 ### Production Checklist
-- [ ] Set `OPENAI_API_KEY` in secrets
+- [ ] Set up MongoDB Atlas cluster
+- [ ] Configure `MONGODB_URI` in environment
+- [ ] Set `OPENAI_API_KEY` in secrets (optional)
 - [ ] Set `NODE_ENV=production`
 - [ ] Configure max instances based on traffic
 - [ ] Enable logging/monitoring
 - [ ] Set up error tracking
 - [ ] Configure CORS for frontend domain
 - [ ] Test all critical endpoints
-- [ ] Set up backup/recovery for auth sessions
+- [ ] MongoDB IP whitelist configured
+- [ ] Backup strategy for auth sessions
 
 ### Monitoring
 ```bash
