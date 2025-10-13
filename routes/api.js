@@ -72,7 +72,7 @@ export function createApiRoutes(broadcast) {
           // Timeout condition
           if (attempts >= maxAttempts) {
             clearInterval(interval);
-            
+
             const result = {
               success: false,
               qrCode: null,
@@ -92,7 +92,7 @@ export function createApiRoutes(broadcast) {
       res.json(result);
     } catch (err) {
       console.error(`❌ Connect error for ${normalizedPhone}:`, err);
-      res.status(500).json({ 
+      res.status(500).json({
         success: false,
         error: `Failed to connect: ${err.message}`,
         qrCode: null,
@@ -181,32 +181,16 @@ export function createApiRoutes(broadcast) {
 
   // ============= CHATS =============
   router.get("/chats/:phone", async (req, res) => {
+    const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
+    const session = sessions.get(normalizedPhone);
+    if (!session?.connected) return res.status(400).json({ error: "Not connected" });
+
     try {
-      const normalizedPhone = normalizePhone(req.params.phone);
-      const session = sessions.get(normalizedPhone);
-
-      if (!session?.connected) {
-        return res.status(200).json({
-          success: false,
-          chats: [],
-          message: 'No active session'
-        });
-      }
-
-      const chats = await chatCtrl.getChats(session);
-      res.json({
-        success: true,
-        chats: chats || [],
-        count: chats ? chats.length : 0,
-        timestamp: new Date().toISOString()
-      });
-    } catch (error) {
-      console.error('Chats endpoint error:', error);
-      res.status(500).json({
-        success: false,
-        chats: [],
-        error: error.message
-      });
+      const chats = await chatCtrl.getChats(normalizedPhone);
+      const timestamp = new Date().toISOString();
+      res.json({ success: true, chats, count: chats.length, timestamp });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   });
 
@@ -242,39 +226,16 @@ export function createApiRoutes(broadcast) {
 
   // ============= STATUS UPDATES =============
   router.get("/status-updates/:phone", async (req, res) => {
+    const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
+    const session = sessions.get(normalizedPhone);
+    if (!session?.connected) return res.status(400).json({ error: "Not connected" });
+
     try {
-      const normalizedPhone = normalizePhone(req.params.phone);
-      const session = sessions.get(normalizedPhone);
-
-      if (!session?.sock) {
-        return res.status(200).json({
-          success: true,
-          statusUpdates: [],
-          message: 'No active session'
-        });
-      }
-
-      let statusUpdates = [];
-      try {
-        const { fetchStatusUpdates } = await import("../helpers/fetchers.js");
-        statusUpdates = await fetchStatusUpdates(session.store) || [];
-      } catch (err) {
-        console.error('Status fetch error:', err);
-      }
-
-      res.json({
-        success: true,
-        statusUpdates,
-        count: statusUpdates.length
-      });
-
-    } catch (error) {
-      console.error('Status updates endpoint error:', error);
-      res.status(200).json({
-        success: false,
-        statusUpdates: [],
-        error: error.message
-      });
+      const { fetchStatusUpdates } = await import("../helpers/fetchers.js");
+      const statusUpdates = await fetchStatusUpdates(normalizedPhone);
+      res.json({ success: true, statusUpdates, count: statusUpdates.length });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   });
 
@@ -294,11 +255,13 @@ export function createApiRoutes(broadcast) {
 
   // ============= CHANNELS =============
   router.get("/channels/:phone", async (req, res) => {
-    const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
-    if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+    const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
+    const session = sessions.get(normalizedPhone);
+    if (!session?.connected) return res.status(400).json({ error: "Not connected" });
 
     try {
-      const channels = [];
+      const { fetchChannels } = await import("../helpers/fetchers.js");
+      const channels = await fetchChannels(normalizedPhone);
       res.json({ success: true, data: { channels } });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -307,11 +270,13 @@ export function createApiRoutes(broadcast) {
 
   // ============= COMMUNITIES =============
   router.get("/communities/:phone", async (req, res) => {
-    const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
-    if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+    const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
+    const session = sessions.get(normalizedPhone);
+    if (!session?.connected) return res.status(400).json({ error: "Not connected" });
 
     try {
-      const communities = [];
+      const { fetchCommunities } = await import("../helpers/fetchers.js");
+      const communities = await fetchCommunities(normalizedPhone);
       res.json({ success: true, data: { communities } });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });

@@ -6,11 +6,13 @@ const router = express.Router();
 
 // List groups
 router.get("/:phone", async (req, res) => {
-  const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
+  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
+  const session = sessions.get(normalizedPhone);
   if (!session?.connected) return res.status(400).json({ error: "Not connected" });
   
   try {
-    const groups = await groupCtrl.listGroups(session);
+    const { fetchGroups } = await import("../helpers/fetchers.js");
+    const groups = await fetchGroups(normalizedPhone);
     
     // Add profile pictures to groups
     const groupsWithPics = await Promise.all(

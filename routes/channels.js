@@ -13,13 +13,14 @@ const normalizePhone = (phone) => phone?.replace(/^\+|\s/g, '');
 
 // Get all channels
 router.get('/:phone', async (req, res) => {
-  const normalizedPhone = normalizePhone(req.params.phone);
+  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
   const session = sessions.get(normalizedPhone);
   if (!session?.connected) return res.status(400).json({ error: 'Not connected' });
 
   try {
-    const result = await channelActions.getChannels(normalizedPhone);
-    res.json(result);
+    const { fetchChannels } = await import("../helpers/fetchers.js");
+    const channels = await fetchChannels(normalizedPhone);
+    res.json({ success: true, data: { channels } });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -84,15 +85,16 @@ router.post('/mute', async (req, res) => {
   }
 });
 
-// Get communities
+// Get communities (linked channels)
 router.get('/communities/:phone', async (req, res) => {
-  const normalizedPhone = normalizePhone(req.params.phone);
+  const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
   const session = sessions.get(normalizedPhone);
   if (!session?.connected) return res.status(400).json({ error: 'Not connected' });
 
   try {
-    const result = await channelActions.getCommunities(normalizedPhone);
-    res.json(result);
+    const { fetchCommunities } = await import("../helpers/fetchers.js");
+    const communities = await fetchCommunities(normalizedPhone);
+    res.json({ success: true, communities });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

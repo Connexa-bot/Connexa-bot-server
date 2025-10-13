@@ -90,12 +90,14 @@ echo -e "\n${YELLOW}2.1 Get Chats...${NC}"
 CHATS_RESPONSE=$(curl -s "$BASE_URL/api/chats/$PHONE")
 echo "$CHATS_RESPONSE" | format_output
 
-# Extract a random chat ID (excluding your own number)
+# Extract a random chat ID (excluding your own number, and only valid JIDs)
 if [ "$HAS_JQ" = true ]; then
-  RANDOM_CHAT=$(echo "$CHATS_RESPONSE" | jq -r '.chats[]? | select(.id != "'"$PHONE"'@s.whatsapp.net" and .isGroup == false) | .id' | shuf -n 1)
+  RANDOM_CHAT=$(echo "$CHATS_RESPONSE" | jq -r '.chats[]? | select(.id != "'"$PHONE"'@s.whatsapp.net" and .isGroup == false and (.id | test("@s.whatsapp.net$"))) | .id' | shuf -n 1)
   if [ -n "$RANDOM_CHAT" ] && [ "$RANDOM_CHAT" != "null" ]; then
     TEST_RECIPIENT="$RANDOM_CHAT"
     echo -e "${GREEN}✓ Selected random contact for testing: $TEST_RECIPIENT${NC}"
+  else
+    echo -e "${YELLOW}⚠ No valid individual chats found, using default recipient${NC}"
   fi
 fi
 
