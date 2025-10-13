@@ -1,0 +1,775 @@
+~/ConnexaBotServer $ ./test-endpoints.sh
+✓ jq found - responses will be formatted
+
+╔════════════════════════════════════════════╗
+║  🧪 ConnexaBot API Comprehensive Testing  ║
+╔════════════════════════════════════════════╝
+║
+║  Base URL: https://7291a9b7-7686-42b0-ba38-4b0639ea71ed-00-22vcaa5x8ip3y.kirk.replit.dev:3000
+║  Phone: 2348113054793
+║  Test Recipient: 2348113054793@s.whatsapp.net
+║
+╚════════════════════════════════════════════
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 SECTION 1: HEALTH & CONNECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1.1 Server Health Check...
+Request: GET https://7291a9b7-7686-42b0-ba38-4b0639ea71ed-00-22vcaa5x8ip3y.kirk.replit.dev:3000/health
+Raw Response (first 200 chars): {"status":"ok","uptime":172.194507962,"timestamp":"2025-10-13T00:54:21.979Z","serverUrl":"https://7291a9b7-7686-42b0-ba38-4b0639ea71ed-00-22vcaa5x8ip3y.kirk.replit.dev"}
+{
+  "status": "ok",
+  "uptime": 172.194507962,
+  "timestamp": "2025-10-13T00:54:21.979Z",
+  "serverUrl": "https://7291a9b7-7686-42b0-ba38-4b0639ea71ed-00-22vcaa5x8ip3y.kirk.replit.dev"
+}
+
+1.2 API Health Check...
+{
+  "status": "ok",
+  "uptime": 174.323432161,
+  "timestamp": "2025-10-13T00:54:24.108Z",
+  "activeSessions": 0
+}                                                     
+1.3 WhatsApp Connect...
+{                                                            "success": true,                                 "qrCode": "2@0LqYP4nKQZ26mRuQrl4WaEyP6sHdqLcpzaUQw0kJCIE780ORAN566bfNW3ugVXRz4l6MaR3AdMcCD0XtrRjXfEzQ2i38x1DSOsk=,A/Y+lBqGuWfk5db0xFfL/sVbNVwUmXi0DQjFfGIGuxE=,LJHcYGa9DSDqWRX3u6dZmgvygOryOGyax4rwQrHC3xk=,0g8JKvgyjgUNZK0BMBVQm5NJ62n8A60t2Tk8d7U87vc=",
+  "linkCode": "1Q1QPQBR",
+  "message": "Scan QR code or use link code",
+  "connected": false
+}
+
+1.4 Connection Status...                                        {
+  "connected": false,
+  "status": "waiting",
+  "authenticated": false,                               "ready": false,                                            "isConnected": false,                            "qrCode": "2@0LqYP4nKQZ26mRuQrl4WaEyP6sHdqLcpzaUQw0kJCIE780ORAN566bfNW3ugVXRz4l6MaR3AdMcCD0XtrRjXfEzQ2i38x1DSOsk=,A/Y+lBqGuWfk5db0xFfL/sVbNVwUmXi0DQjFfGIGuxE=,LJHcYGa9DSDqWRX3u6dZmgvygOryOGyax4rwQrHC3xk=,0g8JKvgyjgUNZK0BMBVQm5NJ62n8A60t2Tk8d7U87vc=",
+  "linkCode": "1Q1QPQBR",
+  "user": null,
+  "phone": "2348113054793",
+  "error": null                                       }
+
+⏳ Please scan QR code if needed and press Enter when connected...
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📥 SECTION 2: DATA RETRIEVAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                                                      2.1 Get Chats...
+
+{
+  "success": true,
+  "chats": [
+    {
+      "id": "key",
+      "name": "key",
+      "profilePicUrl": null,
+      "unreadCount": 0,
+      "lastMessageTimestamp": 0,
+      "lastMessage": {},
+      "isGroup": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false
+    },                                                    {
+      "id": "idGetter",
+      "name": "idGetter",
+      "profilePicUrl": null,
+      "unreadCount": 0,
+      "lastMessageTimestamp": 0,
+      "lastMessage": {},
+      "isGroup": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false
+    },
+    {
+      "id": "dict",
+      "name": "dict",                                       "profilePicUrl": null,                                "unreadCount": 0,                                     "lastMessageTimestamp": 0,                            "lastMessage": {},
+      "isGroup": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false
+    },
+    {
+      "id": "array",
+      "name": "array",
+      "profilePicUrl": null,
+      "unreadCount": 0,
+      "lastMessageTimestamp": 0,
+      "lastMessage": {},
+      "isGroup": false,                                     "isArchived": false,                                  "isPinned": false,                                    "isMuted": false                                    }
+  ],
+  "count": 4,
+  "timestamp": "2025-10-13T00:59:16.014Z"
+}
+✓ Selected random contact for testing: idGetter
+
+2.2 Get Contacts...                                   {
+  "success": true,
+  "contacts": [],
+  "count": 0
+}
+
+2.3 Get Groups...
+{
+  "success": true,
+  "groups": [
+    {
+      "id": "120363403026528867@g.us",
+      "subject": "PRIME BETTING TIPS",
+      "size": 5,
+      "creation": 1746264729,
+      "owner": "164386215870514@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363400670421229@g.us",
+      "subject": "SUCCESSFUL SPORTYBET TIPS",
+      "size": 5,
+      "creation": 1748284854,
+      "owner": "233526146388108@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363399476128785@g.us",
+      "subject": "SWISS TIPS 🇬🇭🇬🇭🇳🇬🇳🇬",
+      "size": 3,
+      "creation": 1745818706,
+      "owner": "16703194976442@lid",
+      "profilePicUrl": null                               },
+    {
+      "id": "120363221901989456@g.us",
+      "subject": "Huzzah",
+      "size": 1,
+      "creation": 1705070216,
+      "owner": "17429228974260@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363232305411853@g.us",
+      "subject": "A",
+      "size": 1,
+      "creation": 1707217151,
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363203223032559@g.us",
+      "subject": "Heartbeat Hangers 💓 💓",
+      "size": 12,
+      "creation": 1705528769,
+      "owner": "17429228974260@lid",
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/491833314_1125488609629059_6723759255473840597_n.jpg?ccb=11-4&oh=01_Q5Aa2wHoBzMuTzmL3FW2JmdH303L0gq_uRvNXqh5WKw2m6IFVA&oe=68F9780D&_nc_sid=5e03e0&_nc_cat=106"
+    },
+    {
+      "id": "120363203244453025@g.us",
+      "subject": "Huzzah",
+      "size": 21,
+      "creation": 1705070216,
+      "owner": "17429228974260@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363401078168786@g.us",
+      "subject": "BETTING TIPS ✅✅✅",
+      "size": 40,
+      "creation": 1755217383,
+      "owner": "201683426652220@lid",
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/511520624_1992616231543678_134246955197738243_n.jpg?ccb=11-4&oh=01_Q5Aa2wHES5pHf3TOdwXUKVWs1Z0zU7ZwSPo4cwEJCwfyDgwONw&oe=68F97CE4&_nc_sid=5e03e0&_nc_cat=104"
+    },
+    {
+      "id": "120363029518270759@g.us",
+      "subject": "Na Annabi group ",
+      "size": 41,
+      "creation": 1675370604,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/367772134_302501912277351_5194830312284724355_n.jpg?ccb=11-4&oh=01_Q5Aa2wGkB6Pe4jjwJIkAIdLYJid2eLU9rJ5sIqbbVB06LpSqKA&oe=68F9716B&_nc_sid=5e03e0&_nc_cat=100"
+    },
+    {
+      "id": "120363331768544317@g.us",
+      "subject": "Galilee FC 🎯🏅⚽",
+      "size": 57,
+      "creation": 1725660051,
+      "owner": "252179441004567@lid",
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/471367956_576044021981987_2634507974218579021_n.jpg?ccb=11-4&oh=01_Q5Aa2wHvMkfvFBNGeOId2CHC9dZloOuzMCSEBD5G3kh1Y0WJMA&oe=68F94A8F&_nc_sid=5e03e0&_nc_cat=111"
+    },
+    {
+      "id": "120363299672308849@g.us",
+      "subject": "MONIEPOINT CARD SALES AGENTS -ADAVI",
+      "size": 90,                                           "creation": 1720985262,
+      "owner": "123162549334133@lid",
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/419721522_26149795657969526_3441387267143563519_n.jpg?ccb=11-4&oh=01_Q5Aa2wGtEYOWrJkT7X9AV7lUZrgeu99VXj-rVDCGemB0PiNfkg&oe=68F96143&_nc_sid=5e03e0&_nc_cat=106"
+    },                                                    {
+      "id": "120363178126240253@g.us",
+      "subject": "Vyruz 🔥City 🔥Gang(VCG)To de world🇬🇭🇯🇲",
+      "size": 140,
+      "creation": 1699033589,
+      "owner": "257350346780722@lid",
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/417826553_694683906205080_1526795626175219464_n.jpg?ccb=11-4&oh=01_Q5Aa2wFGG8yQ-AQVcT_Fy57BikhpJec0f3EYOcpLKc-eBHp3Qw&oe=68F94F3E&_nc_sid=5e03e0&_nc_cat=110"
+    },
+    {
+      "id": "120363399618617045@g.us",
+      "subject": "SWISS TIPS 🇬🇭🇬🇭🇳🇬🇳🇬",
+      "size": 894,
+      "creation": 1745818706,
+      "owner": "16703194976442@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363022596093255@g.us",
+      "subject": "Moniepoint Kogi Support9",
+      "size": 918,
+      "creation": 1645093621,
+      "owner": "277798551818444@lid",
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/254882897_383224353743805_2482826154585774304_n.jpg?ccb=11-4&oh=01_Q5Aa2wEle3gflFkdpYIB8WeWPh4VyOnhxJc7JFTDSBuHhI7BFw&oe=68F97BF5&_nc_sid=5e03e0&_nc_cat=106"
+    },
+    {
+      "id": "120363398650806366@g.us",
+      "subject": "PRIME BETTING TIPS",
+      "size": 1338,
+      "creation": 1746264729,
+      "owner": "164386215870514@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363400355878079@g.us",
+      "subject": "SUCCESSFUL SPORTYBET TIPS",
+      "size": 1348,
+      "creation": 1748284854,
+      "owner": "233526146388108@lid",
+      "profilePicUrl": null
+    }
+  ]
+}
+
+2.4 Get Call History...
+{
+  "success": true,
+  "data": {
+    "calls": []
+  }
+}
+
+2.5 Get Status Updates...
+{
+  "success": true,
+  "statusUpdates": [],
+  "count": 0
+}
+
+2.6 Get Channels...
+{
+  "success": true,
+  "data": {
+    "channels": []
+  }                                                   }                                                                                                           2.7 Get Communities...
+{
+  "success": true,
+  "communities": []
+}
+
+2.8 Get Profile...
+{                                                       "success": true,
+  "data": {
+    "name": "Suleiman Sani",
+    "phone": "2348113054793",
+    "status": "",
+    "picture": "https://pps.whatsapp.net/v/t61.24694-24/406043473_2173767616307032_8090898677810177889_n.jpg?ccb=11-4&oh=01_Q5Aa2wFWSqWL3sdvo-lz4VHpVjsg_GNzETRSlGSplSviuhevew&oe=68F95F63&_nc_sid=5e03e0&_nc_cat=103"
+  }
+}
+
+2.9 Get Chat Labels...
+{
+  "success": false,
+  "message": "Labels not supported or not a business account"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ প্রক্র SECTION 3: MESSAGING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3.1 Send Text Message to: idGetter...
+{
+  "error": "Cannot destructure property 'user' of 'jidDecode(...)' as it is undefined."
+}
+
+3.2 Send Poll...
+{
+  "error": "Cannot destructure property 'user' of 'jidDecode(...)' as it is undefined."                     }
+
+3.3 Send Location...
+{
+  "error": "Cannot destructure property 'user' of 'jidDecode(...)' as it is undefined."
+}
+
+3.4 Send Broadcast Message...
+{                                                       "success": true,
+  "results": [                                            {
+      "recipient": "idGetter",
+      "success": false,
+      "error": "Timed Out"                                }
+  ]
+}
+                                                      3.5 Reply to Message (Note: requires valid quotedMessage)...
+Skipped - requires specific quotedMessage from previous messages
+
+3.6 Send Contact Card...
+{
+  "error": "Cannot destructure property 'user' of 'jidDecode(...)' as it is undefined."
+}
+
+3.7 Send List Message...
+{
+  "error": "Cannot destructure property 'user' of 'jidDecode(...)' as it is undefined."
+}
+
+3.8 Download Media (Note: requires message with media)...
+Skipped - requires specific message with media
+
+3.9 Forward Message (Note: requires valid message)...
+Skipped - requires specific message to forward
+
+3.10 Mark Message as Read (Note: requires valid messageKey)...
+Skipped - requires specific messageKey
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚙️ SECTION 4: MESSAGE ACTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+4.1 React to Message (Note: requires valid messageKey)...
+Skipped - requires specific messageKey from previous messages
+
+4.2 Edit Message (Note: requires valid messageKey)...
+Skipped - requires specific messageKey from previous messages
+
+4.3 Star Message (Note: requires valid messageKey)...
+Skipped - requires specific messageKey from previous messages
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💬 SECTION 5: CHAT ACTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+5.1 Archive Chat...
+{
+  "success": true
+}
+
+5.2 Unarchive Chat...
+{
+  "success": true
+}
+
+5.3 Pin Chat...
+{
+  "success": true
+}
+
+5.4 Unpin Chat...
+{
+  "success": true
+}
+
+5.5 Mute Chat (8 hours)...
+{
+  "success": true
+}
+
+5.6 Mark as Read...
+{
+  "success": true
+}
+
+5.7 Mark as Unread...
+{
+  "success": true
+}
+
+5.8 Clear Chat...
+{
+  "success": true
+}
+
+5.9 Add Chat Label (Note: business feature)...
+{
+  "success": true
+}
+
+5.10 Remove Chat Label...
+{
+  "success": true
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📸 SECTION 6: STATUS/STORY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+6.1 Post Text Status...
+{
+  "success": true,
+  "messageId": "3EB0D62455FBFC41F3D038"
+}
+
+6.2 Get Status Privacy Settings...
+{
+  "success": true,
+  "privacy": {
+    "readreceipts": "all",
+    "profile": "none",
+    "status": "contacts",
+    "online": "all",
+    "last": "contacts",
+    "groupadd": "all",
+    "calladd": "all",
+    "stickers": "contacts",
+    "messages": "all"
+  }
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+👥 SECTION 7: GROUP MANAGEMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+7.1 List Groups...
+{
+  "success": true,
+  "groups": [
+    {
+      "id": "120363403026528867@g.us",
+      "subject": "PRIME BETTING TIPS",
+      "size": 5,
+      "creation": 1746264729,
+      "owner": "164386215870514@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363400670421229@g.us",
+      "subject": "SUCCESSFUL SPORTYBET TIPS",
+      "size": 5,                                            "creation": 1748284854,
+      "owner": "233526146388108@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363399476128785@g.us",
+      "subject": "SWISS TIPS 🇬🇭🇬🇭🇳🇬🇳🇬",
+      "size": 3,                                            "creation": 1745818706,
+      "owner": "16703194976442@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363221901989456@g.us",
+      "subject": "Huzzah",
+      "size": 1,
+      "creation": 1705070216,
+      "owner": "17429228974260@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363232305411853@g.us",
+      "subject": "A",
+      "size": 1,
+      "creation": 1707217151,
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363203223032559@g.us",
+      "subject": "Heartbeat Hangers 💓 💓",
+      "size": 12,
+      "creation": 1705528769,
+      "owner": "17429228974260@lid",
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/491833314_1125488609629059_6723759255473840597_n.jpg?ccb=11-4&oh=01_Q5Aa2wHoBzMuTzmL3FW2JmdH303L0gq_uRvNXqh5WKw2m6IFVA&oe=68F9780D&_nc_sid=5e03e0&_nc_cat=106"
+    },
+    {
+      "id": "120363203244453025@g.us",
+      "subject": "Huzzah",
+      "size": 21,
+      "creation": 1705070216,
+      "owner": "17429228974260@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363401078168786@g.us",
+      "subject": "BETTING TIPS ✅✅✅",
+      "size": 40,
+      "creation": 1755217383,
+      "owner": "201683426652220@lid",
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/511520624_1992616231543678_134246955197738243_n.jpg?ccb=11-4&oh=01_Q5Aa2wHES5pHf3TOdwXUKVWs1Z0zU7ZwSPo4cwEJCwfyDgwONw&oe=68F97CE4&_nc_sid=5e03e0&_nc_cat=104"
+    },
+    {
+      "id": "120363029518270759@g.us",
+      "subject": "Na Annabi group ",                        "size": 41,                                           "creation": 1675370604,                               "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/367772134_302501912277351_5194830312284724355_n.jpg?ccb=11-4&oh=01_Q5Aa2wGkB6Pe4jjwJIkAIdLYJid2eLU9rJ5sIqbbVB06LpSqKA&oe=68F9716B&_nc_sid=5e03e0&_nc_cat=100"
+    },                                                    {                                                       "id": "120363331768544317@g.us",                      "subject": "Galilee FC 🎯🏅⚽",
+      "size": 57,
+      "creation": 1725660051,
+      "owner": "252179441004567@lid",
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/471367956_576044021981987_2634507974218579021_n.jpg?ccb=11-4&oh=01_Q5Aa2wHvMkfvFBNGeOId2CHC9dZloOuzMCSEBD5G3kh1Y0WJMA&oe=68F94A8F&_nc_sid=5e03e0&_nc_cat=111"
+    },
+    {
+      "id": "120363299672308849@g.us",
+      "subject": "MONIEPOINT CARD SALES AGENTS -ADAVI",                                                           "size": 90,                                           "creation": 1720985262,                               "owner": "123162549334133@lid",
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/419721522_26149795657969526_3441387267143563519_n.jpg?ccb=11-4&oh=01_Q5Aa2wGtEYOWrJkT7X9AV7lUZrgeu99VXj-rVDCGemB0PiNfkg&oe=68F96143&_nc_sid=5e03e0&_nc_cat=106"                                                   },                                                    {                                                       "id": "120363178126240253@g.us",
+      "subject": "Vyruz 🔥City 🔥Gang(VCG)To de world🇬🇭🇯🇲",
+      "size": 140,
+      "creation": 1699033589,
+      "owner": "257350346780722@lid",                       "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/417826553_694683906205080_1526795626175219464_n.jpg?ccb=11-4&oh=01_Q5Aa2wFGG8yQ-AQVcT_Fy57BikhpJec0f3EYOcpLKc-eBHp3Qw&oe=68F94F3E&_nc_sid=5e03e0&_nc_cat=110"
+    },
+    {
+      "id": "120363399618617045@g.us",
+      "subject": "SWISS TIPS 🇬🇭🇬🇭🇳🇬🇳🇬",
+      "size": 894,
+      "creation": 1745818706,
+      "owner": "16703194976442@lid",
+      "profilePicUrl": null                               },                                                    {                                                       "id": "120363022596093255@g.us",
+      "subject": "Moniepoint Kogi Support9",
+      "size": 918,
+      "creation": 1645093621,
+      "owner": "277798551818444@lid",
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/254882897_383224353743805_2482826154585774304_n.jpg?ccb=11-4&oh=01_Q5Aa2wEle3gflFkdpYIB8WeWPh4VyOnhxJc7JFTDSBuHhI7BFw&oe=68F97BF5&_nc_sid=5e03e0&_nc_cat=106"
+    },
+    {
+      "id": "120363398650806366@g.us",
+      "subject": "PRIME BETTING TIPS",
+      "size": 1338,
+      "creation": 1746264729,
+      "owner": "164386215870514@lid",
+      "profilePicUrl": null
+    },
+    {
+      "id": "120363400355878079@g.us",
+      "subject": "SUCCESSFUL SPORTYBET TIPS",
+      "size": 1348,
+      "creation": 1748284854,
+      "owner": "233526146388108@lid",
+      "profilePicUrl": null
+    }
+  ]
+}
+
+7.2 Create Group (Note: requires participants)...
+Skipped - requires valid participant JIDs
+
+7.3 Get Group Invite Code (Note: requires group)...
+Skipped - requires existing group
+
+7.4 Get Group Metadata (Note: requires group)...
+Skipped - requires existing group
+
+7.5 Update Group Subject (Note: requires group)...
+Skipped - requires existing group and admin rights
+
+7.6 Update Group Description (Note: requires group)...
+Skipped - requires existing group and admin rights
+
+7.7 Add/Remove Participants (Note: requires group)...
+Skipped - requires existing group and admin rights
+
+7.8 Promote/Demote Participants (Note: requires group)...
+Skipped - requires existing group and admin rights
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🤖 SECTION 8: AI FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                                                      8.1 Generate Smart Reply...                           {                                                       "error": "OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."
+}
+
+8.2 Analyze Sentiment...
+{
+  "error": "OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."
+}
+
+8.3 Translate Text...
+{
+  "error": "OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."
+}
+
+8.4 Improve Message...
+{
+  "error": "OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."
+}
+
+8.5 Content Moderation...
+{
+  "error": "OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."
+}
+
+8.6 Smart Compose...
+{
+  "error": "OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."
+}
+
+8.7 Generate AI Response...
+{
+  "error": "OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."
+}
+                                                      8.8 Batch Analyze Messages...
+{
+  "success": true,
+  "results": [
+    {
+      "messageId": "1",
+      "success": false,
+      "error": "OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."                 },
+    {
+      "messageId": "2",
+      "success": false,
+      "error": "OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."
+    }
+  ]
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📡 SECTION 9: CHANNELS & CALLS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+9.1 Get Channels...
+{
+  "success": true,
+  "data": {
+    "channels": []
+  }
+}
+
+9.2 Get Communities...
+{
+  "success": true,
+  "communities": []
+}
+
+9.3 Get Channel Metadata (Note: requires channel JID)...
+Skipped - requires valid channel JID
+
+9.4 Mute Channel (Note: requires channel JID)...
+Skipped - requires valid channel JID                  
+9.5 Get Call History...
+{
+  "success": true,
+  "data": {
+    "calls": []
+  }
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+👤 SECTION 10: PRESENCE & PROFILE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+10.1 Update Presence (Typing)...
+{
+  "error": "Cannot destructure property 'server' of 'jidDecode(...)' as it is undefined."
+}
+
+10.1b Update Presence (Recording)...
+{
+  "error": "Cannot destructure property 'server' of 'jidDecode(...)' as it is undefined."
+}                                                     
+10.1c Update Presence (Available)...
+{
+  "success": true
+}
+
+10.2 Get Profile...                                   {
+  "success": true,                                      "data": {
+    "name": "Suleiman Sani",
+    "phone": "2348113054793",
+    "status": "",
+    "picture": "https://pps.whatsapp.net/v/t61.24694-24/406043473_2173767616307032_8090898677810177889_n.jpg?ccb=11-4&oh=01_Q5Aa2wFWSqWL3sdvo-lz4VHpVjsg_GNzETRSlGSplSviuhevew&oe=68F95F63&_nc_sid=5e03e0&_nc_cat=103"
+  }                                                   }
+
+10.3 Update Profile Name...
+{
+  "success": true
+}
+                                                      10.4 Update Profile Status...
+{
+  "success": true
+}
+
+10.5 Get Profile Picture (Note: requires JID)...
+Skipped - requires valid JID
+
+10.6 Contact Actions - Block/Unblock...
+{
+  "success": true,                                      "blocked": [
+    "2348137239417@s.whatsapp.net",
+    "2349128227559@s.whatsapp.net"
+  ]
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔒 SECTION 11: PRIVACY & SECURITY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+11.1 Get Privacy Settings...
+{
+  "success": true,                                      "privacy": {
+    "readreceipts": "all",
+    "profile": "none",
+    "status": "contacts",                                 "online": "all",
+    "last": "contacts",
+    "groupadd": "all",
+    "calladd": "all",                                     "stickers": "contacts",
+    "messages": "all"
+  }
+}                                                     
+11.2 Get Blocked Contacts...
+{                                                       "success": true,
+  "blocked": [
+    "2348137239417@s.whatsapp.net",
+    "2349128227559@s.whatsapp.net"
+  ]
+}
+
+11.3 Update Privacy Settings (Status visibility to contacts)...
+{                                                       "success": true
+}
+
+11.4 Set Disappearing Messages (24 hours)...
+{
+  "error": "Cannot destructure property 'user' of 'jidDecode(...)' as it is undefined."
+}
+
+11.5 Get Business Profile (Note: requires business account JID)...
+Skipped - requires valid business account JID
+                                                      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚡ SECTION 12: ADVANCED FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                                                      12.1 Get AI Chat History...
+{
+  "success": true,
+  "history": []                                       }
+
+12.2 Clear Session State (Partial)...
+{                                                       "success": true,
+  "message": "State cleared successfully"
+}                                                     
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🧹 SECTION 13: CLEANUP (OPTIONAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+13.1 Clear AI Chat History...
+{                                                       "success": true,
+  "cleared": 1                                        }
+
+Would you like to logout? (y/n)
+
+
+╔════════════════════════════════════════════╗        ║        ✅ ALL TESTS COMPLETED              ║
+╚════════════════════════════════════════════╝
+
+📝 Test Summary:
+  ✓ Health & Connection Tests (4 tests)
+  ✓ Data Retrieval Tests (9 tests)
+  ✓ Messaging Tests (10 tests - all message types)
+  ✓ Message Actions Tests (3 tests)
+  ✓ Chat Actions Tests (10 tests - including labels)
+  ✓ Status/Story Tests (2 tests)                        ✓ Group Management Tests (8 tests - all actions)
+  ✓ AI Features Tests (8 tests)
+  ✓ Channels & Calls Tests (5 tests)
+  ✓ Presence & Profile Tests (8 tests - all states)
+  ✓ Privacy & Security Tests (5 tests)
+  ✓ Advanced Features Tests (2 tests)
+  ✓ Cleanup Tests (2 tests)
+
+Total: 76+ endpoint tests covering all backend functionality
+
+To run with custom values:
+  BASE_URL=http://localhost:5000 PHONE=123456789 ./test-endpoints.sh
+
+~/ConnexaBotServer $
