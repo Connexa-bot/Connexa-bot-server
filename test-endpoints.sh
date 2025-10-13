@@ -5,7 +5,7 @@
 # ===============================
 # Comprehensive test script for all WhatsApp backend endpoints
 
-BASE_URL="${BASE_URL:-https://7291a9b7-7686-42b0-ba38-4b0639ea71ed-00-22vcaa5x8ip3y.kirk.replit.dev}"
+BASE_URL="https://7291a9b7-7686-42b0-ba38-4b0639ea71ed-00-22vcaa5x8ip3y.kirk.replit.dev:3000"
 PHONE="${PHONE:-2348113054793}"
 TEST_RECIPIENT="${TEST_RECIPIENT:-$PHONE@s.whatsapp.net}"
 
@@ -127,7 +127,7 @@ curl -s "$BASE_URL/api/chats/labels/$PHONE" | format_output
 # SECTION 3: MESSAGING
 # ===============================
 echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}📨 SECTION 3: MESSAGING${NC}"
+echo -e "${GREEN} প্রক্র SECTION 3: MESSAGING${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 echo -e "\n${YELLOW}3.1 Send Text Message to: $TEST_RECIPIENT...${NC}"
