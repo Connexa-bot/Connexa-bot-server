@@ -7,7 +7,7 @@ ConnexaBot is a WhatsApp bot backend server built with Node.js, Express, and the
 
 ### Backend Server
 - **Entry Point**: `index.js`
-- **Port**: 5000
+- **Port**: 3000 (backend server, port 5000 reserved for frontend)
 - **Host**: 0.0.0.0 (configured for Replit environment)
 - **Framework**: Express.js with Socket.IO for real-time communication
 
@@ -32,10 +32,10 @@ The server auto-detects the environment and configures URLs accordingly:
 
 1. **Replit**: Uses `REPLIT_DEV_DOMAIN` environment variable
 2. **Render**: Uses Render-specific URL
-3. **Local**: Falls back to `http://localhost:5000`
+3. **Local**: Falls back to `http://localhost:3000`
 
 ### Required Environment Variables
-- `PORT` - Server port (default: 5000)
+- `PORT` - Server port (default: 3000)
 - `AUTH_DIR` - Session data directory (default: ./auth)
 - `OPENAI_API_KEY` - OpenAI API key for AI features (optional)
 - `NODE_ENV` - Environment mode (development/production)
@@ -106,13 +106,20 @@ The frontend is a React Native mobile application located in the `/frontend` dir
 
 To update the frontend API endpoint, modify `/frontend/src/config.js`.
 
-## Recent Changes (Oct 12, 2025)
+## Recent Changes
 
-### Initial Setup & Configuration
+### Oct 13, 2025 - Replit Environment Setup
+1. **GitHub Import**: Successfully imported and configured project for Replit environment
+2. **Port Configuration**: Changed backend port from 5000 to 3000 (port 5000 reserved for frontend in Replit)
+3. **Dependencies**: Installed all npm packages (367 packages)
+4. **Workflow Setup**: Configured "Backend Server" workflow to run on port 3000
+5. **Testing**: Verified health endpoint and server functionality
+
+### Oct 12, 2025 - Initial Setup & Configuration
 1. **Environment Auto-Detection**: Fixed server URL detection to prioritize Replit environment over .env file configuration
 2. **Gitignore**: Updated with comprehensive Node.js ignore patterns
 3. **Deployment**: Configured for VM deployment (always-on for WebSocket connections)
-4. **Port Standardization**: Unified all port configurations to 5000 (config.js, index.js, workflow)
+4. **Port Standardization**: Backend port standardized to 3000 (config.js, index.js, workflow)
 
 ### Backend Enhancements
 5. **Complete API Endpoints**: Created comprehensive `API.js` file with all endpoints for frontend integration
@@ -144,7 +151,7 @@ node index.js
 ### Running on Replit
 The server is configured to run automatically via the "Backend Server" workflow. It will:
 1. Auto-detect the Replit domain
-2. Start on port 5000
+2. Start on port 3000
 3. Create necessary directories (auth/, media/)
 4. Listen for WebSocket and HTTP connections
 
