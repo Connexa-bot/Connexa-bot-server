@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log
+.env
+.git
+.gitignore
+auth
+media
+chat_history
+*.md
+.replit
+replit.nix
+.config
+attached_assets
+test-endpoints.sh
+.koyeb.yaml
+Dockerfile
+.dockerignore

@@ -5,9 +5,10 @@
 // Complete API client for frontend integration with the WhatsApp backend
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 
+                     process.env.VITE_API_URL ||
                      process.env.SERVER_URL || 
                      (process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : null) ||
-                     'https://7291a9b7-7686-42b0-ba38-4b0639ea71ed-00-22vcaa5x8ip3y.kirk.replit.dev';
+                     'http://localhost:5000';
 
 export const API_ENDPOINTS = {
   

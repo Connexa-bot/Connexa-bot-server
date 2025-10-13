@@ -12,3 +12,6 @@ yarn-error.log*
 *.swo
 *~
 .replit.tmp
+.replit
+replit.nix
+.config/

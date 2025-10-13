@@ -1,0 +1,31 @@
+services:
+  - name: connexabot-backend
+    type: web
+    instance_type: nano
+    regions:
+      - fra
+    ports:
+      - port: 5000
+        protocol: http
+    env:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "5000"
+      - key: AUTH_DIR
+        value: /app/auth
+      - key: MEDIA_DIR
+        value: /app/media
+    build:
+      builder: dockerfile
+      dockerfile: Dockerfile
+    routes:
+      - path: /
+        port: 5000
+    health_checks:
+      - path: /health
+        port: 5000
+        protocol: http
+        interval: 30s
+        timeout: 5s
+        grace_period: 30s
