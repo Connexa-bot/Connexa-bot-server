@@ -3,10 +3,17 @@
 // ===============================
 // Complete list of all available API endpoints with descriptions and usage examples
 
+// Base URL for the backend API
+// In production (Replit), don't specify port as it's auto-forwarded
+const API_BASE_URL = process.env.REACT_APP_API_URL ||
+  (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+    ? `https://${window.location.hostname}`
+    : 'http://localhost:3000');
+
 export const API_ENDPOINTS = {
-  
+
   // ============= CONNECTION & SESSION =============
-  
+
   // Base API check
   GET_API_STATUS: {
     method: "GET",
@@ -94,8 +101,8 @@ export const API_ENDPOINTS = {
       },
       block: {
         description: "Block a contact",
-        request: { 
-          phone: "1234567890", 
+        request: {
+          phone: "1234567890",
           action: "block",
           jid: "9876543210@s.whatsapp.net"
         },

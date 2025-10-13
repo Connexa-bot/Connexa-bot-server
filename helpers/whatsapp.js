@@ -40,15 +40,22 @@ export async function ensureMediaDir(phone) {
 }
 
 export async function clearSession(phone) {
-  const session = sessions.get(phone);
-  if (session?.intervalId) clearInterval(session.intervalId);
+  const normalizedPhone = phone.replace(/^\+|\s/g, "");
+  const session = sessions.get(normalizedPhone);
+  
+  // Stop interval first to prevent write attempts
+  if (session?.intervalId) {
+    clearInterval(session.intervalId);
+    session.intervalId = null;
+  }
+  
   try {
-    const dir = path.join(AUTH_BASE_DIR, phone);
+    const dir = path.join(AUTH_BASE_DIR, normalizedPhone);
     await fs.rm(dir, { recursive: true, force: true });
-    sessions.delete(phone);
-    console.log(`🗑️ Session cleared for ${phone}`);
+    sessions.delete(normalizedPhone);
+    console.log(`🗑️ Session cleared for ${normalizedPhone}`);
   } catch (err) {
-    console.error(`⚠️ Error clearing session for ${phone}: ${err.message}`);
+    console.error(`⚠️ Error clearing session for ${normalizedPhone}: ${err.message}`);
   }
 }
 
@@ -109,7 +116,16 @@ export async function startBot(phone, broadcast) {
     console.log("No store file found, creating a new one.");
   }
 
-  const intervalId = setInterval(() => store.writeToFile(storePath), 10000);
+  let intervalId = setInterval(() => {
+    try {
+      store.writeToFile(storePath);
+    } catch (err) {
+      // Ignore errors if session is being cleared
+      if (err.code !== 'ENOENT') {
+        console.error(`Store write error for ${normalizedPhone}:`, err.message);
+      }
+    }
+  }, 10000);
 
   const sock = makeWASocket({
     version,

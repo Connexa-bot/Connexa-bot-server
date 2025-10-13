@@ -5,7 +5,8 @@
 # ===============================
 # Comprehensive test script for all WhatsApp backend endpoints
 
-BASE_URL="https://7291a9b7-7686-42b0-ba38-4b0639ea71ed-00-22vcaa5x8ip3y.kirk.replit.dev:3000"
+# Replit auto-forwards port 3000, so don't include :3000 in external URLs
+BASE_URL="${BASE_URL:-https://7291a9b7-7686-42b0-ba38-4b0639ea71ed-00-22vcaa5x8ip3y.kirk.replit.dev}"
 PHONE="${PHONE:-2348113054793}"
 TEST_RECIPIENT="${TEST_RECIPIENT:-$PHONE@s.whatsapp.net}"
 
