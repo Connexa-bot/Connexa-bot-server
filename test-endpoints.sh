@@ -25,6 +25,20 @@ else
   echo -e "${YELLOW}⚠ jq not found - responses will be raw JSON${NC}"
 fi
 
+# Helper function to format or print raw
+format_output() {
+  local response=$(cat)
+  if [ "$HAS_JQ" = true ]; then
+    # Try to parse as JSON, if it fails, print raw
+    echo "$response" | jq '.' 2>/dev/null || {
+      echo -e "${RED}⚠ Non-JSON response:${NC}"
+      echo "$response"
+    }
+  else
+    echo "$response"
+  fi
+}
+
 echo -e "${BLUE}"
 echo "╔════════════════════════════════════════════╗"
 echo "║  🧪 ConnexaBot API Comprehensive Testing  ║"
@@ -37,15 +51,6 @@ echo "║"
 echo "╚════════════════════════════════════════════"
 echo -e "${NC}"
 
-# Helper function to format or print raw
-format_output() {
-  if [ "$HAS_JQ" = true ]; then
-    jq '.'
-  else
-    cat
-  fi
-}
-
 # ===============================
 # SECTION 1: HEALTH & CONNECTION
 # ===============================
@@ -54,7 +59,10 @@ echo -e "${GREEN}📊 SECTION 1: HEALTH & CONNECTION${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 echo -e "\n${YELLOW}1.1 Server Health Check...${NC}"
-curl -s "$BASE_URL/health" | format_output
+echo -e "${BLUE}Request: GET $BASE_URL/health${NC}"
+RESPONSE=$(curl -s "$BASE_URL/health")
+echo -e "${BLUE}Raw Response (first 200 chars):${NC} ${RESPONSE:0:200}"
+echo "$RESPONSE" | format_output
 
 echo -e "\n${YELLOW}1.2 API Health Check...${NC}"
 curl -s "$BASE_URL/api/health" | format_output
