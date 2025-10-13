@@ -82,8 +82,24 @@ function broadcast(event, data) {
 // ===============================
 // 🛠️ API Routes
 // ===============================
+// Root endpoint
+app.get("/", (req, res) => {
+  res.json({
+    message: "ConnexaBot WhatsApp API Server",
+    status: "running",
+    version: "1.0.0",
+    endpoints: {
+      health: "/health",
+      apiHealth: "/api/health",
+      connect: "/api/connect",
+      status: "/api/status/:phone"
+    }
+  });
+});
+
 // Health check endpoint
 app.get("/health", (req, res) => {
+  console.log("Health check requested");
   res.json({ 
     status: "ok", 
     uptime: process.uptime(),
@@ -137,9 +153,11 @@ io.on("connection", (socket) => {
 // ===============================
 // 🚀 Start Server
 // ===============================
-const HOST = process.env.HOST || '0.0.0.0';
+const HOST = '0.0.0.0';
 
 server.listen(PORT, HOST, () => {
   console.log(`✅ ConnexaBot server running on port ${PORT}`);
+  console.log(`🌐 Host: ${HOST}`);
   console.log(`🌐 API Base: ${SERVER_URL}/api`);
+  console.log(`🌐 Internal URL: http://${HOST}:${PORT}`);
 });
