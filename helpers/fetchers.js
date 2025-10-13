@@ -1,87 +1,171 @@
-
 import { getClient, getStore } from "./whatsapp.js";
+import Chat from "../models/Chat.js";
+import { isDBConnected } from "../config/database.js";
 
 /**
- * Fetch all chats from store
+ * Fetch all chats from MongoDB or in-memory store
  */
 export async function fetchChats(phone) {
-  const store = getStore(phone);
   const client = getClient(phone);
   
-  if (!store || !client) {
+  if (!client) {
     throw new Error(`No active session for ${phone}`);
+  }
+
+  if (isDBConnected()) {
+    try {
+      const dbChats = await Chat.find({ phone }).sort({ lastMessageTimestamp: -1 }).lean();
+      if (dbChats && dbChats.length > 0) {
+        return dbChats.map(chat => ({
+          id: chat.chatId,
+          name: chat.name || chat.chatId.split('@')[0],
+          profilePicUrl: chat.profilePicUrl,
+          unreadCount: chat.unreadCount || 0,
+          lastMessageTimestamp: chat.lastMessageTimestamp || 0,
+          lastMessage: chat.lastMessage || {},
+          isGroup: chat.isGroup || false,
+          isArchived: chat.isArchived || false,
+          isPinned: chat.isPinned || false,
+          isMuted: chat.isMuted || false,
+        }));
+      }
+    } catch (err) {
+      console.error('Error fetching chats from DB:', err);
+    }
+  }
+
+  const store = getStore(phone);
+  if (!store) {
+    return [];
   }
 
   const chats = [];
   const storeChats = store.chats?.all() || [];
 
   for (const chat of storeChats) {
-    // Skip invalid or system chats
-    if (!chat.id || chat.id === 'status@broadcast') continue;
-    
-    // Determine if it's a group
-    const isGroup = chat.id.endsWith('@g.us');
-    
-    // Get chat name
-    let name = chat.name || chat.id.split('@')[0];
-    
-    // For individual chats, try to get contact name
-    if (!isGroup) {
-      const contact = store.contacts?.[chat.id];
-      if (contact) {
-        name = contact.name || contact.notify || contact.verifiedName || name;
-      }
-    }
-
-    // Get profile picture
-    let profilePicUrl = null;
     try {
-      profilePicUrl = await client.profilePictureUrl(chat.id, 'image').catch(() => null);
-    } catch (err) {
-      // Ignore errors
-    }
+      if (!chat || !chat.id || chat.id === 'status@broadcast') continue;
+      
+      const isGroup = chat.id?.endsWith('@g.us') || false;
+      let name = chat.name || chat.id?.split('@')[0] || 'Unknown';
+      
+      if (!isGroup && store.contacts) {
+        const contact = store.contacts[chat.id];
+        if (contact) {
+          name = contact.name || contact.notify || contact.verifiedName || name;
+        }
+      }
 
-    chats.push({
-      id: chat.id,
-      name,
-      profilePicUrl,
-      unreadCount: chat.unreadCount || 0,
-      lastMessageTimestamp: chat.conversationTimestamp || 0,
-      lastMessage: chat.lastMessage || {},
-      isGroup,
-      isArchived: chat.archived || false,
-      isPinned: chat.pinned || false,
-      isMuted: chat.mute ? chat.mute > Date.now() : false,
-    });
+      let profilePicUrl = null;
+      try {
+        profilePicUrl = await client.profilePictureUrl(chat.id, 'image').catch(() => null);
+      } catch (err) {
+        // Ignore profile pic errors
+      }
+
+      const chatData = {
+        id: chat.id,
+        name,
+        profilePicUrl,
+        unreadCount: chat.unreadCount || 0,
+        lastMessageTimestamp: chat.conversationTimestamp || 0,
+        lastMessage: chat.lastMessage || {},
+        isGroup,
+        isArchived: chat.archived || false,
+        isPinned: chat.pinned || false,
+        isMuted: chat.mute ? chat.mute > Date.now() : false,
+      };
+
+      chats.push(chatData);
+
+      if (isDBConnected()) {
+        try {
+          await Chat.findOneAndUpdate(
+            { phone, chatId: chat.id },
+            {
+              phone,
+              chatId: chat.id,
+              name,
+              profilePicUrl,
+              unreadCount: chatData.unreadCount,
+              lastMessageTimestamp: chatData.lastMessageTimestamp,
+              lastMessage: chatData.lastMessage,
+              isGroup: chatData.isGroup,
+              isArchived: chatData.isArchived,
+              isPinned: chatData.isPinned,
+              isMuted: chatData.isMuted,
+              updatedAt: new Date()
+            },
+            { upsert: true, new: true }
+          );
+        } catch (dbErr) {
+          console.error('Error saving chat to DB:', dbErr);
+        }
+      }
+    } catch (chatErr) {
+      console.error('Error processing chat:', chatErr);
+      continue;
+    }
   }
 
   return chats;
 }
 
 /**
- * Fetch all contacts
+ * Fetch all contacts from MongoDB or in-memory store
  */
 export async function fetchContacts(phone) {
+  if (isDBConnected()) {
+    try {
+      const { default: Contact } = await import("../models/Contact.js");
+      const dbContacts = await Contact.find({ phone }).lean();
+      if (dbContacts && dbContacts.length > 0) {
+        return dbContacts.map(c => ({
+          jid: c.jid,
+          name: c.name || c.jid.split('@')[0],
+          notify: c.notify || '',
+          verifiedName: c.verifiedName || '',
+          imgUrl: c.imgUrl || null,
+        }));
+      }
+    } catch (err) {
+      console.error('Error fetching contacts from DB:', err);
+    }
+  }
+
   const store = getStore(phone);
-  
   if (!store) {
-    throw new Error(`No active session for ${phone}`);
+    return [];
   }
 
   const contacts = [];
   const storeContacts = store.contacts || {};
 
   for (const [jid, contact] of Object.entries(storeContacts)) {
-    // Only include personal contacts (not groups or broadcast)
     if (!jid.endsWith('@s.whatsapp.net')) continue;
     
-    contacts.push({
+    const contactData = {
       jid,
       name: contact.name || contact.notify || contact.verifiedName || jid.split('@')[0],
       notify: contact.notify || '',
       verifiedName: contact.verifiedName || '',
       imgUrl: contact.imgUrl || null,
-    });
+    };
+
+    contacts.push(contactData);
+
+    if (isDBConnected()) {
+      try {
+        const { default: Contact } = await import("../models/Contact.js");
+        await Contact.findOneAndUpdate(
+          { phone, jid },
+          { phone, ...contactData, updatedAt: new Date() },
+          { upsert: true, new: true }
+        );
+      } catch (dbErr) {
+        console.error('Error saving contact to DB:', dbErr);
+      }
+    }
   }
 
   return contacts;

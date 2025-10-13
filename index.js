@@ -28,10 +28,16 @@ import privacyRoutes from "./routes/privacy.js";
 // 🤖 Bot Helper
 import { startBot, clearSession } from "./helpers/whatsapp.js";
 
+// 🗄️ Database Connection
+import { connectDB } from "./config/database.js";
+
 // ===============================
 // ⚙️ Setup & Configuration
 // ===============================
 dotenv.config();
+
+await connectDB();
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
