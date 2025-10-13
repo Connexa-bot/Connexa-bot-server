@@ -12,8 +12,9 @@ router.post("/action", async (req, res) => {
   try {
     switch (action) {
       case "get":
-        const contacts = await contactActions.get(session.store);
-        return res.json({ contacts });
+        const { fetchContacts } = await import("../helpers/fetchers.js");
+        const contacts = await fetchContacts(session.store, session.sock);
+        return res.json({ success: true, contacts });
       case "block":
         await contactActions.block(session.sock, jid);
         break;
@@ -22,7 +23,7 @@ router.post("/action", async (req, res) => {
         break;
       case "blocked":
         const blocked = await contactActions.blocked(session.sock);
-        return res.json({ blocked });
+        return res.json({ success: true, blocked });
       default:
         return res.status(400).json({ error: "Invalid contact action" });
     }

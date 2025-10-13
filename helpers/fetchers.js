@@ -6,44 +6,61 @@ import { jidNormalizedUser } from "baileys";
 /**
  * Fetches and formats all chats from the store.
  * @param {object} store - The Baileys data store.
+ * @param {object} sock - The Baileys socket instance.
  * @returns {Array} - An array of formatted chat objects.
  */
-export const fetchChats = async (store) => {
+export const fetchChats = async (store, sock = null) => {
   try {
-    const chats = store.chats.all();
-    
-    return chats.map(chat => {
-      // Get the last message from this chat
-      const chatMessages = store.messages[chat.id];
-      const lastMsg = chatMessages?.array?.slice(-1)[0];
-      
-      return {
-        id: chat.id,
-        name: chat.name || chat.id,
+    const chats = store.chats || {};
+    const chatList = [];
+
+    for (const jid of Object.keys(chats)) {
+      const chat = chats[jid];
+      const isGroup = jid.includes('@g.us');
+
+      let name = chat.name || jid;
+      let profilePicUrl = null;
+
+      // Get contact name and profile picture
+      if (sock) {
+        try {
+          // Fetch profile picture
+          profilePicUrl = await sock.profilePictureUrl(jid, 'image').catch(() => null);
+
+          // Get better name from contacts or group metadata
+          if (isGroup) {
+            try {
+              const metadata = await sock.groupMetadata(jid);
+              name = metadata.subject;
+            } catch (e) {
+              // Use existing name
+            }
+          } else {
+            const contact = store.contacts?.[jid];
+            name = contact?.name || contact?.notify || contact?.verifiedName || jid.split('@')[0];
+          }
+        } catch (err) {
+          // Use default values
+        }
+      }
+
+      chatList.push({
+        id: jid,
+        name,
+        profilePicUrl,
         unreadCount: chat.unreadCount || 0,
-        lastMessageTimestamp: chat.conversationTimestamp,
-        lastMessage: lastMsg ? {
-          text: lastMsg.message?.conversation || 
-                lastMsg.message?.extendedTextMessage?.text || 
-                lastMsg.message?.imageMessage?.caption ||
-                lastMsg.message?.videoMessage?.caption ||
-                '[Media]',
-          timestamp: lastMsg.messageTimestamp,
-          fromMe: lastMsg.key?.fromMe || false
-        } : null,
-        isGroup: chat.id.endsWith('@g.us'),
+        lastMessageTimestamp: chat.conversationTimestamp || 0,
+        lastMessage: chat.lastMessage || {},
+        isGroup,
         isArchived: chat.archived || false,
         isPinned: chat.pinned || false,
-        isMuted: chat.mute ? chat.mute > Date.now() : false,
-      };
-    }).sort((a, b) => {
-      // Sort by last message timestamp, most recent first
-      const timeA = a.lastMessageTimestamp || 0;
-      const timeB = b.lastMessageTimestamp || 0;
-      return timeB - timeA;
-    });
-  } catch (error) {
-    console.error('Error fetching chats:', error);
+        isMuted: chat.mute || false
+      });
+    }
+
+    return chatList.sort((a, b) => b.lastMessageTimestamp - a.lastMessageTimestamp);
+  } catch (err) {
+    console.error('Failed to fetch chats:', err);
     return [];
   }
 };
@@ -141,14 +158,42 @@ export const fetchGroups = async (sock) => {
 /**
  * Fetches and formats all contacts from the store.
  * @param {object} store - The Baileys data store.
+ * @param {object} sock - The Baileys socket instance.
  * @returns {Array} - An array of formatted contact objects.
  */
-export const fetchContacts = async (store) => {
-    const contacts = store.contacts.all();
-    return contacts.map(contact => ({
-        id: contact.id,
-        name: contact.name || contact.id,
-        notify: contact.notify,
-        verifiedName: contact.verifiedName,
-    }));
+export const fetchContacts = async (store, sock = null) => {
+  try {
+    const contacts = store.contacts || {};
+    const contactList = [];
+
+    for (const jid of Object.keys(contacts)) {
+      if (!jid.includes('@s.whatsapp.net')) continue;
+
+      const contact = {
+        jid,
+        name: contacts[jid]?.name || contacts[jid]?.notify || jid.split('@')[0],
+        notify: contacts[jid]?.notify,
+        verifiedName: contacts[jid]?.verifiedName,
+        imgUrl: null
+      };
+
+      // Fetch profile picture if sock is available
+      if (sock) {
+        try {
+          const profilePicUrl = await sock.profilePictureUrl(jid, 'image');
+          contact.imgUrl = profilePicUrl;
+        } catch (err) {
+          // Profile picture not available
+          contact.imgUrl = null;
+        }
+      }
+
+      contactList.push(contact);
+    }
+
+    return contactList;
+  } catch (err) {
+    console.error('Failed to fetch contacts:', err);
+    return [];
+  }
 };

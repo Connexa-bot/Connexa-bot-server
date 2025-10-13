@@ -138,8 +138,24 @@ export async function updatePrivacySettings(phone, setting, value) {
       throw new Error(`Invalid value. Must be one of: ${validValues.join(', ')}`);
     }
     
-    // Baileys expects an options object
-    await sock.updatePrivacySettings({ [setting]: value });
+    // Use query method for privacy settings
+    await sock.query({
+      tag: 'iq',
+      attrs: {
+        to: '@s.whatsapp.net',
+        type: 'set',
+        xmlns: 'privacy'
+      },
+      content: [{
+        tag: 'privacy',
+        attrs: {},
+        content: [{
+          tag: 'category',
+          attrs: { name: setting, value }
+        }]
+      }]
+    });
+    
     return { success: true };
   } catch (error) {
     console.error('Failed to update privacy settings:', error);

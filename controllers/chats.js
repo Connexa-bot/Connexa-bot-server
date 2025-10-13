@@ -2,7 +2,7 @@ import { fetchChats } from "../helpers/fetchers.js"; // we'll create fetchers.js
 import { archiveChat, muteChat, pinChat, markChatRead, markChatUnread, deleteChat } from "./chatActions.js"; // chat actions
 
 export async function getChats(session) {
-  return await fetchChats(session.store);
+  return await fetchChats(session.store, session.sock);
 }
 
 export async function archive(session, chatId, archive = true) {

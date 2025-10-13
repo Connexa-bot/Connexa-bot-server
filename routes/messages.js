@@ -8,7 +8,7 @@ import fs from "fs/promises";
 const router = express.Router();
 
 // Setup multer for file uploads
-const upload = multer({ 
+const upload = multer({
   dest: './media/uploads/',
   limits: { fileSize: 100 * 1024 * 1024 } // 100MB limit
 });
@@ -62,12 +62,12 @@ router.post("/send-image", upload.single('image'), async (req, res) => {
   try {
     const image = req.file ? req.file.path : imageUrl;
     if (!image) return res.status(400).json({ error: "Image required" });
-    
+
     const msg = await msgActions.sendImage(normalizedPhone, to, image, caption || '');
-    
+
     // Cleanup uploaded file
     if (req.file) await fs.unlink(req.file.path).catch(() => {});
-    
+
     res.json({ success: true, messageId: msg.key.id });
   } catch (err) {
     if (req.file) await fs.unlink(req.file.path).catch(() => {});
@@ -85,11 +85,11 @@ router.post("/send-video", upload.single('video'), async (req, res) => {
   try {
     const video = req.file ? req.file.path : videoUrl;
     if (!video) return res.status(400).json({ error: "Video required" });
-    
+
     const msg = await msgActions.sendVideo(normalizedPhone, to, video, caption || '', gifPlayback === 'true');
-    
+
     if (req.file) await fs.unlink(req.file.path).catch(() => {});
-    
+
     res.json({ success: true, messageId: msg.key.id });
   } catch (err) {
     if (req.file) await fs.unlink(req.file.path).catch(() => {});
@@ -107,11 +107,11 @@ router.post("/send-audio", upload.single('audio'), async (req, res) => {
   try {
     const audio = req.file ? req.file.path : audioUrl;
     if (!audio) return res.status(400).json({ error: "Audio required" });
-    
+
     const msg = await msgActions.sendAudio(normalizedPhone, to, audio, ptt === 'true');
-    
+
     if (req.file) await fs.unlink(req.file.path).catch(() => {});
-    
+
     res.json({ success: true, messageId: msg.key.id });
   } catch (err) {
     if (req.file) await fs.unlink(req.file.path).catch(() => {});
@@ -129,14 +129,14 @@ router.post("/send-document", upload.single('document'), async (req, res) => {
   try {
     const document = req.file ? req.file.path : documentUrl;
     if (!document) return res.status(400).json({ error: "Document required" });
-    
+
     const docFileName = fileName || req.file?.originalname || 'document';
     const docMimetype = mimetype || req.file?.mimetype || 'application/pdf';
-    
+
     const msg = await msgActions.sendDocument(normalizedPhone, to, document, docFileName, docMimetype);
-    
+
     if (req.file) await fs.unlink(req.file.path).catch(() => {});
-    
+
     res.json({ success: true, messageId: msg.key.id });
   } catch (err) {
     if (req.file) await fs.unlink(req.file.path).catch(() => {});
@@ -153,7 +153,7 @@ router.post("/send-location", async (req, res) => {
 
   try {
     if (!latitude || !longitude) return res.status(400).json({ error: "Latitude and longitude required" });
-    
+
     const msg = await msgActions.sendLocation(normalizedPhone, to, parseFloat(latitude), parseFloat(longitude), name || '', address || '');
     res.json({ success: true, messageId: msg.key.id });
   } catch (err) {
@@ -172,7 +172,7 @@ router.post("/send-contact", async (req, res) => {
     if (!contacts || !Array.isArray(contacts)) {
       return res.status(400).json({ error: "Contacts array required" });
     }
-    
+
     const msg = await msgActions.sendContact(normalizedPhone, to, contacts);
     res.json({ success: true, messageId: msg.key.id });
   } catch (err) {
@@ -191,7 +191,7 @@ router.post("/send-poll", async (req, res) => {
     if (!name || !options || !Array.isArray(options)) {
       return res.status(400).json({ error: "Poll name and options array required" });
     }
-    
+
     const msg = await msgActions.sendPoll(normalizedPhone, to, name, options, selectableCount || 1);
     res.json({ success: true, messageId: msg.key.id });
   } catch (err) {
@@ -210,7 +210,7 @@ router.post("/send-list", async (req, res) => {
     if (!sections || !Array.isArray(sections)) {
       return res.status(400).json({ error: "Sections array required" });
     }
-    
+
     const msg = await msgActions.sendList(normalizedPhone, to, text, buttonText, sections, footer, title);
     res.json({ success: true, messageId: msg.key.id });
   } catch (err) {
@@ -220,17 +220,27 @@ router.post("/send-list", async (req, res) => {
 
 // Send broadcast
 router.post("/send-broadcast", async (req, res) => {
-  const { phone, recipients, message } = req.body;
+  const { phone, recipients, message, text } = req.body;
   const normalizedPhone = normalizePhone(phone);
   const session = sessions.get(normalizedPhone);
   if (!session?.connected) return res.status(400).json({ error: "Not connected" });
 
   try {
-    if (!recipients || !Array.isArray(recipients)) {
-      return res.status(400).json({ error: "Recipients array required" });
-    }
-    
-    const results = await msgActions.sendBroadcast(normalizedPhone, recipients, message);
+    // Support both message object and text string
+    const messageContent = typeof message === 'string' ? { text: message } :
+                          typeof text === 'string' ? { text: text } : message;
+
+    const results = await Promise.all(
+      recipients.map(async (recipient) => {
+        try {
+          const jid = recipient.includes("@") ? recipient : `${recipient}@s.whatsapp.net`;
+          const result = await session.sock.sendMessage(jid, messageContent);
+          return { recipient: jid, success: true, messageId: result.key?.id };
+        } catch (err) {
+          return { recipient, success: false, error: err.message };
+        }
+      })
+    );
     res.json({ success: true, results });
   } catch (err) {
     res.status(500).json({ error: err.message });

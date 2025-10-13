@@ -8,8 +8,26 @@ const router = express.Router();
 router.get("/:phone", async (req, res) => {
   const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
   if (!session?.connected) return res.status(400).json({ error: "Not connected" });
-  const groups = await groupCtrl.listGroups(session);
-  res.json({ groups });
+  
+  try {
+    const groups = await groupCtrl.listGroups(session);
+    
+    // Add profile pictures to groups
+    const groupsWithPics = await Promise.all(
+      groups.map(async (group) => {
+        try {
+          const profilePicUrl = await session.sock.profilePictureUrl(group.id, 'image').catch(() => null);
+          return { ...group, profilePicUrl };
+        } catch (err) {
+          return { ...group, profilePicUrl: null };
+        }
+      })
+    );
+    
+    res.json({ success: true, groups: groupsWithPics });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Group actions (create, add, remove, promote, demote, update, leave, invite)

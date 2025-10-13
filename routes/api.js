@@ -278,6 +278,20 @@ export function createApiRoutes(broadcast) {
     }
   });
 
+  // ============= CONTACTS =============
+  router.get("/contacts/:phone", async (req, res) => {
+    const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
+    if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+
+    try {
+      const { fetchContacts } = await import("../helpers/fetchers.js");
+      const contacts = await fetchContacts(session.store, session.sock);
+      res.json({ success: true, contacts, count: contacts.length });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
   // ============= CHANNELS =============
   router.get("/channels/:phone", async (req, res) => {
     const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
