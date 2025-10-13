@@ -79,7 +79,17 @@ echo -e "${GREEN}📥 SECTION 2: DATA RETRIEVAL${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 echo -e "\n${YELLOW}2.1 Get Chats...${NC}"
-curl -s "$BASE_URL/api/chats/$PHONE" | format_output
+CHATS_RESPONSE=$(curl -s "$BASE_URL/api/chats/$PHONE")
+echo "$CHATS_RESPONSE" | format_output
+
+# Extract a random chat ID (excluding your own number)
+if [ "$HAS_JQ" = true ]; then
+  RANDOM_CHAT=$(echo "$CHATS_RESPONSE" | jq -r '.chats[]? | select(.id != "'"$PHONE"'@s.whatsapp.net" and .isGroup == false) | .id' | shuf -n 1)
+  if [ -n "$RANDOM_CHAT" ] && [ "$RANDOM_CHAT" != "null" ]; then
+    TEST_RECIPIENT="$RANDOM_CHAT"
+    echo -e "${GREEN}✓ Selected random contact for testing: $TEST_RECIPIENT${NC}"
+  fi
+fi
 
 echo -e "\n${YELLOW}2.2 Get Contacts...${NC}"
 curl -s "$BASE_URL/api/contacts/$PHONE" | format_output
@@ -112,10 +122,10 @@ echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━�
 echo -e "${GREEN}📨 SECTION 3: MESSAGING${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-echo -e "\n${YELLOW}3.1 Send Text Message...${NC}"
+echo -e "\n${YELLOW}3.1 Send Text Message to: $TEST_RECIPIENT...${NC}"
 curl -s -X POST "$BASE_URL/api/messages/send" \
   -H "Content-Type: application/json" \
-  -d "{\"phone\":\"$PHONE\",\"to\":\"$TEST_RECIPIENT\",\"text\":\"Test message from API\"}" | format_output
+  -d "{\"phone\":\"$PHONE\",\"to\":\"$TEST_RECIPIENT\",\"text\":\"Test message from API - $(date)\"}" | format_output
 
 echo -e "\n${YELLOW}3.2 Send Poll...${NC}"
 curl -s -X POST "$BASE_URL/api/messages/send-poll" \
