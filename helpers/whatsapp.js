@@ -127,6 +127,21 @@ export async function startBot(phone, broadcast) {
     }
   }, 10000);
 
+  // ✅ Create initial session BEFORE creating socket
+  const initialSession = {
+    sock: null,
+    store,
+    connected: false,
+    qrCode: null,
+    linkCode: null,
+    error: null,
+    intervalId,
+    qrAttempts: 0,
+  };
+  
+  sessions.set(normalizedPhone, initialSession);
+  console.log(`🎯 Initial session placeholder created for ${normalizedPhone}`);
+
   const sock = makeWASocket({
     version,
     auth: state,
@@ -150,19 +165,11 @@ export async function startBot(phone, broadcast) {
   });
 
   store.bind(sock.ev);
-  const initialSession = {
-    sock,
-    store,
-    connected: false,
-    qrCode: null,
-    linkCode: null,
-    error: null,
-    intervalId,
-    qrAttempts: 0,
-  };
   
+  // ✅ Update session with socket
+  initialSession.sock = sock;
   sessions.set(normalizedPhone, initialSession);
-  console.log(`🎯 Initial session created for ${normalizedPhone}:`, {
+  console.log(`🎯 Session updated with socket for ${normalizedPhone}:`, {
     hasSocket: !!initialSession.sock,
     hasStore: !!initialSession.store,
     connected: initialSession.connected
