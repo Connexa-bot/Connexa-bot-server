@@ -1,9 +1,26 @@
 #!/bin/bash
 
 # ===============================
-# 🧪 ConnexaBot Complete API Testing Script
+# 🧪 ConnexaBot API Test Suite
 # ===============================
-# Comprehensive test script for all WhatsApp backend endpoints
+# Comprehensive test script for all API endpoints
+
+# Auto-detect URL based on environment or use provided URL
+# Usage: ./test-endpoints.sh [BASE_URL] [PHONE]
+# Example: ./test-endpoints.sh https://your-repl-url.replit.dev 2348113054793
+
+if [ -n "$1" ] && [[ "$1" == http* ]]; then
+  BASE_URL="$1"
+  shift
+elif [ -n "$REPLIT_DEV_DOMAIN" ]; then
+  BASE_URL="https://${REPLIT_DEV_DOMAIN}"
+elif [ -n "$REPL_SLUG" ]; then
+  BASE_URL="https://${REPL_SLUG}.${REPL_OWNER}.repl.co"
+else
+  BASE_URL="http://localhost:5000"
+fi
+PHONE="${PHONE:-2348113054793}"
+TEST_RECIPIENT="${TEST_RECIPIENT:-$PHONE@s.whatsapp.net}"
 
 # Enable verbose mode if -v flag is passed
 VERBOSE=false
@@ -11,17 +28,6 @@ if [ "$1" = "-v" ]; then
   VERBOSE=true
   set -x
 fi
-
-# Auto-detect Replit URL or use localhost
-if [ -n "$REPLIT_DEV_DOMAIN" ]; then
-  BASE_URL="${BASE_URL:-https://${REPLIT_DEV_DOMAIN}}"
-elif [ -n "$REPL_SLUG" ]; then
-  BASE_URL="${BASE_URL:-https://${REPL_SLUG}.${REPL_OWNER}.repl.co}"
-else
-  BASE_URL="${BASE_URL:-http://localhost:5000}"
-fi
-PHONE="${PHONE:-2348113054793}"
-TEST_RECIPIENT="${TEST_RECIPIENT:-$PHONE@s.whatsapp.net}"
 
 # Colors for output
 RED='\033[0;31m'

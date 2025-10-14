@@ -3,17 +3,23 @@
 
 # Quick API Test Script
 # Tests only essential endpoints
+# Usage: ./test-quick.sh [BASE_URL] [PHONE]
+# Example: ./test-quick.sh https://your-repl-url.replit.dev 2348113054793
 
-# Auto-detect URL
-if [ -n "$REPLIT_DEV_DOMAIN" ]; then
+# Auto-detect URL or use provided URL
+if [ -n "$1" ] && [[ "$1" == http* ]]; then
+  BASE_URL="$1"
+  PHONE="${2:-2348113054793}"
+elif [ -n "$REPLIT_DEV_DOMAIN" ]; then
   BASE_URL="https://${REPLIT_DEV_DOMAIN}"
+  PHONE="${1:-2348113054793}"
 elif [ -n "$REPL_SLUG" ]; then
   BASE_URL="https://${REPL_SLUG}.${REPL_OWNER}.repl.co"
+  PHONE="${1:-2348113054793}"
 else
   BASE_URL="http://localhost:5000"
+  PHONE="${1:-2348113054793}"
 fi
-
-PHONE="${1:-2348113054793}"
 
 echo "🧪 Quick API Test"
 echo "Base URL: $BASE_URL"
