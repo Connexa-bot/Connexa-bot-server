@@ -3,27 +3,65 @@ import Chat from "../models/Chat.js";
 import { isDBConnected } from "../config/database.js";
 
 /**
- * Fetch all chats from MongoDB or in-memory store
+ * Fetch all chats from MongoDB or in-memory store with profile pictures
  */
 export async function fetchChats(phone) {
+  const store = getStore(phone);
   const sock = getClient(phone);
-  const chats = await sock.store.chats?.all();
+  
+  if (!store || !sock) {
+    return { success: false, chats: [], count: 0, error: "Store or client not available" };
+  }
+
+  const chats = await store.chats?.all();
 
   if (!chats || chats.length === 0) {
     return { success: true, chats: [], count: 0 };
   }
 
-  // Convert to more usable format
-  const formattedChats = chats.map(chat => ({
-    id: chat.id,
-    name: chat.name || chat.id.split('@')[0],
-    unreadCount: chat.unreadCount || 0,
-    lastMessage: chat.lastMessage?.text || '',
-    isGroup: chat.id.includes('@g.us'),
-    isArchived: chat.archive || false,
-    isPinned: chat.pin || false,
-    isMuted: chat.mute ? true : false,
+  // Format chats with profile pictures and proper names
+  const formattedChats = await Promise.all(chats.map(async (chat) => {
+    let profilePicUrl = null;
+    let displayName = chat.name || chat.id.split('@')[0];
+
+    // Try to get profile picture
+    try {
+      profilePicUrl = await sock.profilePictureUrl(chat.id, 'image');
+    } catch (err) {
+      // No profile picture available
+    }
+
+    // For individual chats, try to get contact name from store
+    if (!chat.id.includes('@g.us') && !chat.id.includes('@newsletter')) {
+      const contact = store.contacts?.[chat.id];
+      if (contact) {
+        displayName = contact.name || contact.notify || contact.verifiedName || displayName;
+      }
+    }
+
+    return {
+      id: chat.id,
+      name: displayName,
+      unreadCount: chat.unreadCount || 0,
+      lastMessage: chat.conversationTimestamp ? {
+        text: chat.lastMessage?.text || '',
+        timestamp: chat.conversationTimestamp
+      } : null,
+      isGroup: chat.id.includes('@g.us'),
+      isChannel: chat.id.includes('@newsletter'),
+      isArchived: chat.archive || false,
+      isPinned: chat.pin || false,
+      isMuted: chat.mute ? true : false,
+      profilePicUrl: profilePicUrl
+    };
   }));
+
+  // Sort by conversation timestamp (most recent first)
+  formattedChats.sort((a, b) => {
+    const timeA = a.lastMessage?.timestamp || 0;
+    const timeB = b.lastMessage?.timestamp || 0;
+    return timeB - timeA;
+  });
 
   return { success: true, chats: formattedChats, count: formattedChats.length };
 }

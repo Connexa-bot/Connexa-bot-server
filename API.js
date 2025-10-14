@@ -55,8 +55,8 @@ export const API_ENDPOINTS = {
   GET_CHATS: (phone) => ({
     url: `${API_BASE_URL}/api/chats/${phone}`,
     method: 'GET',
-    description: 'Get all chats with metadata',
-    responseFormat: '{ success, chats: [...], count }'
+    description: 'Get all chats with profile pictures, names, and last messages (sorted by recent)',
+    responseFormat: '{ success, chats: [{ id, name, profilePicUrl, lastMessage: { text, timestamp }, unreadCount, isGroup, isChannel, isArchived, isPinned, isMuted }], count }'
   }),
 
   ARCHIVE_CHAT: (phone, chatId, archive = true) => ({
