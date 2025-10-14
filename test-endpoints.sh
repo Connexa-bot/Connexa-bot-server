@@ -13,7 +13,9 @@ if [ "$1" = "-v" ]; then
 fi
 
 # Auto-detect Replit URL or use localhost
-if [ -n "$REPL_SLUG" ]; then
+if [ -n "$REPLIT_DEV_DOMAIN" ]; then
+  BASE_URL="${BASE_URL:-https://${REPLIT_DEV_DOMAIN}}"
+elif [ -n "$REPL_SLUG" ]; then
   BASE_URL="${BASE_URL:-https://${REPL_SLUG}.${REPL_OWNER}.repl.co}"
 else
   BASE_URL="${BASE_URL:-http://localhost:5000}"

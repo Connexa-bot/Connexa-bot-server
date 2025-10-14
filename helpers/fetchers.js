@@ -31,8 +31,17 @@ export async function fetchChats(phone) {
 /**
  * Fetch all contacts from MongoDB or in-memory store
  */
-export async function fetchContacts(phone) {
-  if (isDBConnected()) {
+export async function fetchContacts(store, sock) {
+  if (!store) {
+    return [];
+  }
+
+  const contacts = [];
+  const storeContacts = store.contacts || {};
+  const phone = sock?.user?.id?.split('@')[0] || sock?.user?.id;
+
+  // Try DB first if connected
+  if (isDBConnected() && phone) {
     try {
       const { default: Contact } = await import("../models/Contact.js");
       const dbContacts = await Contact.find({ phone }).lean();
@@ -50,14 +59,6 @@ export async function fetchContacts(phone) {
     }
   }
 
-  const store = getStore(phone);
-  if (!store) {
-    return [];
-  }
-
-  const contacts = [];
-  const storeContacts = store.contacts || {};
-
   for (const [jid, contact] of Object.entries(storeContacts)) {
     if (!jid.endsWith('@s.whatsapp.net')) continue;
 
@@ -71,7 +72,7 @@ export async function fetchContacts(phone) {
 
     contacts.push(contactData);
 
-    if (isDBConnected()) {
+    if (isDBConnected() && phone) {
       try {
         const { default: Contact } = await import("../models/Contact.js");
         await Contact.findOneAndUpdate(
@@ -199,14 +200,62 @@ export async function fetchCommunities(phone) {
 /**
  * Fetch call history
  */
-export async function fetchCalls(phone) {
-  const store = getStore(phone);
-
+export async function fetchCalls(store) {
   if (!store) {
-    throw new Error(`No active session for ${phone}`);
+    return [];
   }
 
   // Baileys doesn't directly store call history in the standard store
   // This would need to be tracked separately via events
-  return [];
+  // Check if store has call logs
+  const calls = store.calls || [];
+  
+  return Array.isArray(calls) ? calls : [];
+}
+
+/**
+ * Fetch messages from a chat
+ */
+export async function fetchMessages(store, chatId, limit = 50) {
+  if (!store) {
+    return [];
+  }
+
+  const messages = await store.loadMessages(chatId, limit);
+  return Array.isArray(messages) ? messages : [];
+}
+
+/**
+ * Fetch profile info
+ */
+export async function fetchProfile(sock, jid) {
+  if (!sock) {
+    throw new Error('No active socket');
+  }
+
+  try {
+    // Get status
+    let status = '';
+    try {
+      const statusData = await sock.fetchStatus(jid);
+      status = statusData?.status || '';
+    } catch (err) {
+      console.log('Could not fetch status:', err.message);
+    }
+
+    // Get profile picture
+    let profilePicUrl = null;
+    try {
+      profilePicUrl = await sock.profilePictureUrl(jid, 'image');
+    } catch (err) {
+      console.log('Could not fetch profile picture:', err.message);
+    }
+
+    return {
+      status,
+      profilePicUrl
+    };
+  } catch (err) {
+    throw new Error(`Failed to fetch profile: ${err.message}`);
+  }
 }

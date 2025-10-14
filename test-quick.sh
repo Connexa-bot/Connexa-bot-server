@@ -5,7 +5,9 @@
 # Tests only essential endpoints
 
 # Auto-detect URL
-if [ -n "$REPL_SLUG" ]; then
+if [ -n "$REPLIT_DEV_DOMAIN" ]; then
+  BASE_URL="https://${REPLIT_DEV_DOMAIN}"
+elif [ -n "$REPL_SLUG" ]; then
   BASE_URL="https://${REPL_SLUG}.${REPL_OWNER}.repl.co"
 else
   BASE_URL="http://localhost:5000"
