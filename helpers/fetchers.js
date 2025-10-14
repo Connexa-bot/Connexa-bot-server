@@ -6,109 +6,26 @@ import { isDBConnected } from "../config/database.js";
  * Fetch all chats from MongoDB or in-memory store
  */
 export async function fetchChats(phone) {
-  const client = getClient(phone);
-  
-  if (!client) {
-    throw new Error(`No active session for ${phone}`);
+  const sock = getClient(phone);
+  const chats = await sock.store.chats?.all();
+
+  if (!chats || chats.length === 0) {
+    return { success: true, chats: [], count: 0 };
   }
 
-  if (isDBConnected()) {
-    try {
-      const dbChats = await Chat.find({ phone }).sort({ lastMessageTimestamp: -1 }).lean();
-      if (dbChats && dbChats.length > 0) {
-        return dbChats.map(chat => ({
-          id: chat.chatId,
-          name: chat.name || chat.chatId.split('@')[0],
-          profilePicUrl: chat.profilePicUrl,
-          unreadCount: chat.unreadCount || 0,
-          lastMessageTimestamp: chat.lastMessageTimestamp || 0,
-          lastMessage: chat.lastMessage || {},
-          isGroup: chat.isGroup || false,
-          isArchived: chat.isArchived || false,
-          isPinned: chat.isPinned || false,
-          isMuted: chat.isMuted || false,
-        }));
-      }
-    } catch (err) {
-      console.error('Error fetching chats from DB:', err);
-    }
-  }
+  // Convert to more usable format
+  const formattedChats = chats.map(chat => ({
+    id: chat.id,
+    name: chat.name || chat.id.split('@')[0],
+    unreadCount: chat.unreadCount || 0,
+    lastMessage: chat.lastMessage?.text || '',
+    isGroup: chat.id.includes('@g.us'),
+    isArchived: chat.archive || false,
+    isPinned: chat.pin || false,
+    isMuted: chat.mute ? true : false,
+  }));
 
-  const store = getStore(phone);
-  if (!store) {
-    return [];
-  }
-
-  const chats = [];
-  const storeChats = store.chats?.all() || [];
-
-  for (const chat of storeChats) {
-    try {
-      if (!chat || !chat.id || chat.id === 'status@broadcast') continue;
-      
-      const isGroup = chat.id?.endsWith('@g.us') || false;
-      let name = chat.name || chat.id?.split('@')[0] || 'Unknown';
-      
-      if (!isGroup && store.contacts) {
-        const contact = store.contacts[chat.id];
-        if (contact) {
-          name = contact.name || contact.notify || contact.verifiedName || name;
-        }
-      }
-
-      let profilePicUrl = null;
-      try {
-        profilePicUrl = await client.profilePictureUrl(chat.id, 'image').catch(() => null);
-      } catch (err) {
-        // Ignore profile pic errors
-      }
-
-      const chatData = {
-        id: chat.id,
-        name,
-        profilePicUrl,
-        unreadCount: chat.unreadCount || 0,
-        lastMessageTimestamp: chat.conversationTimestamp || 0,
-        lastMessage: chat.lastMessage || {},
-        isGroup,
-        isArchived: chat.archived || false,
-        isPinned: chat.pinned || false,
-        isMuted: chat.mute ? chat.mute > Date.now() : false,
-      };
-
-      chats.push(chatData);
-
-      if (isDBConnected()) {
-        try {
-          await Chat.findOneAndUpdate(
-            { phone, chatId: chat.id },
-            {
-              phone,
-              chatId: chat.id,
-              name,
-              profilePicUrl,
-              unreadCount: chatData.unreadCount,
-              lastMessageTimestamp: chatData.lastMessageTimestamp,
-              lastMessage: chatData.lastMessage,
-              isGroup: chatData.isGroup,
-              isArchived: chatData.isArchived,
-              isPinned: chatData.isPinned,
-              isMuted: chatData.isMuted,
-              updatedAt: new Date()
-            },
-            { upsert: true, new: true }
-          );
-        } catch (dbErr) {
-          console.error('Error saving chat to DB:', dbErr);
-        }
-      }
-    } catch (chatErr) {
-      console.error('Error processing chat:', chatErr);
-      continue;
-    }
-  }
-
-  return chats;
+  return { success: true, chats: formattedChats, count: formattedChats.length };
 }
 
 /**
@@ -143,7 +60,7 @@ export async function fetchContacts(phone) {
 
   for (const [jid, contact] of Object.entries(storeContacts)) {
     if (!jid.endsWith('@s.whatsapp.net')) continue;
-    
+
     const contactData = {
       jid,
       name: contact.name || contact.notify || contact.verifiedName || jid.split('@')[0],
@@ -176,13 +93,13 @@ export async function fetchContacts(phone) {
  */
 export async function fetchGroups(phone) {
   const client = getClient(phone);
-  
+
   if (!client) {
     throw new Error(`No active WhatsApp client for ${phone}`);
   }
 
   const groups = await client.groupFetchAllParticipating();
-  
+
   return Object.values(groups).map(group => ({
     id: group.id,
     subject: group.subject,
@@ -199,17 +116,17 @@ export async function fetchGroups(phone) {
  */
 export async function fetchStatusUpdates(phone) {
   const store = getStore(phone);
-  
+
   if (!store) {
     throw new Error(`No active session for ${phone}`);
   }
 
   const statusUpdates = [];
   const messages = store.messages || {};
-  
+
   // Look for status broadcast messages
   const statusMessages = messages['status@broadcast'] || [];
-  
+
   for (const msg of statusMessages) {
     if (msg.key && msg.message) {
       statusUpdates.push({
@@ -230,7 +147,7 @@ export async function fetchStatusUpdates(phone) {
 export async function fetchChannels(phone) {
   const store = getStore(phone);
   const client = getClient(phone);
-  
+
   if (!store || !client) {
     throw new Error(`No active session for ${phone}`);
   }
@@ -257,7 +174,7 @@ export async function fetchChannels(phone) {
  */
 export async function fetchCommunities(phone) {
   const store = getStore(phone);
-  
+
   if (!store) {
     throw new Error(`No active session for ${phone}`);
   }
@@ -284,7 +201,7 @@ export async function fetchCommunities(phone) {
  */
 export async function fetchCalls(phone) {
   const store = getStore(phone);
-  
+
   if (!store) {
     throw new Error(`No active session for ${phone}`);
   }

@@ -55,7 +55,8 @@ export const API_ENDPOINTS = {
   GET_CHATS: (phone) => ({
     url: `${API_BASE_URL}/api/chats/${phone}`,
     method: 'GET',
-    description: 'Get all chats with metadata'
+    description: 'Get all chats with metadata',
+    responseFormat: '{ success, chats: [...], count }'
   }),
 
   ARCHIVE_CHAT: (phone, chatId, archive = true) => ({
@@ -131,7 +132,8 @@ export const API_ENDPOINTS = {
   GET_MESSAGES: (phone, chatId, limit = 50) => ({
     url: `${API_BASE_URL}/api/messages/${phone}/${chatId}?limit=${limit}`,
     method: 'GET',
-    description: 'Get messages from a specific chat'
+    description: 'Get messages from a specific chat',
+    responseFormat: '{ success, data: { messages: [...] } }'
   }),
 
   SEND_MESSAGE: (phone, to, text, mentions = []) => ({

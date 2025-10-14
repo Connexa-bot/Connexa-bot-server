@@ -5,8 +5,19 @@
 # ===============================
 # Comprehensive test script for all WhatsApp backend endpoints
 
-# Replit auto-forwards port 3000, so don't include :3000 in external URLs
-BASE_URL="${BASE_URL:-https://7291a9b7-7686-42b0-ba38-4b0639ea71ed-00-22vcaa5x8ip3y.kirk.replit.dev}"
+# Enable verbose mode if -v flag is passed
+VERBOSE=false
+if [ "$1" = "-v" ]; then
+  VERBOSE=true
+  set -x
+fi
+
+# Auto-detect Replit URL or use localhost
+if [ -n "$REPL_SLUG" ]; then
+  BASE_URL="${BASE_URL:-https://${REPL_SLUG}.${REPL_OWNER}.repl.co}"
+else
+  BASE_URL="${BASE_URL:-http://localhost:5000}"
+fi
 PHONE="${PHONE:-2348113054793}"
 TEST_RECIPIENT="${TEST_RECIPIENT:-$PHONE@s.whatsapp.net}"
 
@@ -61,7 +72,7 @@ echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━�
 
 echo -e "\n${YELLOW}1.1 Server Health Check...${NC}"
 echo -e "${BLUE}Request: GET $BASE_URL/health${NC}"
-RESPONSE=$(curl -s "$BASE_URL/health")
+RESPONSE=$(curl -s --max-time 10 "$BASE_URL/health" || echo '{"error":"Connection timeout"}')
 echo -e "${BLUE}Raw Response (first 200 chars):${NC} ${RESPONSE:0:200}"
 echo "$RESPONSE" | format_output
 
@@ -76,9 +87,9 @@ curl -s -X POST "$BASE_URL/api/connect" \
 echo -e "\n${YELLOW}1.4 Connection Status...${NC}"
 curl -s "$BASE_URL/api/status/$PHONE" | format_output
 
-# Wait for connection
-echo -e "\n${RED}⏳ Please scan QR code if needed and press Enter when connected...${NC}"
-read
+# Wait for connection (auto-continue after 3 seconds)
+echo -e "\n${YELLOW}⏳ Waiting 3 seconds for connection (scan QR if needed)...${NC}"
+sleep 3
 
 # ===============================
 # SECTION 2: DATA RETRIEVAL
@@ -93,7 +104,8 @@ echo "$CHATS_RESPONSE" | format_output
 
 # Extract a random chat ID (excluding your own number, and only valid JIDs)
 if [ "$HAS_JQ" = true ]; then
-  RANDOM_CHAT=$(echo "$CHATS_RESPONSE" | jq -r '.chats[]? | select(.id != "'"$PHONE"'@s.whatsapp.net" and .isGroup == false and (.id | test("@s.whatsapp.net$"))) | .id' | shuf -n 1)
+  # Try different JSON response structures
+  RANDOM_CHAT=$(echo "$CHATS_RESPONSE" | jq -r '(.chats // .data.chats // .[])[]? | select(.id != "'"$PHONE"'@s.whatsapp.net" and .isGroup == false and (.id | test("@s.whatsapp.net$"))) | .id' 2>/dev/null | shuf -n 1)
   if [ -n "$RANDOM_CHAT" ] && [ "$RANDOM_CHAT" != "null" ]; then
     TEST_RECIPIENT="$RANDOM_CHAT"
     echo -e "${GREEN}✓ Selected random contact for testing: $TEST_RECIPIENT${NC}"
