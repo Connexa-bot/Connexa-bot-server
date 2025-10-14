@@ -40,9 +40,62 @@ echo -e "Press ENTER after linking to continue..."
 read -r
 
 echo -e "\n4. Verifying connection..."
-curl -s --max-time 5 "$BASE_URL/api/status/$PHONE" | jq '.' 2>/dev/null || echo "Failed"
+MAX_RETRIES=30
+RETRY_COUNT=0
+CONNECTED=false
 
-echo -e "\n5. Get Chats..."
-curl -s --max-time 5 "$BASE_URL/api/chats/$PHONE" | jq '.' 2>/dev/null || echo "Failed"
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+  STATUS=$(curl -s --max-time 5 "$BASE_URL/api/status/$PHONE")
+  
+  if command -v jq &> /dev/null; then
+    IS_CONNECTED=$(echo "$STATUS" | jq -r '.connected // false' 2>/dev/null)
+    if [ "$IS_CONNECTED" = "true" ]; then
+      CONNECTED=true
+      echo "$STATUS" | jq '.' 2>/dev/null || echo "$STATUS"
+      echo "✅ Connected!"
+      break
+    fi
+  fi
+  
+  RETRY_COUNT=$((RETRY_COUNT + 1))
+  if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+    echo "⏳ Waiting for connection... (attempt $RETRY_COUNT/$MAX_RETRIES)"
+    sleep 2
+  fi
+done
+
+if [ "$CONNECTED" = false ]; then
+  echo "❌ Connection timeout"
+  exit 1
+fi
+
+echo -e "\n5. Get Chats (waiting for sync)..."
+MAX_RETRIES=15
+RETRY_COUNT=0
+
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+  CHATS=$(curl -s --max-time 5 "$BASE_URL/api/chats/$PHONE")
+  
+  if command -v jq &> /dev/null; then
+    COUNT=$(echo "$CHATS" | jq -r '.count // 0' 2>/dev/null)
+    if [ "$COUNT" -gt 0 ]; then
+      echo "$CHATS" | jq '.' 2>/dev/null || echo "$CHATS"
+      echo "✅ Found $COUNT chats"
+      break
+    fi
+  else
+    echo "$CHATS"
+    break
+  fi
+  
+  RETRY_COUNT=$((RETRY_COUNT + 1))
+  if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+    echo "⏳ Waiting for chats to sync... (attempt $RETRY_COUNT/$MAX_RETRIES)"
+    sleep 2
+  else
+    echo "$CHATS" | jq '.' 2>/dev/null || echo "$CHATS"
+    echo "⚠️ No chats found yet"
+  fi
+done
 
 echo -e "\n✅ Quick test complete!"

@@ -102,7 +102,34 @@ echo -e "\n${GREEN}Press ENTER after you have successfully linked your device...
 read -r
 
 echo -e "\n${YELLOW}Verifying connection...${NC}"
-curl -s "$BASE_URL/api/status/$PHONE" | format_output
+MAX_RETRIES=30
+RETRY_COUNT=0
+CONNECTED=false
+
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+  STATUS_RESPONSE=$(curl -s "$BASE_URL/api/status/$PHONE")
+  echo "$STATUS_RESPONSE" | format_output
+  
+  if [ "$HAS_JQ" = true ]; then
+    IS_CONNECTED=$(echo "$STATUS_RESPONSE" | jq -r '.connected // false' 2>/dev/null)
+    if [ "$IS_CONNECTED" = "true" ]; then
+      CONNECTED=true
+      echo -e "${GREEN}✅ Connection verified!${NC}"
+      break
+    fi
+  fi
+  
+  RETRY_COUNT=$((RETRY_COUNT + 1))
+  if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+    echo -e "${YELLOW}⏳ Waiting for connection... (attempt $RETRY_COUNT/$MAX_RETRIES)${NC}"
+    sleep 2
+  fi
+done
+
+if [ "$CONNECTED" = false ]; then
+  echo -e "${RED}❌ Connection timeout - please check your WhatsApp and try again${NC}"
+  exit 1
+fi
 
 # ===============================
 # SECTION 2: DATA RETRIEVAL
@@ -112,8 +139,39 @@ echo -e "${GREEN}📥 SECTION 2: DATA RETRIEVAL${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 echo -e "\n${YELLOW}2.1 Get Chats...${NC}"
-CHATS_RESPONSE=$(curl -s "$BASE_URL/api/chats/$PHONE")
-echo "$CHATS_RESPONSE" | format_output
+echo -e "${BLUE}⏳ Waiting for chats to sync...${NC}"
+
+MAX_RETRIES=15
+RETRY_COUNT=0
+HAS_CHATS=false
+
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+  CHATS_RESPONSE=$(curl -s "$BASE_URL/api/chats/$PHONE")
+  
+  if [ "$HAS_JQ" = true ]; then
+    CHAT_COUNT=$(echo "$CHATS_RESPONSE" | jq -r '.count // 0' 2>/dev/null)
+    if [ "$CHAT_COUNT" -gt 0 ]; then
+      HAS_CHATS=true
+      echo "$CHATS_RESPONSE" | format_output
+      echo -e "${GREEN}✅ Found $CHAT_COUNT chats${NC}"
+      break
+    fi
+  else
+    echo "$CHATS_RESPONSE" | format_output
+    break
+  fi
+  
+  RETRY_COUNT=$((RETRY_COUNT + 1))
+  if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+    echo -e "${YELLOW}⏳ Waiting for chats to sync... (attempt $RETRY_COUNT/$MAX_RETRIES)${NC}"
+    sleep 2
+  fi
+done
+
+if [ "$HAS_CHATS" = false ] && [ "$HAS_JQ" = true ]; then
+  echo -e "${YELLOW}⚠ No chats found yet. This is normal for new connections.${NC}"
+  echo -e "${YELLOW}💡 You may need to send a message first to populate the chat list.${NC}"
+fi
 
 # Extract a random chat ID (excluding your own number, and only valid JIDs)
 if [ "$HAS_JQ" = true ]; then
@@ -128,7 +186,35 @@ if [ "$HAS_JQ" = true ]; then
 fi
 
 echo -e "\n${YELLOW}2.2 Get Contacts...${NC}"
-curl -s "$BASE_URL/api/contacts/$PHONE" | format_output
+echo -e "${BLUE}⏳ Waiting for contacts to sync...${NC}"
+
+MAX_RETRIES=15
+RETRY_COUNT=0
+
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+  CONTACTS_RESPONSE=$(curl -s "$BASE_URL/api/contacts/$PHONE")
+  
+  if [ "$HAS_JQ" = true ]; then
+    CONTACT_COUNT=$(echo "$CONTACTS_RESPONSE" | jq -r '.count // 0' 2>/dev/null)
+    if [ "$CONTACT_COUNT" -gt 0 ]; then
+      echo "$CONTACTS_RESPONSE" | format_output
+      echo -e "${GREEN}✅ Found $CONTACT_COUNT contacts${NC}"
+      break
+    fi
+  else
+    echo "$CONTACTS_RESPONSE" | format_output
+    break
+  fi
+  
+  RETRY_COUNT=$((RETRY_COUNT + 1))
+  if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+    echo -e "${YELLOW}⏳ Waiting for contacts to sync... (attempt $RETRY_COUNT/$MAX_RETRIES)${NC}"
+    sleep 2
+  else
+    echo "$CONTACTS_RESPONSE" | format_output
+    echo -e "${YELLOW}⚠ No contacts found. This may be normal if the store is still syncing.${NC}"
+  fi
+done
 
 echo -e "\n${YELLOW}2.3 Get Groups...${NC}"
 curl -s "$BASE_URL/api/groups/$PHONE" | format_output
@@ -159,9 +245,22 @@ echo -e "${GREEN} প্রক্র SECTION 3: MESSAGING${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 echo -e "\n${YELLOW}3.1 Send Text Message to: $TEST_RECIPIENT...${NC}"
-curl -s -X POST "$BASE_URL/api/messages/send" \
+echo -e "${BLUE}Press ENTER to send test message...${NC}"
+read -r
+
+SEND_RESPONSE=$(curl -s -X POST "$BASE_URL/api/messages/send" \
   -H "Content-Type: application/json" \
-  -d "{\"phone\":\"$PHONE\",\"to\":\"$TEST_RECIPIENT\",\"text\":\"Test message from API - $(date)\"}" | format_output
+  -d "{\"phone\":\"$PHONE\",\"to\":\"$TEST_RECIPIENT\",\"text\":\"Test message from API - $(date)\"}")
+echo "$SEND_RESPONSE" | format_output
+
+if [ "$HAS_JQ" = true ]; then
+  SUCCESS=$(echo "$SEND_RESPONSE" | jq -r '.success // false' 2>/dev/null)
+  if [ "$SUCCESS" = "true" ]; then
+    echo -e "${GREEN}✅ Message sent successfully${NC}"
+  else
+    echo -e "${RED}❌ Failed to send message${NC}"
+  fi
+fi
 
 echo -e "\n${YELLOW}3.2 Send Poll...${NC}"
 curl -s -X POST "$BASE_URL/api/messages/send-poll" \
