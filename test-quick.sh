@@ -35,7 +35,14 @@ curl -s --max-time 5 "$BASE_URL/api/health" | jq '.' 2>/dev/null || echo "Failed
 echo -e "\n3. Connection Status..."
 curl -s --max-time 5 "$BASE_URL/api/status/$PHONE" | jq '.' 2>/dev/null || echo "Failed"
 
-echo -e "\n4. Get Chats..."
+echo -e "\nℹ️  If you see a QR code or linking code above, scan it or enter it in WhatsApp now."
+echo -e "Press ENTER after linking to continue..."
+read -r
+
+echo -e "\n4. Verifying connection..."
+curl -s --max-time 5 "$BASE_URL/api/status/$PHONE" | jq '.' 2>/dev/null || echo "Failed"
+
+echo -e "\n5. Get Chats..."
 curl -s --max-time 5 "$BASE_URL/api/chats/$PHONE" | jq '.' 2>/dev/null || echo "Failed"
 
 echo -e "\n✅ Quick test complete!"

@@ -95,9 +95,14 @@ curl -s -X POST "$BASE_URL/api/connect" \
 echo -e "\n${YELLOW}1.4 Connection Status...${NC}"
 curl -s "$BASE_URL/api/status/$PHONE" | format_output
 
-# Wait for connection (auto-continue after 3 seconds)
-echo -e "\n${YELLOW}⏳ Waiting 3 seconds for connection (scan QR if needed)...${NC}"
-sleep 3
+# Wait for user to complete linking
+echo -e "\n${YELLOW}⏳ Please scan the QR code or use the linking code shown above${NC}"
+echo -e "${YELLOW}📱 Enter the pairing code in WhatsApp: Linked Devices > Link a Device > Link with phone number${NC}"
+echo -e "\n${GREEN}Press ENTER after you have successfully linked your device...${NC}"
+read -r
+
+echo -e "\n${YELLOW}Verifying connection...${NC}"
+curl -s "$BASE_URL/api/status/$PHONE" | format_output
 
 # ===============================
 # SECTION 2: DATA RETRIEVAL
