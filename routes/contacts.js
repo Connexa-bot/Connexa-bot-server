@@ -42,7 +42,7 @@ router.get("/:phone", async (req, res) => {
   try {
     const { fetchContacts } = await import("../helpers/fetchers.js");
     const contacts = await fetchContacts(normalizedPhone);
-    res.json({ success: true, contacts, count: contacts.length });
+    res.json({ success: true, contacts, count: contacts.length, message: contacts.length === 0 ? "No contacts found. Store may still be syncing." : undefined });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

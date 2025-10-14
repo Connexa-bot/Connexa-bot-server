@@ -132,13 +132,21 @@ export async function startBot(phone, broadcast) {
     auth: state,
     printQRInTerminal: false,
     browser: Browsers.ubuntu("Chrome"),
-    syncFullHistory: false,
+    syncFullHistory: true, // ✅ Enable full history sync
     connectTimeoutMs: CONNECTION_TIMEOUT_MS,
     keepAliveIntervalMs: 30000,
     defaultQueryTimeoutMs: 60000,
     retryRequestDelayMs: 250,
     markOnlineOnConnect: true,
     emitOwnEvents: false,
+    // ✅ Enable message history sync
+    getMessage: async (key) => {
+      if (store) {
+        const msg = await store.loadMessage(key.remoteJid, key.id);
+        return msg?.message || undefined;
+      }
+      return undefined;
+    },
   });
 
   store.bind(sock.ev);
@@ -219,6 +227,29 @@ export async function startBot(phone, broadcast) {
       
       console.log(`✅ Session updated - connected: ${session.connected}`);
       broadcast("status", { phone: normalizedPhone, connected: true });
+      
+      // ✅ Force sync all data after connection
+      try {
+        console.log(`🔄 Syncing WhatsApp data for ${normalizedPhone}...`);
+        
+        // Sync contacts
+        const contactsCount = Object.keys(store.contacts || {}).length;
+        console.log(`📇 Contacts synced: ${contactsCount}`);
+        
+        // Sync chats
+        const chatsCount = (store.chats?.all() || []).length;
+        console.log(`💬 Chats synced: ${chatsCount}`);
+        
+        // If no chats in store, force fetch from WhatsApp
+        if (chatsCount === 0) {
+          console.log(`⚠️ No chats in store, forcing sync...`);
+          await delay(2000); // Wait for initial sync
+          const allChats = store.chats?.all() || [];
+          console.log(`✅ Chats after sync: ${allChats.length}`);
+        }
+      } catch (syncErr) {
+        console.error(`⚠️ Error syncing data: ${syncErr.message}`);
+      }
     }
 
     // Closed

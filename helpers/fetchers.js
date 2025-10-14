@@ -8,19 +8,34 @@ import { isDBConnected } from "../config/database.js";
 export async function fetchChats(phone) {
   const store = getStore(phone);
   const sock = getClient(phone);
-  
+
   if (!store || !sock) {
-    return { success: false, chats: [], count: 0, error: "Store or client not available" };
+    throw new Error(`No active session for ${phone}`);
   }
 
-  const chats = await store.chats?.all();
+  let storeChats = store.chats?.all() || [];
 
-  if (!chats || chats.length === 0) {
-    return { success: true, chats: [], count: 0 };
+  if (storeChats.length === 0) {
+    console.log(`⚠️ No chats in store, attempting to fetch from WhatsApp...`);
+
+    // Force fetch chats from WhatsApp
+    try {
+      // Wait a bit for store to populate
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      storeChats = store.chats?.all() || [];
+
+      if (storeChats.length === 0) {
+        console.log(`⚠️ Still no chats after fetch attempt`);
+        return { success: true, chats: [], count: 0, message: "No chats found. Try sending a message first to populate the chat list." };
+      }
+    } catch (err) {
+      console.error(`Error fetching chats:`, err);
+      return { success: true, chats: [], count: 0, message: "No chats available yet" };
+    }
   }
 
   // Format chats with profile pictures and proper names
-  const formattedChats = await Promise.all(chats.map(async (chat) => {
+  const formattedChats = await Promise.all(storeChats.map(async (chat) => {
     let profilePicUrl = null;
     let displayName = chat.name || chat.id.split('@')[0];
 
@@ -247,7 +262,7 @@ export async function fetchCalls(store) {
   // This would need to be tracked separately via events
   // Check if store has call logs
   const calls = store.calls || [];
-  
+
   return Array.isArray(calls) ? calls : [];
 }
 
