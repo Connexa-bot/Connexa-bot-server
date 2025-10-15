@@ -1495,12 +1495,23 @@ export function createApiRoutes(broadcast) {
   // AI endpoints are handled in separate routes/ai.js file
   // This section is a placeholder for reference
 
-  // Add a new endpoint to check OpenAI connection status
+  // ===============================
+  // SECTION 19: OPENAI STATUS
+  // ===============================
+
+  // Check OpenAI connection status
   router.get("/openai/status", (req, res) => {
-    // Assuming you have a way to check OpenAI connection status globally
-    // For example, a global variable or a status object
-    const isOpenAiConnected = typeof global.openaiClient !== 'undefined' && global.openaiClient !== null; // Example check
-    res.json({ connected: isOpenAiConnected });
+    const isOpenAiConnected = typeof global.openaiClient !== 'undefined' && global.openaiClient !== null;
+    const hasApiKey = !!process.env.OPENAI_API_KEY;
+    
+    res.json({ 
+      connected: isOpenAiConnected,
+      configured: hasApiKey,
+      status: isOpenAiConnected ? 'active' : (hasApiKey ? 'error' : 'not_configured'),
+      message: isOpenAiConnected 
+        ? 'OpenAI API is connected and ready' 
+        : (hasApiKey ? 'OpenAI API key configured but connection failed' : 'OpenAI API key not configured')
+    });
   });
 
   return router;

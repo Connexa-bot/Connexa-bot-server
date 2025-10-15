@@ -81,19 +81,6 @@ export const blockContact = async (phone, contactId) => {
 };
 
 /**
- * Block a contact
- */
-export const blockContact = async (phone, contactId) => {
-  const sock = getClient(phone);
-  try {
-    await sock.updateBlockStatus(contactId, 'block');
-    return { success: true, message: 'Contact blocked' };
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-};
-
-/**
  * Block a user (alias for compatibility)
  */
 export const blockUser = async (sock, jid) => {

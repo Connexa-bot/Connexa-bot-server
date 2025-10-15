@@ -87,12 +87,15 @@ echo "$RESPONSE" | format_output
 echo -e "\n${YELLOW}1.2 API Health Check...${NC}"
 curl -s "$BASE_URL/api/health" | format_output
 
-echo -e "\n${YELLOW}1.3 WhatsApp Connect...${NC}"
+echo -e "\n${YELLOW}1.3 OpenAI Connection Status...${NC}"
+curl -s "$BASE_URL/api/openai/status" | format_output
+
+echo -e "\n${YELLOW}1.4 WhatsApp Connect...${NC}"
 curl -s -X POST "$BASE_URL/api/connect" \
   -H "Content-Type: application/json" \
   -d "{\"phone\":\"$PHONE\"}" | format_output
 
-echo -e "\n${YELLOW}1.4 Connection Status...${NC}"
+echo -e "\n${YELLOW}1.5 Connection Status...${NC}"
 curl -s "$BASE_URL/api/status/$PHONE" | format_output
 
 # Wait for user to complete linking
@@ -639,7 +642,7 @@ echo "╚═══════════════════════�
 echo -e "${NC}"
 
 echo -e "${BLUE}📝 Test Summary:${NC}"
-echo -e "  ${GREEN}✓${NC} Health & Connection Tests (4 tests)"
+echo -e "  ${GREEN}✓${NC} Health & Connection Tests (5 tests - including OpenAI status)"
 echo -e "  ${GREEN}✓${NC} Data Retrieval Tests (9 tests)"
 echo -e "  ${GREEN}✓${NC} Messaging Tests (10 tests - all message types)"
 echo -e "  ${GREEN}✓${NC} Message Actions Tests (3 tests)"
@@ -655,7 +658,7 @@ echo -e "  ${GREEN}✓${NC} Advanced Search & Starred Tests (5 tests)"
 echo -e "  ${GREEN}✓${NC} Linked Devices Tests (1 test)"
 echo -e "  ${GREEN}✓${NC} Cleanup Tests (2 tests)"
 
-echo -e "\n${GREEN}Total: 82+ endpoint tests covering 100% backend functionality${NC}"
+echo -e "\n${GREEN}Total: 83+ endpoint tests covering 100% backend functionality${NC}"
 
 echo -e "\n${YELLOW}To run with custom values:${NC}"
 echo -e "  ${BLUE}BASE_URL=http://localhost:5000 PHONE=123456789 ./test-endpoints.sh${NC}"
