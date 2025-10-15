@@ -176,15 +176,22 @@ if [ "$HAS_CHATS" = false ] && [ "$HAS_JQ" = true ]; then
   echo -e "${YELLOW}💡 You may need to send a message first to populate the chat list.${NC}"
 fi
 
-# Extract a random chat ID (excluding your own number, and only valid JIDs)
+# Extract a random chat ID from contacts (excluding your own number)
 if [ "$HAS_JQ" = true ]; then
-  # Try different JSON response structures
-  RANDOM_CHAT=$(echo "$CHATS_RESPONSE" | jq -r '(.chats // .data.chats // .[])[]? | select(.id != "'"$PHONE"'@s.whatsapp.net" and .isGroup == false and (.id | test("@s.whatsapp.net$"))) | .id' 2>/dev/null | shuf -n 1)
-  if [ -n "$RANDOM_CHAT" ] && [ "$RANDOM_CHAT" != "null" ]; then
-    TEST_RECIPIENT="$RANDOM_CHAT"
+  # Try to get a random contact from the contacts list
+  RANDOM_CONTACT=$(echo "$CONTACTS_RESPONSE" | jq -r '.contacts[]? | select(.jid != "'"$PHONE"'@s.whatsapp.net" and (.jid | test("@s.whatsapp.net$")) and .jid != "0@s.whatsapp.net") | .jid' 2>/dev/null | shuf -n 1)
+  if [ -n "$RANDOM_CONTACT" ] && [ "$RANDOM_CONTACT" != "null" ]; then
+    TEST_RECIPIENT="$RANDOM_CONTACT"
     echo -e "${GREEN}✓ Selected random contact for testing: $TEST_RECIPIENT${NC}"
   else
-    echo -e "${YELLOW}⚠ No valid individual chats found, using default recipient${NC}"
+    # Fallback: try to get from chats
+    RANDOM_CHAT=$(echo "$CHATS_RESPONSE" | jq -r '(.chats // .[])[]? | select(.id != "'"$PHONE"'@s.whatsapp.net" and .isGroup == false and (.id | test("@s.whatsapp.net$"))) | .id' 2>/dev/null | shuf -n 1)
+    if [ -n "$RANDOM_CHAT" ] && [ "$RANDOM_CHAT" != "null" ]; then
+      TEST_RECIPIENT="$RANDOM_CHAT"
+      echo -e "${GREEN}✓ Selected random chat for testing: $TEST_RECIPIENT${NC}"
+    else
+      echo -e "${YELLOW}⚠ No valid contacts/chats found, using default recipient${NC}"
+    fi
   fi
 fi
 

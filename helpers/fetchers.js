@@ -17,19 +17,26 @@ export async function fetchChats(phone) {
   const store = session.store;
   const sock = session.sock;
   
-  if (!store) {
-    console.log(`No store found for ${normalizedPhone}`);
+  if (!store || !store.chats) {
+    console.log(`No store or chats found for ${normalizedPhone}`);
     return [];
   }
 
   try {
-    const chats = store.chats?.all() || [];
-    console.log(`📋 Fetched ${chats.length} raw chats for ${normalizedPhone}`);
+    // Get all chats from the store
+    const allChats = store.chats.all ? store.chats.all() : Object.values(store.chats);
+    console.log(`📋 Fetched ${allChats.length} raw chats for ${normalizedPhone}`);
+
+    if (!allChats || allChats.length === 0) {
+      console.log(`⚠️ No chats found in store for ${normalizedPhone}`);
+      return [];
+    }
 
     // Format chats with profile pictures and proper names
-    const formattedChats = await Promise.all(chats.map(async (chat) => {
+    const formattedChats = await Promise.all(allChats.map(async (chat) => {
       let profilePicUrl = null;
       let displayName = chat.name || chat.id.split('@')[0];
+      let lastMessageText = '';
 
       // Try to get profile picture
       try {
@@ -48,12 +55,23 @@ export async function fetchChats(phone) {
         }
       }
 
+      // Extract last message text if available
+      if (chat.lastMessage) {
+        if (typeof chat.lastMessage === 'string') {
+          lastMessageText = chat.lastMessage;
+        } else if (chat.lastMessage.conversation) {
+          lastMessageText = chat.lastMessage.conversation;
+        } else if (chat.lastMessage.extendedTextMessage?.text) {
+          lastMessageText = chat.lastMessage.extendedTextMessage.text;
+        }
+      }
+
       return {
         id: chat.id,
         name: displayName,
         unreadCount: chat.unreadCount || 0,
         lastMessage: chat.conversationTimestamp ? {
-          text: chat.lastMessage?.text || '',
+          text: lastMessageText,
           timestamp: chat.conversationTimestamp
         } : null,
         isGroup: chat.id.includes('@g.us'),
@@ -74,7 +92,6 @@ export async function fetchChats(phone) {
 
     console.log(`✅ Returning ${formattedChats.length} formatted chats`);
     
-    // Return just the array, not an object
     return formattedChats;
   } catch (err) {
     console.error(`❌ Error fetching chats for ${normalizedPhone}:`, err.message);
@@ -180,16 +197,18 @@ export async function fetchStatusUpdates(phone) {
   const messages = store.messages || {};
 
   // Look for status broadcast messages
-  const statusMessages = messages['status@broadcast'] || [];
+  const statusMessages = messages['status@broadcast'];
 
-  for (const msg of statusMessages) {
-    if (msg.key && msg.message) {
-      statusUpdates.push({
-        key: msg.key,
-        message: msg.message,
-        messageTimestamp: msg.messageTimestamp,
-        pushName: msg.pushName,
-      });
+  if (statusMessages && Array.isArray(statusMessages)) {
+    for (const msg of statusMessages) {
+      if (msg.key && msg.message) {
+        statusUpdates.push({
+          key: msg.key,
+          message: msg.message,
+          messageTimestamp: msg.messageTimestamp,
+          pushName: msg.pushName,
+        });
+      }
     }
   }
 

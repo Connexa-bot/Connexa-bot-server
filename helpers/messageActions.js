@@ -256,7 +256,19 @@ export async function sendBroadcast(phone, recipients, message) {
   const results = [];
   for (const recipient of recipients) {
     try {
-      const msg = await client.sendMessage(recipient, message);
+      let msg;
+      // Handle string message
+      if (typeof message === 'string') {
+        msg = await client.sendMessage(recipient, { text: message });
+      } 
+      // Handle object with text property
+      else if (message && typeof message === 'object' && 'text' in message) {
+        msg = await client.sendMessage(recipient, { text: message.text });
+      } 
+      // Handle other message types
+      else {
+        msg = await client.sendMessage(recipient, message);
+      }
       results.push({ recipient, success: true, messageId: msg.key.id });
     } catch (error) {
       results.push({ recipient, success: false, error: error.message });
