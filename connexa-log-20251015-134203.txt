@@ -1,0 +1,36 @@
+[0;32m✓ jq found - responses will be formatted[0m
+[0;34m
+╔════════════════════════════════════════════╗
+║  🧪 ConnexaBot API Comprehensive Testing  ║
+╔════════════════════════════════════════════╝
+║
+║  Base URL: http://localhost:5000
+║  Phone: 2349041648144
+║  Test Recipient: 2349041648144@s.whatsapp.net
+║
+╚════════════════════════════════════════════
+[0m
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m📊 SECTION 1: HEALTH & CONNECTION[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m1.1 Server Health Check...[0m
+[0;34mRequest: GET http://localhost:5000/health[0m
+[0;34mRaw Response (first 200 chars):[0m {"error":"Connection timeout"}
+{
+  "error": "Connection timeout"
+}
+
+[1;33m1.2 API Health Check...[0m
+
+[1;33m1.3 OpenAI Connection Status...[0m
+
+[1;33m1.4 WhatsApp Connect...[0m
+
+[1;33m1.5 Connection Status...[0m
+
+[1;33m⏳ Please scan the QR code or use the linking code shown above[0m
+[1;33m📱 Enter the pairing code in WhatsApp: Linked Devices > Link a Device > Link with phone number[0m
+
+[0;32mPress ENTER after you have successfully linked your device...[0m

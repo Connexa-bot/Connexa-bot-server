@@ -17,9 +17,9 @@ elif [ -n "$REPLIT_DEV_DOMAIN" ]; then
 elif [ -n "$REPL_SLUG" ]; then
   BASE_URL="https://${REPL_SLUG}.${REPL_OWNER}.repl.co"
 else
-  BASE_URL="http://localhost:5000"
+BASE_URL="${BASE_URL:-http://widespread-chicky-connexa-hub-afd02d40.koyeb.app}"
 fi
-PHONE="${PHONE:-2348113054793}"
+PHONE="${PHONE:-2349041648144}"
 TEST_RECIPIENT="${TEST_RECIPIENT:-$PHONE@s.whatsapp.net}"
 
 # Enable verbose mode if -v flag is passed
@@ -144,15 +144,24 @@ echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━�
 echo -e "\n${YELLOW}2.1 Get Chats...${NC}"
 echo -e "${BLUE}⏳ Waiting for chats to sync...${NC}"
 
-MAX_RETRIES=15
+MAX_RETRIES=1
 RETRY_COUNT=0
 HAS_CHATS=false
 
-while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+while [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
   CHATS_RESPONSE=$(curl -s "$BASE_URL/api/chats/$PHONE")
-  
+
   if [ "$HAS_JQ" = true ]; then
+    # Safely extract numeric chat count, default to 0 if invalid or missing
     CHAT_COUNT=$(echo "$CHATS_RESPONSE" | jq -r '.count // 0' 2>/dev/null)
+    # If jq returned nothing, fallback to 0 to avoid "integer expected"
+    CHAT_COUNT=${CHAT_COUNT:-0}
+
+    # Ensure CHAT_COUNT is numeric (remove non-digits just in case)
+    if ! [[ "$CHAT_COUNT" =~ ^[0-9]+$ ]]; then
+      CHAT_COUNT=0
+    fi
+
     if [ "$CHAT_COUNT" -gt 0 ]; then
       HAS_CHATS=true
       echo "$CHATS_RESPONSE" | format_output
@@ -163,9 +172,9 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     echo "$CHATS_RESPONSE" | format_output
     break
   fi
-  
+
   RETRY_COUNT=$((RETRY_COUNT + 1))
-  if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+  if [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; then
     echo -e "${YELLOW}⏳ Waiting for chats to sync... (attempt $RETRY_COUNT/$MAX_RETRIES)${NC}"
     sleep 2
   fi
