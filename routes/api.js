@@ -360,7 +360,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await contactActions.getContact(validation.session.sock, contactId);
+      const result = await contactActions.getContact(normalizePhone(phone), contactId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -374,7 +374,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await contactActions.getProfilePicture(validation.session.sock, contactId);
+      const result = await contactActions.getProfilePicture(normalizePhone(phone), contactId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -388,7 +388,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await contactActions.getStatus(validation.session.sock, contactId);
+      const result = await contactActions.getStatus(normalizePhone(phone), contactId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -402,7 +402,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await contactActions.checkIfContactExists(validation.session.sock, phoneNumber);
+      const result = await contactActions.checkIfContactExists(normalizePhone(phone), phoneNumber);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -416,7 +416,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await contactActions.blockContact(validation.session.sock, contactId);
+      const result = await contactActions.blockContact(normalizePhone(phone), contactId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -430,7 +430,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await contactActions.unblockContact(validation.session.sock, contactId);
+      const result = await contactActions.unblockContact(normalizePhone(phone), contactId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -444,7 +444,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await contactActions.getBusinessProfile(validation.session.sock, contactId);
+      const result = await contactActions.getBusinessProfile(normalizePhone(phone), contactId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -477,7 +477,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await statusActions.postTextStatus(validation.session.sock, text, { statusJidList, backgroundColor, font });
+      const result = await statusActions.postTextStatus(normalizePhone(phone), text, { statusJidList, backgroundColor, font });
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -491,7 +491,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await statusActions.postImageStatus(validation.session.sock, imageUrl, caption, statusJidList);
+      const result = await statusActions.postImageStatus(normalizePhone(phone), imageUrl, caption, statusJidList);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -505,7 +505,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await statusActions.postVideoStatus(validation.session.sock, videoUrl, caption, statusJidList);
+      const result = await statusActions.postVideoStatus(normalizePhone(phone), videoUrl, caption, statusJidList);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -519,7 +519,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await statusActions.deleteStatus(validation.session.sock, statusKey);
+      const result = await statusActions.deleteStatus(normalizePhone(phone), statusKey);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -533,7 +533,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await statusActions.viewStatus(validation.session.sock, statusJid, messageKeys);
+      const result = await statusActions.viewStatus(normalizePhone(phone), statusJid, messageKeys);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -547,7 +547,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await statusActions.getStatusPrivacy(validation.session.sock);
+      const result = await statusActions.getStatusPrivacy(normalizePhone(phone));
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -580,7 +580,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.getGroupMetadata(validation.session.sock, groupId);
+      const result = await groupActions.getGroupMetadata(normalizePhone(phone), groupId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -594,7 +594,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.createGroup(validation.session.sock, name, participants);
+      const result = await groupActions.createGroup(normalizePhone(phone), name, participants);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -608,7 +608,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.getGroupInviteCode(validation.session.sock, groupId);
+      const result = await groupActions.getGroupInviteCode(normalizePhone(phone), groupId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -622,7 +622,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.joinGroupViaInvite(validation.session.sock, inviteCode);
+      const result = await groupActions.joinGroupViaInvite(normalizePhone(phone), inviteCode);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -636,7 +636,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.leaveGroup(validation.session.sock, groupId);
+      const result = await groupActions.leaveGroup(normalizePhone(phone), groupId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -650,7 +650,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.updateGroupSubject(validation.session.sock, groupId, subject);
+      const result = await groupActions.updateGroupSubject(normalizePhone(phone), groupId, subject);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -664,7 +664,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.updateGroupDescription(validation.session.sock, groupId, description);
+      const result = await groupActions.updateGroupDescription(normalizePhone(phone), groupId, description);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -678,7 +678,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.addParticipants(validation.session.sock, groupId, participants);
+      const result = await groupActions.addParticipants(normalizePhone(phone), groupId, participants);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -692,7 +692,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.removeParticipants(validation.session.sock, groupId, participants);
+      const result = await groupActions.removeParticipants(normalizePhone(phone), groupId, participants);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -706,7 +706,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.promoteParticipants(validation.session.sock, groupId, participants);
+      const result = await groupActions.promoteParticipants(normalizePhone(phone), groupId, participants);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -720,7 +720,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.demoteParticipants(validation.session.sock, groupId, participants);
+      const result = await groupActions.demoteParticipants(normalizePhone(phone), groupId, participants);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -734,7 +734,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.updateGroupPicture(validation.session.sock, groupId, imageUrl);
+      const result = await groupActions.updateGroupPicture(normalizePhone(phone), groupId, imageUrl);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -748,7 +748,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await groupActions.toggleAnnouncement(validation.session.sock, groupId, announce);
+      const result = await groupActions.toggleAnnouncement(normalizePhone(phone), groupId, announce);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -781,7 +781,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await channelActions.getChannelInfo(validation.session.sock, channelId);
+      const result = await channelActions.getChannelInfo(normalizePhone(phone), channelId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -795,7 +795,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await channelActions.followChannel(validation.session.sock, channelJid);
+      const result = await channelActions.followChannel(normalizePhone(phone), channelJid);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -809,7 +809,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await channelActions.unfollowChannel(validation.session.sock, channelJid);
+      const result = await channelActions.unfollowChannel(normalizePhone(phone), channelJid);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -823,7 +823,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await channelActions.muteChannel(validation.session.sock, channelJid, duration);
+      const result = await channelActions.muteChannel(normalizePhone(phone), channelJid, duration);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -876,7 +876,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendTextMessage(validation.session.sock, to, text, mentions);
+      const result = await messageActions.sendTextMessage(normalizePhone(phone), to, text, mentions);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -890,7 +890,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.replyToMessage(validation.session.sock, to, text, quotedMessage);
+      const result = await messageActions.replyToMessage(normalizePhone(phone), to, text, quotedMessage);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -904,7 +904,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendImageMessage(validation.session.sock, to, imageUrl, caption);
+      const result = await messageActions.sendImageMessage(normalizePhone(phone), to, imageUrl, caption);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -918,7 +918,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendVideoMessage(validation.session.sock, to, videoUrl, caption, gifPlayback);
+      const result = await messageActions.sendVideoMessage(normalizePhone(phone), to, videoUrl, caption, gifPlayback);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -932,7 +932,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendAudioMessage(validation.session.sock, to, audioUrl, ptt);
+      const result = await messageActions.sendAudioMessage(normalizePhone(phone), to, audioUrl, ptt);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -946,7 +946,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendDocumentMessage(validation.session.sock, to, documentUrl, fileName, mimetype);
+      const result = await messageActions.sendDocumentMessage(normalizePhone(phone), to, documentUrl, fileName, mimetype);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -960,7 +960,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendLocationMessage(validation.session.sock, to, latitude, longitude, name, address);
+      const result = await messageActions.sendLocationMessage(normalizePhone(phone), to, latitude, longitude, name, address);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -974,7 +974,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendContactMessage(validation.session.sock, to, contacts);
+      const result = await messageActions.sendContactMessage(normalizePhone(phone), to, contacts);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -988,7 +988,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendPollMessage(validation.session.sock, to, name, options, selectableCount);
+      const result = await messageActions.sendPollMessage(normalizePhone(phone), to, name, options, selectableCount);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1002,7 +1002,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendListMessage(validation.session.sock, to, text, buttonText, sections, footer, title);
+      const result = await messageActions.sendListMessage(normalizePhone(phone), to, text, buttonText, sections, footer, title);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1016,7 +1016,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.forwardMessage(validation.session.sock, to, message);
+      const result = await messageActions.forwardMessage(normalizePhone(phone), to, message);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1030,7 +1030,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.deleteMessage(validation.session.sock, chatId, messageKey);
+      const result = await messageActions.deleteMessage(normalizePhone(phone), chatId, messageKey);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1044,7 +1044,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.reactToMessage(validation.session.sock, chatId, messageKey, emoji);
+      const result = await messageActions.reactToMessage(normalizePhone(phone), chatId, messageKey, emoji);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1058,7 +1058,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.editMessage(validation.session.sock, chatId, messageKey, newText);
+      const result = await messageActions.editMessage(normalizePhone(phone), chatId, messageKey, newText);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1072,7 +1072,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.starMessage(validation.session.sock, chatId, messageKey, star);
+      const result = await messageActions.starMessage(normalizePhone(phone), chatId, messageKey, star);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1086,7 +1086,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.downloadMedia(validation.session.sock, messageKey);
+      const result = await messageActions.downloadMedia(normalizePhone(phone), messageKey);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1100,7 +1100,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendBroadcastMessage(validation.session.sock, recipients, message);
+      const result = await messageActions.sendBroadcastMessage(normalizePhone(phone), recipients, message);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1149,7 +1149,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await presenceActions.updatePresence(validation.session.sock, chatId, presence);
+      const result = await presenceActions.updatePresence(normalizePhone(phone), chatId, presence);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1163,7 +1163,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await presenceActions.subscribeToPresence(validation.session.sock, contactId);
+      const result = await presenceActions.subscribeToPresence(normalizePhone(phone), contactId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1205,7 +1205,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await profileActions.updateProfileName(validation.session.sock, name);
+      const result = await profileActions.updateProfileName(normalizePhone(phone), name);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1219,7 +1219,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await profileActions.updateProfileStatus(validation.session.sock, status);
+      const result = await profileActions.updateProfileStatus(normalizePhone(phone), status);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1233,7 +1233,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await profileActions.updateProfilePicture(validation.session.sock, imageUrl);
+      const result = await profileActions.updateProfilePicture(normalizePhone(phone), imageUrl);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1247,7 +1247,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await profileActions.removeProfilePicture(validation.session.sock);
+      const result = await profileActions.removeProfilePicture(normalizePhone(phone));
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
