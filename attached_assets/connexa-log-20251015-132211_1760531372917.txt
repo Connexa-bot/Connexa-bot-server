@@ -1,0 +1,5207 @@
+[0;32m✓ jq found - responses will be formatted[0m
+[0;34m
+╔════════════════════════════════════════════╗
+║  🧪 ConnexaBot API Comprehensive Testing  ║
+╔════════════════════════════════════════════╝
+║
+║  Base URL: http://widespread-chicky-connexa-hub-afd02d40.koyeb.app
+║  Phone: 2349041648144
+║  Test Recipient: 2349041648144@s.whatsapp.net
+║
+╚════════════════════════════════════════════
+[0m
+[1;33mLogging to:[0m ./logs/test_2025-10-15_132211.log
+
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m📊 SECTION 1: HEALTH & CONNECTION[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m1.1 Server Health Check...[0m
+[0;34mRequest: GET http://widespread-chicky-connexa-hub-afd02d40.koyeb.app/health[0m
+[0;34mRaw Response (first 200 chars):[0m {"status":"ok","uptime":1481.431207015,"timestamp":"2025-10-15T12:22:12.931Z","serverUrl":"https://widespread-chicky-connexa-hub-afd02d40.koyeb.app/"}
+{
+  "status": "ok",
+  "uptime": 1481.431207015,
+  "timestamp": "2025-10-15T12:22:12.931Z",
+  "serverUrl": "https://widespread-chicky-connexa-hub-afd02d40.koyeb.app/"
+}
+
+[1;33m1.2 API Health Check...[0m
+{
+  "status": "ok",
+  "uptime": 1481.970893535,
+  "timestamp": "2025-10-15T12:22:13.471Z",
+  "activeSessions": 0
+}
+
+[1;33m1.3 OpenAI Connection Status...[0m
+{
+  "connected": true,
+  "configured": true,
+  "status": "active",
+  "message": "OpenAI API is connected and ready"
+}
+
+[1;33m1.4 WhatsApp Connect...[0m
+{
+  "success": true,
+  "qrCode": "2@/6moYUfvMbUb8JVU7PHh2TCIJGSJYZoQWvxZgB32WPyiHsC5LJZ7ioK8EfAPUONMspdcEgrRfBwRWblc0xNSqaMXeyrRBK2ccHk=,G1qO728ys3AQTjfEHyyy3tHdOSD4Z8Wi469dBpz1LjU=,TCgMrvkjuot6FelWgLr68Ab6jU30mSM+ehIr0gNEgxk=,c2tCHHLOV/N01Xge9sUzFe6FYXttLwEwr500qyuoVfk=",
+  "linkCode": null,
+  "message": "Scan QR code or use link code",
+  "connected": false
+}
+
+[1;33m1.5 Connection Status...[0m
+{
+  "connected": false,
+  "status": "waiting",
+  "authenticated": false,
+  "ready": false,
+  "isConnected": false,
+  "qrCode": "2@/6moYUfvMbUb8JVU7PHh2TCIJGSJYZoQWvxZgB32WPyiHsC5LJZ7ioK8EfAPUONMspdcEgrRfBwRWblc0xNSqaMXeyrRBK2ccHk=,G1qO728ys3AQTjfEHyyy3tHdOSD4Z8Wi469dBpz1LjU=,TCgMrvkjuot6FelWgLr68Ab6jU30mSM+ehIr0gNEgxk=,c2tCHHLOV/N01Xge9sUzFe6FYXttLwEwr500qyuoVfk=",
+  "linkCode": "CHANFTLG",
+  "user": null,
+  "phone": "2349041648144",
+  "error": null
+}
+
+[1;33m⏳ Please scan the QR code or use the linking code shown above[0m
+[1;33m📱 Enter the pairing code in WhatsApp: Linked Devices > Link a Device > Link with phone number[0m
+
+[0;32mPress ENTER after you have successfully linked your device...[0m
+
+[1;33mVerifying connection...[0m
+{
+  "connected": true,
+  "status": "connected",
+  "authenticated": true,
+  "ready": true,
+  "isConnected": true,
+  "qrCode": null,
+  "linkCode": null,
+  "user": {
+    "id": "2349041648144:20@s.whatsapp.net"
+  },
+  "phone": "2349041648144",
+  "error": null
+}
+[0;32m✅ Connection verified![0m
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m📥 SECTION 2: DATA RETRIEVAL[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m2.1 Get Chats...[0m
+[0;34m⏳ Waiting for chats to sync...[0m
+[1;33m⚠ No chats found yet. This is normal for new connections.[0m
+[1;33m💡 You may need to send a message first to populate the chat list.[0m
+[1;33m⚠ No valid individual chats found, using default recipient[0m
+
+[1;33m2.2 Get Contacts...[0m
+[0;34m⏳ Waiting for contacts to sync...[0m
+{
+  "success": true,
+  "contacts": [
+    {
+      "jid": "13135550002@s.whatsapp.net",
+      "name": "Meta AI",
+      "notify": "Meta AI",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347089378090@s.whatsapp.net",
+      "name": "Pastr wife",
+      "notify": "deborahnwanneka1994",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347077967983@s.whatsapp.net",
+      "name": "Nne",
+      "notify": "Boo😉",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348100583499@s.whatsapp.net",
+      "name": "Eunice Owutu",
+      "notify": "ASA Odogwu",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348128785335@s.whatsapp.net",
+      "name": "Mercy🤍",
+      "notify": "Mercy🤍",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348114875136@s.whatsapp.net",
+      "name": "onuorahmiracle92",
+      "notify": "onuorahmiracle92",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349061199841@s.whatsapp.net",
+      "name": "Crusher Church Customer",
+      "notify": "Ash",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349123958727@s.whatsapp.net",
+      "name": "Paparazzi",
+      "notify": "Paparazzi",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349137517405@s.whatsapp.net",
+      "name": "Honey Drop's Into Wealth",
+      "notify": "Honey Drop's Into Wealth",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349042377075@s.whatsapp.net",
+      "name": "Rebecca💝",
+      "notify": "Rebecca💝",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349155189680@s.whatsapp.net",
+      "name": "Ajoke",
+      "notify": "Faith Ayomide",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348057434358@s.whatsapp.net",
+      "name": "KEWZY FUNDZ 🤡",
+      "notify": "KEWZY FUNDZ 🤡",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347046545005@s.whatsapp.net",
+      "name": "Saudat",
+      "notify": "Saudyy",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349169389772@s.whatsapp.net",
+      "name": "mom",
+      "notify": "🥰🥰",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347070432576@s.whatsapp.net",
+      "name": "Ruth Otakuhi",
+      "notify": "Smart angel",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347064640384@s.whatsapp.net",
+      "name": "Arc Austine",
+      "notify": "austine989",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348037774745@s.whatsapp.net",
+      "name": "New Customer Shettima",
+      "notify": "Benjamin Akor",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349065034471@s.whatsapp.net",
+      "name": "blessing zam zam",
+      "notify": "Mary David",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349124508935@s.whatsapp.net",
+      "name": "silaschristiana76",
+      "notify": "Christyy🥰🥰🥰",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349155210346@s.whatsapp.net",
+      "name": "itunuoluwa",
+      "notify": "Dr Adewale ogunrinde",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348074779502@s.whatsapp.net",
+      "name": "Mary Ene🥰😍🥰",
+      "notify": "Mary Ene🥰😍🥰",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349037974162@s.whatsapp.net",
+      "name": "Cheenirayo🌸",
+      "notify": "Cheenirayo🌸",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348142932808@s.whatsapp.net",
+      "name": "ihuomannamdi65",
+      "notify": "ihuomannamdi65",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349025322871@s.whatsapp.net",
+      "name": "Damilare",
+      "notify": "Damilare",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348104522188@s.whatsapp.net",
+      "name": "collinsnnaji727@gmail.com",
+      "notify": "collinsnnaji727@gmail.com",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348123267962@s.whatsapp.net",
+      "name": "Success Shettima",
+      "notify": "Śüçç  èśś",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349035259087@s.whatsapp.net",
+      "name": "DuduYegbe",
+      "notify": "Christy❤️💋",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347041752120@s.whatsapp.net",
+      "name": "Juliet",
+      "notify": "O❤️h❤️u❤️t❤️u❤️l❤️e❤️n❤️e ❤️",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347062385443@s.whatsapp.net",
+      "name": "Happiness Ajaokuta",
+      "notify": "johnhappiness225",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348085950760@s.whatsapp.net",
+      "name": "My Sweetheart",
+      "notify": "Peculiar",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349162855461@s.whatsapp.net",
+      "name": "Sunday Lokoja",
+      "notify": "too much::",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347081433243@s.whatsapp.net",
+      "name": "Victor Ajaokuta",
+      "notify": "victor Joel",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347013384711@s.whatsapp.net",
+      "name": "Faniwa Hannah",
+      "notify": "hannahmoses172",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349040402020@s.whatsapp.net",
+      "name": "''s''a",
+      "notify": "ogbupeace352",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348140407557@s.whatsapp.net",
+      "name": "Ada Vela",
+      "notify": "𝓓𝓘𝓓𝓘𝓘𝓘😌😘🧚‍♂️",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349043845616@s.whatsapp.net",
+      "name": "Damilola mi",
+      "notify": "Ololade❤️🥰💋",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348135499007@s.whatsapp.net",
+      "name": "happiness",
+      "notify": "happiness",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347042514136@s.whatsapp.net",
+      "name": "Pammy",
+      "notify": "Pammy",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348141140436@s.whatsapp.net",
+      "name": "Heart",
+      "notify": "Beeebah🫅🫅🥰🥰",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348120075552@s.whatsapp.net",
+      "name": "GRACE BENNETH",
+      "notify": "GRACE BENNETH",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348156202408@s.whatsapp.net",
+      "name": "Magare8",
+      "notify": "Maggie 🌹",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349165978730@s.whatsapp.net",
+      "name": "Blessing Ganaja",
+      "notify": "Eze Blessing",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349032160313@s.whatsapp.net",
+      "name": "M C C",
+      "notify": "M C C",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348164536729@s.whatsapp.net",
+      "name": "Esther Jacob ❤️❤️",
+      "notify": "Esther Jacob ❤️❤️",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347044137088@s.whatsapp.net",
+      "name": "My Lunar",
+      "notify": "favourfavour7079",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348062460316@s.whatsapp.net",
+      "name": "Nnamdi Hanson",
+      "notify": "Nnamdi Hanson",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "0@s.whatsapp.net",
+      "name": "WhatsApp",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347065130726@s.whatsapp.net",
+      "name": "Ayoolami1",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347062287946@s.whatsapp.net",
+      "name": "Ngozi nwajagu",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348168363521@s.whatsapp.net",
+      "name": "Mrs E Ejimaji",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349124247637@s.whatsapp.net",
+      "name": "2349124247637",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347034548503@s.whatsapp.net",
+      "name": "Hope",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "18002428478@s.whatsapp.net",
+      "name": "Chat Gpt",
+      "notify": "",
+      "verifiedName": "ChatGPT",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349154347487@s.whatsapp.net",
+      "name": "Lenient",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349163175009@s.whatsapp.net",
+      "name": "2349163175009",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349063432803@s.whatsapp.net",
+      "name": "2349063432803",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349051136188@s.whatsapp.net",
+      "name": "Christiana Precious",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348052332058@s.whatsapp.net",
+      "name": "grace",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348113054793@s.whatsapp.net",
+      "name": "Abc2",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348105602600@s.whatsapp.net",
+      "name": "aishat kabawa",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "22969774062@s.whatsapp.net",
+      "name": "Fanou Hélène Kemi",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348081443275@s.whatsapp.net",
+      "name": "Elek2",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349038644973@s.whatsapp.net",
+      "name": "Hussaina",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349168370819@s.whatsapp.net",
+      "name": "ummi Galilee",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348149303404@s.whatsapp.net",
+      "name": "Norbert P. o. p",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347081842067@s.whatsapp.net",
+      "name": "+2347081842067",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348166649984@s.whatsapp.net",
+      "name": "Heartbeat💓1",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348126817612@s.whatsapp.net",
+      "name": "Ranti akinade",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "85246408220@s.whatsapp.net",
+      "name": "INTERLINX",
+      "notify": "",
+      "verifiedName": "INTERLINX",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348147911067@s.whatsapp.net",
+      "name": "My Smallie",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "31645855058@s.whatsapp.net",
+      "name": "31645855058",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347042275876@s.whatsapp.net",
+      "name": "Luiz",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "905374319083@s.whatsapp.net",
+      "name": "905374319083",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "33649637368@s.whatsapp.net",
+      "name": "33649637368",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "905388810874@s.whatsapp.net",
+      "name": "905388810874",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347039427295@s.whatsapp.net",
+      "name": "2347039427295",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923493319105@s.whatsapp.net",
+      "name": "923493319105",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348076996298@s.whatsapp.net",
+      "name": "Perpetual",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923140587500@s.whatsapp.net",
+      "name": "923140587500",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923439883021@s.whatsapp.net",
+      "name": "923439883021",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923037390442@s.whatsapp.net",
+      "name": "923037390442",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923146414645@s.whatsapp.net",
+      "name": "923146414645",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923017521055@s.whatsapp.net",
+      "name": "923017521055",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923347381150@s.whatsapp.net",
+      "name": "923347381150",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923315143133@s.whatsapp.net",
+      "name": "923315143133",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923287458644@s.whatsapp.net",
+      "name": "923287458644",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923065777084@s.whatsapp.net",
+      "name": "923065777084",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347079888456@s.whatsapp.net",
+      "name": "2347079888456",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349049001617@s.whatsapp.net",
+      "name": "2349049001617",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347037499705@s.whatsapp.net",
+      "name": "2347037499705",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349073064940@s.whatsapp.net",
+      "name": "Speedaf Logistics Nigeria Limited",
+      "notify": "",
+      "verifiedName": "Speedaf Logistics Nigeria Limited",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349033000001@s.whatsapp.net",
+      "name": "Zigi – MTN Chatbot",
+      "notify": "",
+      "verifiedName": "Zigi – MTN Chatbot",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348137642776@s.whatsapp.net",
+      "name": "2348137642776",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349151350977@s.whatsapp.net",
+      "name": "2349151350977",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349133389227@s.whatsapp.net",
+      "name": "2349133389227",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349132997498@s.whatsapp.net",
+      "name": "2349132997498",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349011940986@s.whatsapp.net",
+      "name": "2349011940986",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348167803424@s.whatsapp.net",
+      "name": "2348167803424",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348139690609@s.whatsapp.net",
+      "name": "2348139690609",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348139134725@s.whatsapp.net",
+      "name": "2348139134725",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348136517502@s.whatsapp.net",
+      "name": "2348136517502",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348134515113@s.whatsapp.net",
+      "name": "2348134515113",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348118858978@s.whatsapp.net",
+      "name": "2348118858978",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348107029318@s.whatsapp.net",
+      "name": "2348107029318",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348104893038@s.whatsapp.net",
+      "name": "2348104893038",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348103504298@s.whatsapp.net",
+      "name": "2348103504298",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348102782884@s.whatsapp.net",
+      "name": "2348102782884",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348086224683@s.whatsapp.net",
+      "name": "2348086224683",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348079252556@s.whatsapp.net",
+      "name": "2348079252556",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348069058161@s.whatsapp.net",
+      "name": "2348069058161",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348036434534@s.whatsapp.net",
+      "name": "2348036434534",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347073633403@s.whatsapp.net",
+      "name": "2347073633403",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347060584150@s.whatsapp.net",
+      "name": "2347060584150",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347041290154@s.whatsapp.net",
+      "name": "2347041290154",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347039933752@s.whatsapp.net",
+      "name": "2347039933752",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347035968478@s.whatsapp.net",
+      "name": "2347035968478",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347032114861@s.whatsapp.net",
+      "name": "2347032114861",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "22948979214@s.whatsapp.net",
+      "name": "22948979214",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349028559003@s.whatsapp.net",
+      "name": "2349028559003",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349068287533@s.whatsapp.net",
+      "name": "2349068287533",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347041961101@s.whatsapp.net",
+      "name": "2347041961101",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347075309576@s.whatsapp.net",
+      "name": "2347075309576",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349027212454@s.whatsapp.net",
+      "name": "2349027212454",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347030910587@s.whatsapp.net",
+      "name": "2347030910587",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348148970283@s.whatsapp.net",
+      "name": "2348148970283",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347032444160@s.whatsapp.net",
+      "name": "2347032444160",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348155080861@s.whatsapp.net",
+      "name": "2348155080861",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347011177062@s.whatsapp.net",
+      "name": "2347011177062",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349035505759@s.whatsapp.net",
+      "name": "2349035505759",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348054291954@s.whatsapp.net",
+      "name": "2348054291954",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349065368287@s.whatsapp.net",
+      "name": "2349065368287",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347040170107@s.whatsapp.net",
+      "name": "2347040170107",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347073048686@s.whatsapp.net",
+      "name": "2347073048686",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349130760065@s.whatsapp.net",
+      "name": "2349130760065",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349036325798@s.whatsapp.net",
+      "name": "2349036325798",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348107051672@s.whatsapp.net",
+      "name": "2348107051672",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348023714010@s.whatsapp.net",
+      "name": "2348023714010",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347044004131@s.whatsapp.net",
+      "name": "2347044004131",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348122805725@s.whatsapp.net",
+      "name": "2348122805725",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349028798294@s.whatsapp.net",
+      "name": "2349028798294",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349166028663@s.whatsapp.net",
+      "name": "2349166028663",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348165409759@s.whatsapp.net",
+      "name": "2348165409759",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348073357416@s.whatsapp.net",
+      "name": "2348073357416",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349159022041@s.whatsapp.net",
+      "name": "2349159022041",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349157966780@s.whatsapp.net",
+      "name": "2349157966780",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349155516758@s.whatsapp.net",
+      "name": "2349155516758",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349073208146@s.whatsapp.net",
+      "name": "2349073208146",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349072610078@s.whatsapp.net",
+      "name": "2349072610078",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349059934796@s.whatsapp.net",
+      "name": "2349059934796",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349036592187@s.whatsapp.net",
+      "name": "2349036592187",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349012781524@s.whatsapp.net",
+      "name": "2349012781524",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348167067689@s.whatsapp.net",
+      "name": "2348167067689",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348165280158@s.whatsapp.net",
+      "name": "2348165280158",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348146039380@s.whatsapp.net",
+      "name": "2348146039380",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348143405789@s.whatsapp.net",
+      "name": "2348143405789",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348140955497@s.whatsapp.net",
+      "name": "2348140955497",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348104295299@s.whatsapp.net",
+      "name": "2348104295299",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348069618528@s.whatsapp.net",
+      "name": "2348069618528",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348067092750@s.whatsapp.net",
+      "name": "2348067092750",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348035680820@s.whatsapp.net",
+      "name": "2348035680820",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348032565410@s.whatsapp.net",
+      "name": "2348032565410",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348028320919@s.whatsapp.net",
+      "name": "2348028320919",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347056544835@s.whatsapp.net",
+      "name": "2347056544835",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347048395152@s.whatsapp.net",
+      "name": "2347048395152",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347039627117@s.whatsapp.net",
+      "name": "2347039627117",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347025751099@s.whatsapp.net",
+      "name": "2347025751099",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347065775152@s.whatsapp.net",
+      "name": "2347065775152",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347061609575@s.whatsapp.net",
+      "name": "2347061609575",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "8618171815909@s.whatsapp.net",
+      "name": "8618171815909",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348036215527@s.whatsapp.net",
+      "name": "2348036215527",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348168802558@s.whatsapp.net",
+      "name": "2348168802558",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347048302988@s.whatsapp.net",
+      "name": "2347048302988",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347034986014@s.whatsapp.net",
+      "name": "2347034986014",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347046800884@s.whatsapp.net",
+      "name": "2347046800884",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349066549050@s.whatsapp.net",
+      "name": "2349066549050",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348024269944@s.whatsapp.net",
+      "name": "2348024269944",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349167771332@s.whatsapp.net",
+      "name": "2349167771332",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349166317774@s.whatsapp.net",
+      "name": "2349166317774",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349159280430@s.whatsapp.net",
+      "name": "2349159280430",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349134392867@s.whatsapp.net",
+      "name": "2349134392867",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349133439795@s.whatsapp.net",
+      "name": "2349133439795",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349066765814@s.whatsapp.net",
+      "name": "2349066765814",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349064649145@s.whatsapp.net",
+      "name": "2349064649145",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349058849276@s.whatsapp.net",
+      "name": "2349058849276",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349054919719@s.whatsapp.net",
+      "name": "2349054919719",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349030619803@s.whatsapp.net",
+      "name": "2349030619803",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349027021115@s.whatsapp.net",
+      "name": "2349027021115",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349013435925@s.whatsapp.net",
+      "name": "2349013435925",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349011310287@s.whatsapp.net",
+      "name": "2349011310287",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348169110148@s.whatsapp.net",
+      "name": "2348169110148",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348165743143@s.whatsapp.net",
+      "name": "2348165743143",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348165532914@s.whatsapp.net",
+      "name": "2348165532914",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348163442934@s.whatsapp.net",
+      "name": "2348163442934",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348138711749@s.whatsapp.net",
+      "name": "2348138711749",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348138108284@s.whatsapp.net",
+      "name": "2348138108284",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348134532779@s.whatsapp.net",
+      "name": "2348134532779",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348133943558@s.whatsapp.net",
+      "name": "2348133943558",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348130430813@s.whatsapp.net",
+      "name": "2348130430813",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348100311639@s.whatsapp.net",
+      "name": "2348100311639",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348075189661@s.whatsapp.net",
+      "name": "2348075189661",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348068687647@s.whatsapp.net",
+      "name": "2348068687647",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348066180880@s.whatsapp.net",
+      "name": "2348066180880",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348061311832@s.whatsapp.net",
+      "name": "2348061311832",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348052604168@s.whatsapp.net",
+      "name": "2348052604168",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348038283024@s.whatsapp.net",
+      "name": "2348038283024",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348036193716@s.whatsapp.net",
+      "name": "2348036193716",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347084196379@s.whatsapp.net",
+      "name": "2347084196379",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347077652537@s.whatsapp.net",
+      "name": "2347077652537",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347061641181@s.whatsapp.net",
+      "name": "2347061641181",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347054689892@s.whatsapp.net",
+      "name": "2347054689892",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347053902854@s.whatsapp.net",
+      "name": "2347053902854",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347044262240@s.whatsapp.net",
+      "name": "2347044262240",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347043369136@s.whatsapp.net",
+      "name": "2347043369136",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347041262046@s.whatsapp.net",
+      "name": "2347041262046",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347034615504@s.whatsapp.net",
+      "name": "2347034615504",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347025260869@s.whatsapp.net",
+      "name": "2347025260869",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349155180139@s.whatsapp.net",
+      "name": "2349155180139",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347036186805@s.whatsapp.net",
+      "name": "2347036186805",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347019718910@s.whatsapp.net",
+      "name": "2347019718910",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348104561666@s.whatsapp.net",
+      "name": "2348104561666",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348166206068@s.whatsapp.net",
+      "name": "2348166206068",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348101382099@s.whatsapp.net",
+      "name": "2348101382099",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349073867150@s.whatsapp.net",
+      "name": "2349073867150",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347025582217@s.whatsapp.net",
+      "name": "2347025582217",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348064243497@s.whatsapp.net",
+      "name": "2348064243497",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348124386872@s.whatsapp.net",
+      "name": "2348124386872",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347034573681@s.whatsapp.net",
+      "name": "2347034573681",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348134076863@s.whatsapp.net",
+      "name": "2348134076863",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348113218992@s.whatsapp.net",
+      "name": "2348113218992",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349012863494@s.whatsapp.net",
+      "name": "2349012863494",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348141988828@s.whatsapp.net",
+      "name": "2348141988828",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349018517768@s.whatsapp.net",
+      "name": "2349018517768",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348122579461@s.whatsapp.net",
+      "name": "2348122579461",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348108897036@s.whatsapp.net",
+      "name": "2348108897036",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349018442299@s.whatsapp.net",
+      "name": "2349018442299",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349163460899@s.whatsapp.net",
+      "name": "2349163460899",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349155048645@s.whatsapp.net",
+      "name": "2349155048645",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349162348152@s.whatsapp.net",
+      "name": "2349162348152",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349155041818@s.whatsapp.net",
+      "name": "2349155041818",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349153010877@s.whatsapp.net",
+      "name": "2349153010877",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349151522815@s.whatsapp.net",
+      "name": "2349151522815",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349137774059@s.whatsapp.net",
+      "name": "2349137774059",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349137014103@s.whatsapp.net",
+      "name": "2349137014103",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349136341236@s.whatsapp.net",
+      "name": "2349136341236",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349135497393@s.whatsapp.net",
+      "name": "2349135497393",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349132571584@s.whatsapp.net",
+      "name": "2349132571584",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349131080197@s.whatsapp.net",
+      "name": "2349131080197",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349113045961@s.whatsapp.net",
+      "name": "2349113045961",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349080244120@s.whatsapp.net",
+      "name": "2349080244120",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349079950500@s.whatsapp.net",
+      "name": "2349079950500",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349079841859@s.whatsapp.net",
+      "name": "2349079841859",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349072628182@s.whatsapp.net",
+      "name": "2349072628182",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349070748491@s.whatsapp.net",
+      "name": "2349070748491",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349068099033@s.whatsapp.net",
+      "name": "2349068099033",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349058228076@s.whatsapp.net",
+      "name": "2349058228076",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349052533100@s.whatsapp.net",
+      "name": "2349052533100",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349052137263@s.whatsapp.net",
+      "name": "2349052137263",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349041590107@s.whatsapp.net",
+      "name": "2349041590107",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349035218859@s.whatsapp.net",
+      "name": "2349035218859",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349034774078@s.whatsapp.net",
+      "name": "2349034774078",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349032625731@s.whatsapp.net",
+      "name": "2349032625731",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349031232125@s.whatsapp.net",
+      "name": "2349031232125",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349030537391@s.whatsapp.net",
+      "name": "2349030537391",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349028107955@s.whatsapp.net",
+      "name": "2349028107955",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349026819882@s.whatsapp.net",
+      "name": "2349026819882",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349023002367@s.whatsapp.net",
+      "name": "2349023002367",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349013970343@s.whatsapp.net",
+      "name": "2349013970343",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349013166643@s.whatsapp.net",
+      "name": "2349013166643",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348168802123@s.whatsapp.net",
+      "name": "2348168802123",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348165689183@s.whatsapp.net",
+      "name": "2348165689183",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348162942951@s.whatsapp.net",
+      "name": "2348162942951",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348162090036@s.whatsapp.net",
+      "name": "2348162090036",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348160802864@s.whatsapp.net",
+      "name": "2348160802864",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348160618233@s.whatsapp.net",
+      "name": "2348160618233",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348150237971@s.whatsapp.net",
+      "name": "2348150237971",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348148375257@s.whatsapp.net",
+      "name": "2348148375257",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348148008098@s.whatsapp.net",
+      "name": "2348148008098",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348147666141@s.whatsapp.net",
+      "name": "2348147666141",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348142986441@s.whatsapp.net",
+      "name": "2348142986441",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348141537834@s.whatsapp.net",
+      "name": "2348141537834",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348131885648@s.whatsapp.net",
+      "name": "2348131885648",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348118429102@s.whatsapp.net",
+      "name": "2348118429102",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348116264922@s.whatsapp.net",
+      "name": "2348116264922",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348109755136@s.whatsapp.net",
+      "name": "2348109755136",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348109563566@s.whatsapp.net",
+      "name": "2348109563566",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348108281826@s.whatsapp.net",
+      "name": "2348108281826",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348104194670@s.whatsapp.net",
+      "name": "2348104194670",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348102146996@s.whatsapp.net",
+      "name": "2348102146996",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348100262933@s.whatsapp.net",
+      "name": "2348100262933",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348089795888@s.whatsapp.net",
+      "name": "2348089795888",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348079541629@s.whatsapp.net",
+      "name": "2348079541629",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348076927917@s.whatsapp.net",
+      "name": "2348076927917",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348075121516@s.whatsapp.net",
+      "name": "2348075121516",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348074839131@s.whatsapp.net",
+      "name": "2348074839131",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348069943161@s.whatsapp.net",
+      "name": "2348069943161",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348069606467@s.whatsapp.net",
+      "name": "2348069606467",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348063836447@s.whatsapp.net",
+      "name": "2348063836447",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348062960163@s.whatsapp.net",
+      "name": "2348062960163",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348062486847@s.whatsapp.net",
+      "name": "2348062486847",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348061987043@s.whatsapp.net",
+      "name": "2348061987043",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348061676043@s.whatsapp.net",
+      "name": "2348061676043",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348060552214@s.whatsapp.net",
+      "name": "2348060552214",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348058500927@s.whatsapp.net",
+      "name": "2348058500927",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348055921871@s.whatsapp.net",
+      "name": "2348055921871",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348055821188@s.whatsapp.net",
+      "name": "2348055821188",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348055089801@s.whatsapp.net",
+      "name": "2348055089801",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348052338271@s.whatsapp.net",
+      "name": "2348052338271",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348051953521@s.whatsapp.net",
+      "name": "2348051953521",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348051767638@s.whatsapp.net",
+      "name": "2348051767638",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348039631551@s.whatsapp.net",
+      "name": "2348039631551",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348036263912@s.whatsapp.net",
+      "name": "2348036263912",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348034500308@s.whatsapp.net",
+      "name": "2348034500308",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348034104649@s.whatsapp.net",
+      "name": "2348034104649",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348034073755@s.whatsapp.net",
+      "name": "2348034073755",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348033509250@s.whatsapp.net",
+      "name": "2348033509250",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348032468459@s.whatsapp.net",
+      "name": "2348032468459",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348028339222@s.whatsapp.net",
+      "name": "2348028339222",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347084936820@s.whatsapp.net",
+      "name": "2347084936820",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347069104970@s.whatsapp.net",
+      "name": "2347069104970",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347068181662@s.whatsapp.net",
+      "name": "2347068181662",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347066590417@s.whatsapp.net",
+      "name": "2347066590417",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347062944935@s.whatsapp.net",
+      "name": "2347062944935",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347060732696@s.whatsapp.net",
+      "name": "2347060732696",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347056509372@s.whatsapp.net",
+      "name": "2347056509372",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347055793481@s.whatsapp.net",
+      "name": "2347055793481",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347053881287@s.whatsapp.net",
+      "name": "2347053881287",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347041613395@s.whatsapp.net",
+      "name": "2347041613395",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347039639537@s.whatsapp.net",
+      "name": "2347039639537",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347038512592@s.whatsapp.net",
+      "name": "2347038512592",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347036239899@s.whatsapp.net",
+      "name": "2347036239899",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347035795603@s.whatsapp.net",
+      "name": "2347035795603",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347033072179@s.whatsapp.net",
+      "name": "2347033072179",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347025176205@s.whatsapp.net",
+      "name": "2347025176205",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347014580253@s.whatsapp.net",
+      "name": "2347014580253",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347011051102@s.whatsapp.net",
+      "name": "2347011051102",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349168213825@s.whatsapp.net",
+      "name": "2349168213825",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349166569532@s.whatsapp.net",
+      "name": "2349166569532",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349164225442@s.whatsapp.net",
+      "name": "2349164225442",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349161275483@s.whatsapp.net",
+      "name": "2349161275483",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349160748197@s.whatsapp.net",
+      "name": "2349160748197",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349160141663@s.whatsapp.net",
+      "name": "2349160141663",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349159770790@s.whatsapp.net",
+      "name": "2349159770790",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349156269858@s.whatsapp.net",
+      "name": "2349156269858",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349154746854@s.whatsapp.net",
+      "name": "2349154746854",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349151900941@s.whatsapp.net",
+      "name": "2349151900941",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349136643016@s.whatsapp.net",
+      "name": "2349136643016",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349134815951@s.whatsapp.net",
+      "name": "2349134815951",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349134523738@s.whatsapp.net",
+      "name": "2349134523738",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349134113162@s.whatsapp.net",
+      "name": "2349134113162",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349133649779@s.whatsapp.net",
+      "name": "2349133649779",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349132177876@s.whatsapp.net",
+      "name": "2349132177876",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349130809228@s.whatsapp.net",
+      "name": "2349130809228",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349127571082@s.whatsapp.net",
+      "name": "2349127571082",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349124336305@s.whatsapp.net",
+      "name": "2349124336305",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349123031399@s.whatsapp.net",
+      "name": "2349123031399",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349121050792@s.whatsapp.net",
+      "name": "2349121050792",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349115796524@s.whatsapp.net",
+      "name": "2349115796524",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349074924200@s.whatsapp.net",
+      "name": "2349074924200",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349074883500@s.whatsapp.net",
+      "name": "2349074883500",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349074561236@s.whatsapp.net",
+      "name": "2349074561236",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349072201144@s.whatsapp.net",
+      "name": "2349072201144",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349071510609@s.whatsapp.net",
+      "name": "2349071510609",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349070370152@s.whatsapp.net",
+      "name": "2349070370152",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349069528853@s.whatsapp.net",
+      "name": "2349069528853",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349064953165@s.whatsapp.net",
+      "name": "2349064953165",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349064663232@s.whatsapp.net",
+      "name": "2349064663232",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349064157714@s.whatsapp.net",
+      "name": "2349064157714",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349064064288@s.whatsapp.net",
+      "name": "2349064064288",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349061658212@s.whatsapp.net",
+      "name": "2349061658212",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349052582568@s.whatsapp.net",
+      "name": "2349052582568",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349050075648@s.whatsapp.net",
+      "name": "2349050075648",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349048002232@s.whatsapp.net",
+      "name": "2349048002232",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349039207256@s.whatsapp.net",
+      "name": "2349039207256",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349039106744@s.whatsapp.net",
+      "name": "2349039106744",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349038062680@s.whatsapp.net",
+      "name": "2349038062680",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349034802562@s.whatsapp.net",
+      "name": "2349034802562",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349033405351@s.whatsapp.net",
+      "name": "2349033405351",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349033374654@s.whatsapp.net",
+      "name": "2349033374654",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349033132238@s.whatsapp.net",
+      "name": "2349033132238",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349032448118@s.whatsapp.net",
+      "name": "2349032448118",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349028907740@s.whatsapp.net",
+      "name": "2349028907740",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349028712881@s.whatsapp.net",
+      "name": "2349028712881",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349026846691@s.whatsapp.net",
+      "name": "2349026846691",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349021829993@s.whatsapp.net",
+      "name": "2349021829993",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349017544475@s.whatsapp.net",
+      "name": "2349017544475",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349016180274@s.whatsapp.net",
+      "name": "2349016180274",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349016047504@s.whatsapp.net",
+      "name": "2349016047504",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348169250972@s.whatsapp.net",
+      "name": "2348169250972",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348167304614@s.whatsapp.net",
+      "name": "2348167304614",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348165160556@s.whatsapp.net",
+      "name": "2348165160556",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348164485671@s.whatsapp.net",
+      "name": "2348164485671",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348163995281@s.whatsapp.net",
+      "name": "2348163995281",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348162923684@s.whatsapp.net",
+      "name": "2348162923684",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348152249574@s.whatsapp.net",
+      "name": "2348152249574",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348150787809@s.whatsapp.net",
+      "name": "2348150787809",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348147108312@s.whatsapp.net",
+      "name": "2348147108312",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348146977066@s.whatsapp.net",
+      "name": "2348146977066",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348146335338@s.whatsapp.net",
+      "name": "2348146335338",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348144693886@s.whatsapp.net",
+      "name": "2348144693886",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348144461424@s.whatsapp.net",
+      "name": "2348144461424",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348144216228@s.whatsapp.net",
+      "name": "2348144216228",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348144181150@s.whatsapp.net",
+      "name": "2348144181150",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348139457012@s.whatsapp.net",
+      "name": "2348139457012",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348139063442@s.whatsapp.net",
+      "name": "2348139063442",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348138378181@s.whatsapp.net",
+      "name": "2348138378181",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348134566250@s.whatsapp.net",
+      "name": "2348134566250",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348133949554@s.whatsapp.net",
+      "name": "2348133949554",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348133382380@s.whatsapp.net",
+      "name": "2348133382380",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348133248228@s.whatsapp.net",
+      "name": "2348133248228",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348131358227@s.whatsapp.net",
+      "name": "2348131358227",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348131161603@s.whatsapp.net",
+      "name": "2348131161603",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348127754716@s.whatsapp.net",
+      "name": "2348127754716",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348132684671@s.whatsapp.net",
+      "name": "2348132684671",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348112007789@s.whatsapp.net",
+      "name": "2348112007789",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348110151965@s.whatsapp.net",
+      "name": "2348110151965",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348108435403@s.whatsapp.net",
+      "name": "2348108435403",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348107622271@s.whatsapp.net",
+      "name": "2348107622271",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348106352021@s.whatsapp.net",
+      "name": "2348106352021",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348081050893@s.whatsapp.net",
+      "name": "2348081050893",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348080705175@s.whatsapp.net",
+      "name": "2348080705175",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348073447467@s.whatsapp.net",
+      "name": "2348073447467",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348072101417@s.whatsapp.net",
+      "name": "2348072101417",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348069093600@s.whatsapp.net",
+      "name": "2348069093600",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348066693646@s.whatsapp.net",
+      "name": "2348066693646",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348065146284@s.whatsapp.net",
+      "name": "2348065146284",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348065142379@s.whatsapp.net",
+      "name": "2348065142379",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348064465420@s.whatsapp.net",
+      "name": "2348064465420",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348063376471@s.whatsapp.net",
+      "name": "2348063376471",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348062516535@s.whatsapp.net",
+      "name": "2348062516535",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348061257986@s.whatsapp.net",
+      "name": "2348061257986",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348052904181@s.whatsapp.net",
+      "name": "2348052904181",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348039731523@s.whatsapp.net",
+      "name": "2348039731523",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348038652256@s.whatsapp.net",
+      "name": "2348038652256",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348036670647@s.whatsapp.net",
+      "name": "2348036670647",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348030915239@s.whatsapp.net",
+      "name": "2348030915239",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348036173049@s.whatsapp.net",
+      "name": "2348036173049",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348036015051@s.whatsapp.net",
+      "name": "2348036015051",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348034529053@s.whatsapp.net",
+      "name": "2348034529053",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348033310960@s.whatsapp.net",
+      "name": "2348033310960",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348031387994@s.whatsapp.net",
+      "name": "2348031387994",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348028783964@s.whatsapp.net",
+      "name": "2348028783964",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348022864146@s.whatsapp.net",
+      "name": "2348022864146",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347088003045@s.whatsapp.net",
+      "name": "2347088003045",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347085652821@s.whatsapp.net",
+      "name": "2347085652821",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347078080477@s.whatsapp.net",
+      "name": "2347078080477",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347070428468@s.whatsapp.net",
+      "name": "2347070428468",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347069789507@s.whatsapp.net",
+      "name": "2347069789507",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347069132457@s.whatsapp.net",
+      "name": "2347069132457",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347067393304@s.whatsapp.net",
+      "name": "2347067393304",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347067295796@s.whatsapp.net",
+      "name": "2347067295796",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347066904901@s.whatsapp.net",
+      "name": "2347066904901",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347063030129@s.whatsapp.net",
+      "name": "2347063030129",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347062270738@s.whatsapp.net",
+      "name": "2347062270738",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347061270400@s.whatsapp.net",
+      "name": "2347061270400",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347052582021@s.whatsapp.net",
+      "name": "2347052582021",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347052222955@s.whatsapp.net",
+      "name": "2347052222955",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347051766905@s.whatsapp.net",
+      "name": "2347051766905",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347038740358@s.whatsapp.net",
+      "name": "2347038740358",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347038034332@s.whatsapp.net",
+      "name": "2347038034332",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347037678185@s.whatsapp.net",
+      "name": "2347037678185",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347043765622@s.whatsapp.net",
+      "name": "2347043765622",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347035938089@s.whatsapp.net",
+      "name": "2347035938089",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347035094600@s.whatsapp.net",
+      "name": "2347035094600",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347034544818@s.whatsapp.net",
+      "name": "2347034544818",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347034288728@s.whatsapp.net",
+      "name": "2347034288728",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347032744090@s.whatsapp.net",
+      "name": "2347032744090",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347032221392@s.whatsapp.net",
+      "name": "2347032221392",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347032061532@s.whatsapp.net",
+      "name": "2347032061532",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347031371612@s.whatsapp.net",
+      "name": "2347031371612",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347034490179@s.whatsapp.net",
+      "name": "2347034490179",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347025467100@s.whatsapp.net",
+      "name": "2347025467100",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347025039760@s.whatsapp.net",
+      "name": "2347025039760",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "12406593437@s.whatsapp.net",
+      "name": "12406593437",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349129742716@s.whatsapp.net",
+      "name": "2349129742716",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349025761932@s.whatsapp.net",
+      "name": "2349025761932",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348057393913@s.whatsapp.net",
+      "name": "2348057393913",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347068094084@s.whatsapp.net",
+      "name": "2347068094084",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347047037382@s.whatsapp.net",
+      "name": "2347047037382",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348075171409@s.whatsapp.net",
+      "name": "2348075171409",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348167000725@s.whatsapp.net",
+      "name": "2348167000725",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348074193193@s.whatsapp.net",
+      "name": "2348074193193",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348107634245@s.whatsapp.net",
+      "name": "2348107634245",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349155051484@s.whatsapp.net",
+      "name": "2349155051484",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349150565877@s.whatsapp.net",
+      "name": "2349150565877",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348155981024@s.whatsapp.net",
+      "name": "2348155981024",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349038468221@s.whatsapp.net",
+      "name": "2349038468221",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347080242431@s.whatsapp.net",
+      "name": "2347080242431",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349069381226@s.whatsapp.net",
+      "name": "2349069381226",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348055917307@s.whatsapp.net",
+      "name": "2348055917307",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348168614557@s.whatsapp.net",
+      "name": "2348168614557",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347025528847@s.whatsapp.net",
+      "name": "2347025528847",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349163285002@s.whatsapp.net",
+      "name": "2349163285002",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349046375002@s.whatsapp.net",
+      "name": "2349046375002",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349169127871@s.whatsapp.net",
+      "name": "2349169127871",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349154441855@s.whatsapp.net",
+      "name": "2349154441855",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348115270826@s.whatsapp.net",
+      "name": "2348115270826",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347047074269@s.whatsapp.net",
+      "name": "2347047074269",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348060270697@s.whatsapp.net",
+      "name": "2348060270697",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349038027986@s.whatsapp.net",
+      "name": "2349038027986",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347018194526@s.whatsapp.net",
+      "name": "2347018194526",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348152502508@s.whatsapp.net",
+      "name": "2348152502508",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347035446072@s.whatsapp.net",
+      "name": "2347035446072",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348076100565@s.whatsapp.net",
+      "name": "2348076100565",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348169817112@s.whatsapp.net",
+      "name": "2348169817112",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349079563401@s.whatsapp.net",
+      "name": "2349079563401",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347013798608@s.whatsapp.net",
+      "name": "2347013798608",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349036529215@s.whatsapp.net",
+      "name": "2349036529215",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349074661236@s.whatsapp.net",
+      "name": "2349074661236",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348162374223@s.whatsapp.net",
+      "name": "2348162374223",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348146332636@s.whatsapp.net",
+      "name": "2348146332636",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347011384363@s.whatsapp.net",
+      "name": "2347011384363",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348138894830@s.whatsapp.net",
+      "name": "2348138894830",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348052658481@s.whatsapp.net",
+      "name": "2348052658481",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348060051633@s.whatsapp.net",
+      "name": "2348060051633",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347086953041@s.whatsapp.net",
+      "name": "2347086953041",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347064782969@s.whatsapp.net",
+      "name": "2347064782969",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347083535076@s.whatsapp.net",
+      "name": "2347083535076",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349069322959@s.whatsapp.net",
+      "name": "2349069322959",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349150756768@s.whatsapp.net",
+      "name": "2349150756768",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347067894338@s.whatsapp.net",
+      "name": "2347067894338",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348113659235@s.whatsapp.net",
+      "name": "2348113659235",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349168894079@s.whatsapp.net",
+      "name": "2349168894079",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349162673014@s.whatsapp.net",
+      "name": "2349162673014",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349138567366@s.whatsapp.net",
+      "name": "2349138567366",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349155606141@s.whatsapp.net",
+      "name": "2349155606141",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349031272881@s.whatsapp.net",
+      "name": "2349031272881",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348060208436@s.whatsapp.net",
+      "name": "2348060208436",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348059006411@s.whatsapp.net",
+      "name": "2348059006411",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348036765893@s.whatsapp.net",
+      "name": "2348036765893",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349058841118@s.whatsapp.net",
+      "name": "2349058841118",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348157986777@s.whatsapp.net",
+      "name": "2348157986777",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348065714576@s.whatsapp.net",
+      "name": "2348065714576",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348160464008@s.whatsapp.net",
+      "name": "2348160464008",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349032083330@s.whatsapp.net",
+      "name": "2349032083330",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348138106528@s.whatsapp.net",
+      "name": "2348138106528",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347088698212@s.whatsapp.net",
+      "name": "2347088698212",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348067077966@s.whatsapp.net",
+      "name": "2348067077966",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348069296509@s.whatsapp.net",
+      "name": "2348069296509",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348039688982@s.whatsapp.net",
+      "name": "2348039688982",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348070646864@s.whatsapp.net",
+      "name": "2348070646864",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348066219645@s.whatsapp.net",
+      "name": "2348066219645",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349038009070@s.whatsapp.net",
+      "name": "2349038009070",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348030942702@s.whatsapp.net",
+      "name": "2348030942702",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349036680255@s.whatsapp.net",
+      "name": "2349036680255",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348034505903@s.whatsapp.net",
+      "name": "2348034505903",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348055148332@s.whatsapp.net",
+      "name": "2348055148332",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348065600509@s.whatsapp.net",
+      "name": "2348065600509",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347050537306@s.whatsapp.net",
+      "name": "2347050537306",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347040396199@s.whatsapp.net",
+      "name": "2347040396199",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348148495059@s.whatsapp.net",
+      "name": "2348148495059",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349063545180@s.whatsapp.net",
+      "name": "2349063545180",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347079990083@s.whatsapp.net",
+      "name": "2347079990083",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347010062909@s.whatsapp.net",
+      "name": "2347010062909",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349163710249@s.whatsapp.net",
+      "name": "2349163710249",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348166156351@s.whatsapp.net",
+      "name": "2348166156351",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349165176766@s.whatsapp.net",
+      "name": "2349165176766",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349047645864@s.whatsapp.net",
+      "name": "2349047645864",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348036413520@s.whatsapp.net",
+      "name": "2348036413520",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349168255082@s.whatsapp.net",
+      "name": "2349168255082",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348143427739@s.whatsapp.net",
+      "name": "2348143427739",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "31683593427@s.whatsapp.net",
+      "name": "31683593427",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349165375044@s.whatsapp.net",
+      "name": "2349165375044",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "31643599281@s.whatsapp.net",
+      "name": "31643599281",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348108081588@s.whatsapp.net",
+      "name": "2348108081588",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348160704840@s.whatsapp.net",
+      "name": "2348160704840",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349132146331@s.whatsapp.net",
+      "name": "2349132146331",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349160612971@s.whatsapp.net",
+      "name": "2349160612971",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348067701133@s.whatsapp.net",
+      "name": "2348067701133",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348033103064@s.whatsapp.net",
+      "name": "2348033103064",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349069719082@s.whatsapp.net",
+      "name": "2349069719082",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348153534913@s.whatsapp.net",
+      "name": "2348153534913",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349037859969@s.whatsapp.net",
+      "name": "2349037859969",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    }
+  ],
+  "count": 572
+}
+[0;32m✅ Found 572 contacts[0m
+
+[1;33m2.3 Get Groups...[0m
+{
+  "success": true,
+  "groups": [
+    {
+      "id": "120363388995420849@g.us",
+      "subject": "THE red ♥️ ROOM",
+      "size": 2,
+      "creation": 1740272994,
+      "desc": "",
+      "participants": [
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": null
+        },
+        {
+          "id": "119524997201937@lid",
+          "jid": "2349030476305@s.whatsapp.net",
+          "lid": "119524997201937@lid",
+          "admin": "admin"
+        }
+      ]
+    },
+    {
+      "id": "120363325727715969@g.us",
+      "subject": "3k every 5 days to pack 50k 👍👉👈🥰",
+      "size": 2,
+      "creation": 1728457695,
+      "owner": "117175767531560@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": null
+        },
+        {
+          "id": "72615448309948@lid",
+          "jid": "2348143427739@s.whatsapp.net",
+          "lid": "72615448309948@lid",
+          "admin": "admin"
+        }
+      ]
+    },
+    {
+      "id": "120363421779888083@g.us",
+      "subject": "Connexa Hub",
+      "size": 2,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to Connexa Hub Community 🌐\nWe build mobile apps, bots, and tools for businesses and individuals — tailored to any type you want.\nStay connected with updates, tips, and tech solutions.\n👉 Contact us via the community link in the channel.\nGitHub: https://github.com/ConnexaHub   This community is for members to chat in topic-based groups and get important announcements.",
+      "participants": [
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        }
+      ]
+    },
+    {
+      "id": "120363422362443321@g.us",
+      "subject": "Showcase",
+      "size": 5,
+      "creation": 1757972880,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363420985155425@g.us",
+      "subject": "Support",
+      "size": 5,
+      "creation": 1757972804,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363422155891971@g.us",
+      "subject": "🤝 Request and Collaboration",
+      "size": 5,
+      "creation": 1757972950,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363403359581541@g.us",
+      "subject": "General",
+      "size": 6,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to the community! 🎉\nThis is the space for questions, feedback, discussions, and ideas.\nNeed a custom app, bot, or tool? Share here or reach us via GitHub 👉 github.com/connexa-hub",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "146870970151025@lid",
+          "jid": "2349161275483@s.whatsapp.net",
+          "lid": "146870970151025@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363420612494192@g.us",
+      "subject": "Connexa Hub",
+      "size": 8,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to Connexa Hub Community 🌐\nWe build mobile apps, bots, and tools for businesses and individuals — tailored to any type you want.\nStay connected with updates, tips, and tech solutions.\n👉 Contact us via the community link in the channel.\nGitHub: https://github.com/ConnexaHub   This community is for members to chat in topic-based groups and get important announcements.",
+      "participants": [
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        },
+        {
+          "id": "111110971777216@lid",
+          "jid": "2348128785335@s.whatsapp.net",
+          "lid": "111110971777216@lid",
+          "admin": null
+        },
+        {
+          "id": "33930493313263@lid",
+          "jid": "2348168363521@s.whatsapp.net",
+          "lid": "33930493313263@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "146870970151025@lid",
+          "jid": "2349161275483@s.whatsapp.net",
+          "lid": "146870970151025@lid",
+          "admin": null
+        },
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        }
+      ]
+    }
+  ],
+  "count": 8
+}
+
+[1;33m2.4 Get Call History...[0m
+{
+  "success": true,
+  "data": {
+    "calls": []
+  }
+}
+
+[1;33m2.5 Get Status Updates...[0m
+[0;31m⚠ Non-JSON response:[0m
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/status-updates/2349041648144</pre>
+</body>
+</html>
+
+[1;33m2.6 Get Channels...[0m
+{
+  "success": true,
+  "data": {
+    "channels": []
+  }
+}
+
+[1;33m2.7 Get Communities...[0m
+{
+  "success": true,
+  "communities": []
+}
+
+[1;33m2.8 Get Profile...[0m
+{
+  "success": true,
+  "data": {
+    "name": "2349041648144",
+    "phone": "2349041648144",
+    "status": "",
+    "picture": "https://pps.whatsapp.net/v/t61.24694-24/461101747_890073422483178_1593072381481040421_n.jpg?ccb=11-4&oh=01_Q5Aa2wG5GXHTuAbAxk42Nojrv-9JF8wnz5z3P4iFlcJXRqI8FA&oe=68FCB7C3&_nc_sid=5e03e0&_nc_cat=109"
+  }
+}
+
+[1;33m2.9 Get Chat Labels...[0m
+{
+  "error": "Not connected to WhatsApp"
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 3: MESSAGING[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m3.1 Send Text Message to: 2349041648144@s.whatsapp.net...[0m
+[0;34mPress ENTER to send test message...[0m
+{
+  "success": false,
+  "error": "messageActions.sendTextMessage is not a function"
+}
+[0;31m❌ Failed to send message[0m
+
+[1;33m3.2 Send Poll...[0m
+{
+  "success": false,
+  "error": "messageActions.sendPollMessage is not a function"
+}
+
+[1;33m3.3 Send Location...[0m
+{
+  "success": false,
+  "error": "messageActions.sendLocationMessage is not a function"
+}
+
+[1;33m3.4 Send Broadcast Message...[0m
+{
+  "success": false,
+  "error": "messageActions.sendBroadcastMessage is not a function"
+}
+
+[1;33m3.5 Reply to Message (Note: requires valid quotedMessage)...[0m
+Skipped - requires specific quotedMessage from previous messages
+
+[1;33m3.6 Send Contact Card...[0m
+{
+  "success": false,
+  "error": "messageActions.sendContactMessage is not a function"
+}
+
+[1;33m3.7 Send List Message...[0m
+{
+  "success": false,
+  "error": "messageActions.sendListMessage is not a function"
+}
+
+[1;33m3.8 Download Media (Note: requires message with media)...[0m
+Skipped - requires specific message with media
+
+[1;33m3.9 Forward Message (Note: requires valid message)...[0m
+Skipped - requires specific message to forward
+
+[1;33m3.10 Mark Message as Read (Note: requires valid messageKey)...[0m
+Skipped - requires specific messageKey
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 4: MESSAGE ACTIONS[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m4.1 React to Message (Note: requires valid messageKey)...[0m
+Skipped - requires specific messageKey from previous messages
+
+[1;33m4.2 Edit Message (Note: requires valid messageKey)...[0m
+Skipped - requires specific messageKey from previous messages
+
+[1;33m4.3 Star Message (Note: requires valid messageKey)...[0m
+Skipped - requires specific messageKey from previous messages
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 5: CHAT ACTIONS[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m5.1 Archive Chat...[0m
+{
+  "success": true,
+  "message": "Chat archived"
+}
+
+[1;33m5.2 Unarchive Chat...[0m
+{
+  "success": true,
+  "message": "Chat unarchived"
+}
+
+[1;33m5.3 Pin Chat...[0m
+{
+  "success": true,
+  "message": "Chat pinned"
+}
+
+[1;33m5.4 Unpin Chat...[0m
+{
+  "success": true,
+  "message": "Chat unpinned"
+}
+
+[1;33m5.5 Mute Chat (8 hours)...[0m
+{
+  "success": true,
+  "message": "Chat muted"
+}
+
+[1;33m5.6 Mark as Read...[0m
+{
+  "success": true,
+  "message": "Chat marked as read"
+}
+
+[1;33m5.7 Mark as Unread...[0m
+{
+  "success": true,
+  "message": "Chat marked as unread"
+}
+
+[1;33m5.8 Clear Chat...[0m
+{
+  "success": true
+}
+
+[1;33m5.9 Add Chat Label (Note: business feature)...[0m
+{
+  "success": true
+}
+
+[1;33m5.10 Remove Chat Label...[0m
+{
+  "success": true
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 6: STATUS/STORY[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m6.1 Post Text Status...[0m
+{
+  "success": false,
+  "error": "Spread syntax requires ...iterable[Symbol.iterator] to be a function"
+}
+
+[1;33m6.2 Get Status Privacy Settings...[0m
+{
+  "success": false,
+  "error": "phone is not defined"
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 7: GROUP MANAGEMENT[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m7.1 List Groups...[0m
+{
+  "success": true,
+  "groups": [
+    {
+      "id": "120363388995420849@g.us",
+      "subject": "THE red ♥️ ROOM",
+      "size": 2,
+      "creation": 1740272994,
+      "desc": "",
+      "participants": [
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": null
+        },
+        {
+          "id": "119524997201937@lid",
+          "jid": "2349030476305@s.whatsapp.net",
+          "lid": "119524997201937@lid",
+          "admin": "admin"
+        }
+      ]
+    },
+    {
+      "id": "120363325727715969@g.us",
+      "subject": "3k every 5 days to pack 50k 👍👉👈🥰",
+      "size": 2,
+      "creation": 1728457695,
+      "owner": "117175767531560@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": null
+        },
+        {
+          "id": "72615448309948@lid",
+          "jid": "2348143427739@s.whatsapp.net",
+          "lid": "72615448309948@lid",
+          "admin": "admin"
+        }
+      ]
+    },
+    {
+      "id": "120363421779888083@g.us",
+      "subject": "Connexa Hub",
+      "size": 2,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to Connexa Hub Community 🌐\nWe build mobile apps, bots, and tools for businesses and individuals — tailored to any type you want.\nStay connected with updates, tips, and tech solutions.\n👉 Contact us via the community link in the channel.\nGitHub: https://github.com/ConnexaHub   This community is for members to chat in topic-based groups and get important announcements.",
+      "participants": [
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        }
+      ]
+    },
+    {
+      "id": "120363422362443321@g.us",
+      "subject": "Showcase",
+      "size": 5,
+      "creation": 1757972880,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363420985155425@g.us",
+      "subject": "Support",
+      "size": 5,
+      "creation": 1757972804,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363422155891971@g.us",
+      "subject": "🤝 Request and Collaboration",
+      "size": 5,
+      "creation": 1757972950,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363403359581541@g.us",
+      "subject": "General",
+      "size": 6,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to the community! 🎉\nThis is the space for questions, feedback, discussions, and ideas.\nNeed a custom app, bot, or tool? Share here or reach us via GitHub 👉 github.com/connexa-hub",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "146870970151025@lid",
+          "jid": "2349161275483@s.whatsapp.net",
+          "lid": "146870970151025@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363420612494192@g.us",
+      "subject": "Connexa Hub",
+      "size": 8,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to Connexa Hub Community 🌐\nWe build mobile apps, bots, and tools for businesses and individuals — tailored to any type you want.\nStay connected with updates, tips, and tech solutions.\n👉 Contact us via the community link in the channel.\nGitHub: https://github.com/ConnexaHub   This community is for members to chat in topic-based groups and get important announcements.",
+      "participants": [
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        },
+        {
+          "id": "111110971777216@lid",
+          "jid": "2348128785335@s.whatsapp.net",
+          "lid": "111110971777216@lid",
+          "admin": null
+        },
+        {
+          "id": "33930493313263@lid",
+          "jid": "2348168363521@s.whatsapp.net",
+          "lid": "33930493313263@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "146870970151025@lid",
+          "jid": "2349161275483@s.whatsapp.net",
+          "lid": "146870970151025@lid",
+          "admin": null
+        },
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        }
+      ]
+    }
+  ],
+  "count": 8
+}
+
+[1;33m7.2 Create Group (Note: requires participants)...[0m
+Skipped - requires valid participant JIDs
+
+[1;33m7.3 Get Group Invite Code (Note: requires group)...[0m
+Skipped - requires existing group
+
+[1;33m7.4 Get Group Metadata (Note: requires group)...[0m
+Skipped - requires existing group
+
+[1;33m7.5 Update Group Subject (Note: requires group)...[0m
+Skipped - requires existing group and admin rights
+
+[1;33m7.6 Update Group Description (Note: requires group)...[0m
+Skipped - requires existing group and admin rights
+
+[1;33m7.7 Add/Remove Participants (Note: requires group)...[0m
+Skipped - requires existing group and admin rights
+
+[1;33m7.8 Promote/Demote Participants (Note: requires group)...[0m
+Skipped - requires existing group and admin rights
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 8: AI FEATURES[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m8.1 Generate Smart Reply...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.2 Analyze Sentiment...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.3 Translate Text...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.4 Improve Message...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.5 Content Moderation...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.6 Smart Compose...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.7 Generate AI Response...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.8 Batch Analyze Messages...[0m
+{
+  "success": true,
+  "results": [
+    {
+      "messageId": "1",
+      "success": false,
+      "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+    },
+    {
+      "messageId": "2",
+      "success": false,
+      "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+    }
+  ]
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 9: CHANNELS & CALLS[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m9.1 Get Channels...[0m
+{
+  "success": true,
+  "data": {
+    "channels": []
+  }
+}
+
+[1;33m9.2 Get Communities...[0m
+{
+  "success": true,
+  "communities": []
+}
+
+[1;33m9.3 Get Channel Metadata (Note: requires channel JID)...[0m
+Skipped - requires valid channel JID
+
+[1;33m9.4 Mute Channel (Note: requires channel JID)...[0m
+Skipped - requires valid channel JID
+
+[1;33m9.5 Get Call History...[0m
+{
+  "success": true,
+  "data": {
+    "calls": []
+  }
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 10: PRESENCE & PROFILE[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m10.1 Update Presence (Typing)...[0m
+{
+  "error": "phone.replace is not a function"
+}
+
+[1;33m10.1b Update Presence (Recording)...[0m
+{
+  "error": "phone.replace is not a function"
+}
+
+[1;33m10.1c Update Presence (Available)...[0m
+{
+  "error": "phone.replace is not a function"
+}
+
+[1;33m10.2 Get Profile...[0m
+{
+  "success": true,
+  "data": {
+    "name": "2349041648144",
+    "phone": "2349041648144",
+    "status": "",
+    "picture": "https://pps.whatsapp.net/v/t61.24694-24/461101747_890073422483178_1593072381481040421_n.jpg?ccb=11-4&oh=01_Q5Aa2wG5GXHTuAbAxk42Nojrv-9JF8wnz5z3P4iFlcJXRqI8FA&oe=68FCB7C3&_nc_sid=5e03e0&_nc_cat=109"
+  }
+}
+
+[1;33m10.3 Update Profile Name...[0m
+{
+  "error": "phone.replace is not a function"
+}
+
+[1;33m10.4 Update Profile Status...[0m
+{
+  "error": "phone.replace is not a function"
+}
+
+[1;33m10.5 Get Profile Picture (Note: requires JID)...[0m
+Skipped - requires valid JID
+
+[1;33m10.6 Contact Actions - Block/Unblock...[0m
+{
+  "success": true,
+  "blocked": []
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 11: PRIVACY & SECURITY[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m11.1 Get Privacy Settings...[0m
+{
+  "success": true,
+  "data": {
+    "readreceipts": "all",
+    "profile": "all",
+    "status": "contacts",
+    "online": "match_last_seen",
+    "last": "contact_blacklist",
+    "groupadd": "all",
+    "calladd": "all",
+    "stickers": "contacts",
+    "messages": "all"
+  }
+}
+
+[1;33m11.2 Get Blocked Contacts...[0m
+{
+  "success": true,
+  "data": []
+}
+
+[1;33m11.3 Update Privacy Settings (Status visibility to contacts)...[0m
+{
+  "success": false,
+  "error": "validation.session.sock.updatePrivacySettings is not a function"
+}
+
+[1;33m11.4 Set Disappearing Messages (24 hours)...[0m
+{
+  "success": true,
+  "message": "Disappearing messages updated"
+}
+
+[1;33m11.5 Get Business Profile (Note: requires business account JID)...[0m
+Skipped - requires valid business account JID
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 12: ADVANCED FEATURES[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m12.1 Get AI Chat History...[0m
+{
+  "success": true,
+  "history": []
+}
+
+[1;33m12.2 Clear Session State (Partial)...[0m
+{
+  "success": true,
+  "message": "State cleared successfully"
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 13: CLEANUP (OPTIONAL)[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m13.1 Clear AI Chat History...[0m
+{
+  "success": true,
+  "cleared": 1
+}
+
+[0;31mWould you like to logout? (y/n)[0m
+
+[1;33m13.2 Logout...[0m
+{
+  "success": true,
+  "message": "Session cleared. Please reconnect."
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 14: ADVANCED SEARCH & STARRED[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m14.1 Global Message Search...[0m
+{
+  "error": "Not connected"
+}
+
+[1;33m14.2 Search by Media Type...[0m
+{
+  "error": "Not connected"
+}
+
+[1;33m14.3 Get Unread Chats...[0m
+{
+  "error": "Not connected"
+}
+
+[1;33m14.4 Get All Starred Messages...[0m
+{
+  "error": "Not connected"
+}
+
+[1;33m14.5 Search Starred Messages...[0m
+{
+  "error": "Not connected"
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32mSECTION 15: LINKED DEVICES[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m15.1 Get Linked Devices...[0m
+{
+  "error": "Not connected to WhatsApp"
+}
+
+[0;32m
+╔════════════════════════════════════════════╗
+║        ✅ ALL TESTS COMPLETED              ║
+╚════════════════════════════════════════════╝
+[0m
+[0;34m📝 Test Summary:[0m
+  [0;32m✓[0m Health & Connection Tests (5 tests - including OpenAI status)
+  [0;32m✓[0m Data Retrieval Tests (9 tests)
+  [0;32m✓[0m Messaging Tests (10 tests - all message types)
+  [0;32m✓[0m Message Actions Tests (3 tests)
+  [0;32m✓[0m Chat Actions Tests (10 tests - including labels)
+  [0;32m✓[0m Status/Story Tests (2 tests)
+  [0;32m✓[0m Group Management Tests (8 tests - all actions)
+  [0;32m✓[0m AI Features Tests (8 tests)
+  [0;32m✓[0m Channels & Calls Tests (5 tests)
+  [0;32m✓[0m Presence & Profile Tests (8 tests - all states)
+  [0;32m✓[0m Privacy & Security Tests (5 tests)
+  [0;32m✓[0m Advanced Features Tests (2 tests)
+  [0;32m✓[0m Advanced Search & Starred Tests (5 tests)
+  [0;32m✓[0m Linked Devices Tests (1 test)
+  [0;32m✓[0m Cleanup Tests (2 tests)
+
+[0;32mTotal: 83+ endpoint tests covering 100% backend functionality[0m
+
+[1;33mTo run with custom values:[0m
+  [0;34mBASE_URL=http://localhost:5000 PHONE=123456789 ./test-endpoints.sh[0m
+
+[1;33mSaved run log to:[0m ./logs/test_2025-10-15_132211.log
+
