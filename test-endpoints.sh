@@ -153,7 +153,7 @@ if [ "$HAS_JQ" = true ]; then
     CHAT_COUNT=0
   fi
 
-  if [ "$CHAT_COUNT" -gt 0 ]; then
+  if [ "$CHAT_COUNT" -gt 5 ]; then
     echo -e "${GREEN}✅ Found $CHAT_COUNT chats${NC}"
   else
     echo -e "${YELLOW}⚠ No chats found. Chats are constructed from contacts or message history.${NC}"
