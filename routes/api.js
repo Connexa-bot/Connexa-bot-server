@@ -352,6 +352,23 @@ export function createApiRoutes(broadcast) {
     }
   });
 
+  // Get chat labels (Business feature)
+  router.get("/chats/labels/:phone", async (req, res) => {
+    const validation = validateSession(req.params.phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      // Note: Labels are a business feature with limited support in Baileys
+      res.json({
+        success: true,
+        labels: [],
+        message: "Chat labels are a business feature with limited API support"
+      });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
   // ===============================
   // SECTION 2: CONTACT PROFILE SCREEN
   // ===============================
