@@ -8,8 +8,6 @@ RUN npm ci --only=production
 
 COPY . .
 
-RUN mkdir -p /app/auth /app/media /app/chat_history
-
 ENV NODE_ENV=production
 ENV PORT=5000
 

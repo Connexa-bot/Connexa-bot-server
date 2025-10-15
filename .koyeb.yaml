@@ -13,9 +13,15 @@ services:
       - key: PORT
         value: "5000"
       - key: AUTH_DIR
-        value: /app/auth
+        value: /data/auth
       - key: MEDIA_DIR
-        value: /app/media
+        value: /data/media
+      - key: CHAT_HISTORY_DIR
+        value: /data/chat_history
+    volumes:
+      - scope: region
+        path: /data
+        name: app-data
     build:
       builder: dockerfile
       dockerfile: Dockerfile
