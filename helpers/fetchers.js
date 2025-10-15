@@ -1,4 +1,4 @@
-import { getClient, getStore } from "./whatsapp.js";
+import { getClient, getStore, sessions } from "./whatsapp.js";
 import Chat from "../models/Chat.js";
 import { isDBConnected } from "../config/database.js";
 
@@ -6,79 +6,73 @@ import { isDBConnected } from "../config/database.js";
  * Fetch all chats from MongoDB or in-memory store with profile pictures
  */
 export async function fetchChats(phone) {
-  const store = getStore(phone);
-  const sock = getClient(phone);
+  const normalizedPhone = phone.replace(/^\+|\s/g, '');
+  const session = sessions.get(normalizedPhone);
 
-  if (!store || !sock) {
-    throw new Error(`No active session for ${phone}`);
+  if (!session) {
+    console.log(`No session found for ${normalizedPhone}`);
+    return [];
   }
 
-  let storeChats = store.chats?.all() || [];
-
-  if (storeChats.length === 0) {
-    console.log(`⚠️ No chats in store, attempting to fetch from WhatsApp...`);
-
-    // Force fetch chats from WhatsApp
-    try {
-      // Wait a bit for store to populate
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      storeChats = store.chats?.all() || [];
-
-      if (storeChats.length === 0) {
-        console.log(`⚠️ Still no chats after fetch attempt`);
-        return { success: true, chats: [], count: 0, message: "No chats found. Try sending a message first to populate the chat list." };
-      }
-    } catch (err) {
-      console.error(`Error fetching chats:`, err);
-      return { success: true, chats: [], count: 0, message: "No chats available yet" };
-    }
+  const store = session.store;
+  if (!store) {
+    console.log(`No store found for ${normalizedPhone}`);
+    return [];
   }
 
-  // Format chats with profile pictures and proper names
-  const formattedChats = await Promise.all(storeChats.map(async (chat) => {
-    let profilePicUrl = null;
-    let displayName = chat.name || chat.id.split('@')[0];
+  try {
+    const chats = store.chats?.all() || [];
+    console.log(`Fetched ${chats.length} chats for ${normalizedPhone}`);
 
-    // Try to get profile picture
-    try {
-      profilePicUrl = await sock.profilePictureUrl(chat.id, 'image');
-    } catch (err) {
-      // No profile picture available
-    }
+    // Format chats with profile pictures and proper names
+    const formattedChats = await Promise.all(chats.map(async (chat) => {
+      let profilePicUrl = null;
+      let displayName = chat.name || chat.id.split('@')[0];
 
-    // For individual chats, try to get contact name from store
-    if (!chat.id.includes('@g.us') && !chat.id.includes('@newsletter')) {
-      const contact = store.contacts?.[chat.id];
-      if (contact) {
-        displayName = contact.name || contact.notify || contact.verifiedName || displayName;
+      // Try to get profile picture
+      try {
+        profilePicUrl = await getClient(phone)?.profilePictureUrl(chat.id, 'image');
+      } catch (err) {
+        // No profile picture available
       }
-    }
 
-    return {
-      id: chat.id,
-      name: displayName,
-      unreadCount: chat.unreadCount || 0,
-      lastMessage: chat.conversationTimestamp ? {
-        text: chat.lastMessage?.text || '',
-        timestamp: chat.conversationTimestamp
-      } : null,
-      isGroup: chat.id.includes('@g.us'),
-      isChannel: chat.id.includes('@newsletter'),
-      isArchived: chat.archive || false,
-      isPinned: chat.pin || false,
-      isMuted: chat.mute ? true : false,
-      profilePicUrl: profilePicUrl
-    };
-  }));
+      // For individual chats, try to get contact name from store
+      if (!chat.id.includes('@g.us') && !chat.id.includes('@newsletter')) {
+        const contact = store.contacts?.[chat.id];
+        if (contact) {
+          displayName = contact.name || contact.notify || contact.verifiedName || displayName;
+        }
+      }
 
-  // Sort by conversation timestamp (most recent first)
-  formattedChats.sort((a, b) => {
-    const timeA = a.lastMessage?.timestamp || 0;
-    const timeB = b.lastMessage?.timestamp || 0;
-    return timeB - timeA;
-  });
+      return {
+        id: chat.id,
+        name: displayName,
+        unreadCount: chat.unreadCount || 0,
+        lastMessage: chat.conversationTimestamp ? {
+          text: chat.lastMessage?.text || '',
+          timestamp: chat.conversationTimestamp
+        } : null,
+        isGroup: chat.id.includes('@g.us'),
+        isChannel: chat.id.includes('@newsletter'),
+        isArchived: chat.archive || false,
+        isPinned: chat.pin || false,
+        isMuted: chat.mute ? true : false,
+        profilePicUrl: profilePicUrl
+      };
+    }));
 
-  return { success: true, chats: formattedChats, count: formattedChats.length };
+    // Sort by conversation timestamp (most recent first)
+    formattedChats.sort((a, b) => {
+      const timeA = a.lastMessage?.timestamp || 0;
+      const timeB = b.lastMessage?.timestamp || 0;
+      return timeB - timeA;
+    });
+
+    return { success: true, chats: formattedChats, count: formattedChats.length };
+  } catch (err) {
+    console.error(`Error fetching chats for ${normalizedPhone}:`, err.message);
+    return { success: false, chats: [], count: 0, message: err.message };
+  }
 }
 
 /**

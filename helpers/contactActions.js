@@ -81,6 +81,18 @@ export const blockContact = async (phone, contactId) => {
 };
 
 /**
+ * Block a user (alias for compatibility)
+ */
+export const blockUser = async (sock, jid) => {
+  try {
+    await sock.updateBlockStatus(jid, 'block');
+    return { success: true, message: 'User blocked' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+/**
  * Unblock a contact
  */
 export const unblockContact = async (phone, contactId) => {
@@ -88,6 +100,18 @@ export const unblockContact = async (phone, contactId) => {
   try {
     await sock.updateBlockStatus(contactId, 'unblock');
     return { success: true, message: 'Contact unblocked' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+/**
+ * Unblock a user (alias for compatibility)
+ */
+export const unblockUser = async (sock, jid) => {
+  try {
+    await sock.updateBlockStatus(jid, 'unblock');
+    return { success: true, message: 'User unblocked' };
   } catch (err) {
     return { success: false, error: err.message };
   }

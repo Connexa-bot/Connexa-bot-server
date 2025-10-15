@@ -11,6 +11,7 @@ import * as profileActions from "../helpers/profileActions.js";
 import * as statusActions from "../helpers/statusActions.js";
 import * as channelActions from "../helpers/channelActions.js";
 import * as callActions from "../helpers/callActions.js";
+import { fetchChats } from "../helpers/fetchers.js"; // Explicitly import fetchChats
 
 export function createApiRoutes(broadcast) {
   const router = express.Router();
@@ -39,7 +40,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 0: HEALTH & CONNECTION
   // ===============================
-  
+
   router.get("/", (req, res) => res.send("🚀 WhatsApp Bot Backend running..."));
 
   // Health check endpoint
@@ -172,17 +173,34 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 1: CHAT LIST SCREEN
   // ===============================
-  
-  // Get all chats
+
+  // Get all chats with full details
   router.get("/chats/:phone", async (req, res) => {
-    const normalizedPhone = normalizePhone(req.params.phone);
-    const validation = validateSession(normalizedPhone);
+    const validation = validateSession(req.params.phone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await chatActions.getChats(normalizedPhone);
-      res.json(result);
+      const normalizedPhone = normalizePhone(req.params.phone);
+      console.log(`📋 Fetching chats for ${normalizedPhone}`);
+
+      const chats = await chatActions.getChats(normalizedPhone); // Changed from fetchChats to chatActions.getChats
+      console.log(`📋 Found ${chats.length} chats`);
+
+      // Get profile pictures for each chat
+      const chatsWithPics = await Promise.all(
+        chats.map(async (chat) => {
+          try {
+            const profilePicUrl = await validation.session.sock.profilePictureUrl(chat.id, 'image').catch(() => null);
+            return { ...chat, profilePicUrl };
+          } catch (err) {
+            return { ...chat, profilePicUrl: null };
+          }
+        })
+      );
+
+      res.json({ success: true, chats: chatsWithPics, count: chatsWithPics.length });
     } catch (err) {
+      console.error(`❌ Error fetching chats:`, err.message);
       res.status(500).json({ success: false, error: err.message });
     }
   });
@@ -337,7 +355,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 2: CONTACT PROFILE SCREEN
   // ===============================
-  
+
   // Get all contacts
   router.get("/contacts/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -454,7 +472,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 3: STATUS/UPDATES SCREEN
   // ===============================
-  
+
   // Get all status updates
   router.get("/status/updates/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -557,7 +575,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 4: GROUPS SCREEN
   // ===============================
-  
+
   // Get all groups
   router.get("/groups/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -758,7 +776,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 5: CHANNELS SCREEN
   // ===============================
-  
+
   // Get all channels
   router.get("/channels/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -833,7 +851,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 6: COMMUNITIES SCREEN
   // ===============================
-  
+
   // Get all communities
   router.get("/communities/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -852,7 +870,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 7: CHAT VIEW/MESSAGING
   // ===============================
-  
+
   // Get messages from a chat
   router.get("/messages/:phone/:chatId", async (req, res) => {
     const { phone, chatId } = req.params;
@@ -1110,7 +1128,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 8: CALLS
   // ===============================
-  
+
   // Get call history
   router.get("/calls/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -1141,7 +1159,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 9: PRESENCE & TYPING
   // ===============================
-  
+
   // Update presence (typing, recording, online, etc.)
   router.post("/presence/update", async (req, res) => {
     const { phone, chatId, presence } = req.body;
@@ -1173,7 +1191,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 10: PROFILE SETTINGS
   // ===============================
-  
+
   // Get own profile
   router.get("/profile/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -1257,7 +1275,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 11: PRIVACY SETTINGS
   // ===============================
-  
+
   // Get privacy settings
   router.get("/privacy/settings/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -1319,7 +1337,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 12: STARRED MESSAGES
   // ===============================
-  
+
   // Get starred messages
   router.get("/messages/starred/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -1337,7 +1355,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 13: MEDIA GALLERY
   // ===============================
-  
+
   // Get shared media from chat
   router.get("/media/:phone/:chatId", async (req, res) => {
     const { phone, chatId } = req.params;
@@ -1356,7 +1374,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 14: BROADCAST LISTS
   // ===============================
-  
+
   // Get broadcast lists
   router.get("/broadcast/lists/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -1372,7 +1390,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 15: SEARCH
   // ===============================
-  
+
   // Search messages globally
   router.get("/search/messages/:phone", async (req, res) => {
     const { phone } = req.params;
@@ -1391,7 +1409,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 16: QR CODE & MULTI-DEVICE
   // ===============================
-  
+
   // Get linked devices
   router.get("/devices/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -1423,7 +1441,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 17: BUSINESS FEATURES
   // ===============================
-  
+
   // Get business catalog
   router.get("/business/catalog/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
@@ -1439,9 +1457,17 @@ export function createApiRoutes(broadcast) {
   // ===============================
   // SECTION 18: AUTOMATION & AI
   // ===============================
-  
+
   // AI endpoints are handled in separate routes/ai.js file
   // This section is a placeholder for reference
+
+  // Add a new endpoint to check OpenAI connection status
+  router.get("/openai/status", (req, res) => {
+    // Assuming you have a way to check OpenAI connection status globally
+    // For example, a global variable or a status object
+    const isOpenAiConnected = typeof global.openaiClient !== 'undefined' && global.openaiClient !== null; // Example check
+    res.json({ connected: isOpenAiConnected });
+  });
 
   return router;
 }

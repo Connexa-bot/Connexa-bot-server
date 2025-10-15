@@ -41,6 +41,13 @@ dotenv.config();
 
 await connectDB();
 
+// Check OpenAI connection
+if (process.env.OPENAI_API_KEY) {
+  console.log('✅ OpenAI API connected successfully');
+} else {
+  console.log('⚠️  OpenAI API key not configured (AI features disabled)');
+}
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
