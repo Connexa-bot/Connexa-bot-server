@@ -112,7 +112,7 @@ CONNECTED=false
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
   STATUS_RESPONSE=$(curl -s "$BASE_URL/api/status/$PHONE")
   echo "$STATUS_RESPONSE" | format_output
-  
+
   if [ "$HAS_JQ" = true ]; then
     IS_CONNECTED=$(echo "$STATUS_RESPONSE" | jq -r '.connected // false' 2>/dev/null)
     if [ "$IS_CONNECTED" = "true" ]; then
@@ -121,7 +121,7 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
       break
     fi
   fi
-  
+
   RETRY_COUNT=$((RETRY_COUNT + 1))
   if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
     echo -e "${YELLOW}⏳ Waiting for connection... (attempt $RETRY_COUNT/$MAX_RETRIES)${NC}"
@@ -148,7 +148,7 @@ echo "$CHATS_RESPONSE" | format_output
 if [ "$HAS_JQ" = true ]; then
   CHAT_COUNT=$(echo "$CHATS_RESPONSE" | jq -r '.count // 0' 2>/dev/null)
   CHAT_COUNT=${CHAT_COUNT:-0}
-  
+
   if ! [[ "$CHAT_COUNT" =~ ^[0-9]+$ ]]; then
     CHAT_COUNT=0
   fi
@@ -188,7 +188,7 @@ RETRY_COUNT=0
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
   CONTACTS_RESPONSE=$(curl -s "$BASE_URL/api/contacts/$PHONE")
-  
+
   if [ "$HAS_JQ" = true ]; then
     CONTACT_COUNT=$(echo "$CONTACTS_RESPONSE" | jq -r '.count // 0' 2>/dev/null)
     if [ "$CONTACT_COUNT" -gt 0 ]; then
@@ -200,7 +200,7 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     echo "$CONTACTS_RESPONSE" | format_output
     break
   fi
-  
+
   RETRY_COUNT=$((RETRY_COUNT + 1))
   if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
     echo -e "${YELLOW}⏳ Waiting for contacts to sync... (attempt $RETRY_COUNT/$MAX_RETRIES)${NC}"
@@ -490,19 +490,19 @@ echo -e "${GREEN}👤 SECTION 10: PRESENCE & PROFILE${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 echo -e "\n${YELLOW}10.1 Update Presence (Typing)...${NC}"
-curl -s -X POST "$BASE_URL/api/presence/action" \
+curl -s -X POST "$BASE_URL/api/presence/update" \
   -H "Content-Type: application/json" \
-  -d "{\"phone\":\"$PHONE\",\"action\":\"update\",\"chatId\":\"$TEST_RECIPIENT\",\"presence\":\"composing\"}" | format_output
+  -d "{\"phone\":\"$PHONE\",\"chatId\":\"$TEST_RECIPIENT\",\"presence\":\"composing\"}" | format_output
 
 echo -e "\n${YELLOW}10.1b Update Presence (Recording)...${NC}"
-curl -s -X POST "$BASE_URL/api/presence/action" \
+curl -s -X POST "$BASE_URL/api/presence/update" \
   -H "Content-Type: application/json" \
-  -d "{\"phone\":\"$PHONE\",\"action\":\"update\",\"chatId\":\"$TEST_RECIPIENT\",\"presence\":\"recording\"}" | format_output
+  -d "{\"phone\":\"$PHONE\",\"chatId\":\"$TEST_RECIPIENT\",\"presence\":\"recording\"}" | format_output
 
 echo -e "\n${YELLOW}10.1c Update Presence (Available)...${NC}"
-curl -s -X POST "$BASE_URL/api/presence/action" \
+curl -s -X POST "$BASE_URL/api/presence/update" \
   -H "Content-Type: application/json" \
-  -d "{\"phone\":\"$PHONE\",\"action\":\"update\",\"chatId\":\"$TEST_RECIPIENT\",\"presence\":\"available\"}" | format_output
+  -d "{\"phone\":\"$PHONE\",\"chatId\":\"$TEST_RECIPIENT\",\"presence\":\"available\"}" | format_output
 
 echo -e "\n${YELLOW}10.2 Get Profile...${NC}"
 curl -s "$BASE_URL/api/profile/$PHONE" | format_output

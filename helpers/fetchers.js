@@ -22,28 +22,51 @@ export async function fetchChats(phone) {
   }
 
   try {
-    // Use Baileys method to fetch chats
     console.log(`📋 Fetching chats for ${normalizedPhone}...`);
     
-    // Get chats using store.chats if available, otherwise use contacts
+    // Get message history from store - this is the reliable way
     let allChats = [];
     
-    // Try to get chats from the store
-    if (session.store?.chats) {
-      const storeChats = session.store.chats;
-      if (typeof storeChats.all === 'function') {
-        allChats = storeChats.all();
-      } else if (typeof storeChats === 'object') {
-        allChats = Object.values(storeChats);
+    if (session.store?.messages) {
+      const messages = session.store.messages;
+      const chatMap = new Map();
+      
+      // Build chats from message history
+      for (const [chatId, chatMessages] of Object.entries(messages)) {
+        if (!chatId || chatId === 'status@broadcast') continue;
+        
+        const msgArray = Array.isArray(chatMessages) ? chatMessages : Object.values(chatMessages);
+        if (msgArray.length === 0) continue;
+        
+        // Get most recent message
+        const sortedMsgs = msgArray
+          .filter(m => m?.key && m?.messageTimestamp)
+          .sort((a, b) => (b.messageTimestamp || 0) - (a.messageTimestamp || 0));
+        
+        if (sortedMsgs.length === 0) continue;
+        
+        const lastMsg = sortedMsgs[0];
+        const contact = session.store?.contacts?.[chatId];
+        
+        chatMap.set(chatId, {
+          id: chatId,
+          name: contact?.name || contact?.notify || contact?.verifiedName || chatId.split('@')[0],
+          conversationTimestamp: lastMsg.messageTimestamp,
+          unreadCount: 0,
+          lastMessage: lastMsg
+        });
       }
+      
+      allChats = Array.from(chatMap.values());
     }
     
-    // If no chats from store, construct from contacts
+    // Fallback: construct from contacts if no message history
     if (allChats.length === 0 && session.store?.contacts) {
-      console.log(`📋 No chats in store, constructing from contacts...`);
+      console.log(`📋 No message history, constructing from contacts...`);
       const contacts = session.store.contacts;
       const contactChats = Object.entries(contacts)
         .filter(([jid]) => jid.endsWith('@s.whatsapp.net') && jid !== '0@s.whatsapp.net')
+        .slice(0, 50) // Limit to 50 to prevent timeout
         .map(([jid, contact]) => ({
           id: jid,
           name: contact.name || contact.notify || contact.verifiedName || jid.split('@')[0],
@@ -60,42 +83,26 @@ export async function fetchChats(phone) {
       return [];
     }
 
-    // Format chats with profile pictures and proper names
-    const formattedChats = await Promise.all(allChats.map(async (chat) => {
-      let profilePicUrl = null;
+    // Format chats - skip profile pictures to avoid timeout
+    const formattedChats = allChats.map((chat) => {
       let displayName = chat.name || chat.id?.split('@')[0] || 'Unknown';
       let lastMessageText = '';
 
-      // Try to get profile picture
-      try {
-        profilePicUrl = await sock.profilePictureUrl(chat.id, 'image').catch(() => null);
-      } catch (err) {
-        // No profile picture available
-      }
-
-      // For individual chats, try to get contact name from store
-      if (!chat.id?.includes('@g.us') && !chat.id?.includes('@newsletter')) {
-        const contact = session.store?.contacts?.[chat.id];
-        if (contact) {
-          displayName = contact.name || contact.notify || contact.verifiedName || displayName;
-        }
-      }
-
       // Extract last message text if available
-      if (chat.lastMessage || chat.messages) {
-        const lastMsg = chat.lastMessage || chat.messages?.[0];
-        if (lastMsg) {
-          if (typeof lastMsg === 'string') {
-            lastMessageText = lastMsg;
-          } else if (lastMsg.message?.conversation) {
-            lastMessageText = lastMsg.message.conversation;
-          } else if (lastMsg.message?.extendedTextMessage?.text) {
-            lastMessageText = lastMsg.message.extendedTextMessage.text;
-          } else if (lastMsg.conversation) {
-            lastMessageText = lastMsg.conversation;
-          } else if (lastMsg.extendedTextMessage?.text) {
-            lastMessageText = lastMsg.extendedTextMessage.text;
-          }
+      if (chat.lastMessage) {
+        const msg = chat.lastMessage;
+        if (msg.message?.conversation) {
+          lastMessageText = msg.message.conversation;
+        } else if (msg.message?.extendedTextMessage?.text) {
+          lastMessageText = msg.message.extendedTextMessage.text;
+        } else if (msg.message?.imageMessage?.caption) {
+          lastMessageText = '📷 ' + (msg.message.imageMessage.caption || 'Image');
+        } else if (msg.message?.videoMessage?.caption) {
+          lastMessageText = '🎥 ' + (msg.message.videoMessage.caption || 'Video');
+        } else if (msg.message?.audioMessage) {
+          lastMessageText = '🎵 Audio';
+        } else if (msg.message?.documentMessage?.fileName) {
+          lastMessageText = '📄 ' + msg.message.documentMessage.fileName;
         }
       }
 
@@ -103,18 +110,18 @@ export async function fetchChats(phone) {
         id: chat.id,
         name: displayName,
         unreadCount: chat.unreadCount || 0,
-        lastMessage: chat.conversationTimestamp || chat.timestamp ? {
+        lastMessage: chat.conversationTimestamp ? {
           text: lastMessageText,
-          timestamp: chat.conversationTimestamp || chat.timestamp
+          timestamp: chat.conversationTimestamp
         } : null,
         isGroup: chat.id?.includes('@g.us') || false,
         isChannel: chat.id?.includes('@newsletter') || false,
-        isArchived: chat.archive || false,
-        isPinned: chat.pin || chat.pinned || false,
-        isMuted: chat.mute ? true : false,
-        profilePicUrl: profilePicUrl
+        isArchived: false,
+        isPinned: false,
+        isMuted: false,
+        profilePicUrl: null // Skip to prevent timeout
       };
-    }));
+    });
 
     // Sort by conversation timestamp (most recent first)
     formattedChats.sort((a, b) => {

@@ -1218,8 +1218,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await presenceActions.subscribeToPresence(normalizedPhone, contactId);
-      res.json(result);
+      await validation.session.sock.presenceSubscribe(contactId);
+      res.json({ success: true, message: `Subscribed to presence updates for ${contactId}` });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
