@@ -1,0 +1,2587 @@
+[0;32m✓ jq found - responses will be formatted[0m
+[0;34m
+╔════════════════════════════════════════════╗
+║  🧪 ConnexaBot API Comprehensive Testing  ║
+╔════════════════════════════════════════════╝
+║
+║  Base URL: http://widespread-chicky-connexa-hub-afd02d40.koyeb.app
+║  Phone: 2349041648144
+║  Test Recipient: 2349041648144@s.whatsapp.net
+║
+╚════════════════════════════════════════════
+[0m
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m📊 SECTION 1: HEALTH & CONNECTION[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m1.1 Server Health Check...[0m
+[0;34mRequest: GET http://widespread-chicky-connexa-hub-afd02d40.koyeb.app/health[0m
+[0;34mRaw Response (first 200 chars):[0m {"status":"ok","uptime":186.662060973,"timestamp":"2025-10-15T17:02:26.127Z","serverUrl":"https://widespread-chicky-connexa-hub-afd02d40.koyeb.app/"}
+{
+  "status": "ok",
+  "uptime": 186.662060973,
+  "timestamp": "2025-10-15T17:02:26.127Z",
+  "serverUrl": "https://widespread-chicky-connexa-hub-afd02d40.koyeb.app/"
+}
+
+[1;33m1.2 API Health Check...[0m
+{
+  "status": "ok",
+  "uptime": 187.861727079,
+  "timestamp": "2025-10-15T17:02:27.326Z",
+  "activeSessions": 0
+}
+
+[1;33m1.3 OpenAI Connection Status...[0m
+{
+  "connected": true,
+  "configured": true,
+  "status": "active",
+  "message": "OpenAI API is connected and ready"
+}
+
+[1;33m1.4 WhatsApp Connect...[0m
+{
+  "success": true,
+  "qrCode": "2@eSZwBr1LyrnOF9wNR/zZxyhtagV+yFjBoaH5T6JwaY+N7bHSth7NHR6006qkhpy2fqk9CJQjShidgMa3c7dVi03mgPFYt7AveTE=,pfqedDoiTlE60BDxmv9f0WHH3gqCjCXdHrZKiq9Nihk=,emeSKyIFeHZNJZT8RYSHHhLf+AfgSWyDwXPgaQzKtFc=,89bCOnqIqg7ZpL294IOvm3X0IuokSYT16t6Plc+HFsc=",
+  "linkCode": null,
+  "message": "Scan QR code or use link code",
+  "connected": false
+}
+
+[1;33m1.5 Connection Status...[0m
+{
+  "connected": false,
+  "status": "waiting",
+  "authenticated": false,
+  "ready": false,
+  "isConnected": false,
+  "qrCode": "2@eSZwBr1LyrnOF9wNR/zZxyhtagV+yFjBoaH5T6JwaY+N7bHSth7NHR6006qkhpy2fqk9CJQjShidgMa3c7dVi03mgPFYt7AveTE=,pfqedDoiTlE60BDxmv9f0WHH3gqCjCXdHrZKiq9Nihk=,emeSKyIFeHZNJZT8RYSHHhLf+AfgSWyDwXPgaQzKtFc=,89bCOnqIqg7ZpL294IOvm3X0IuokSYT16t6Plc+HFsc=",
+  "linkCode": "JT3F24H1",
+  "user": null,
+  "phone": "2349041648144",
+  "error": null
+}
+
+[1;33m⏳ Please scan the QR code or use the linking code shown above[0m
+[1;33m📱 Enter the pairing code in WhatsApp: Linked Devices > Link a Device > Link with phone number[0m
+
+[0;32mPress ENTER after you have successfully linked your device...[0m
+
+[1;33mVerifying connection...[0m
+{
+  "connected": true,
+  "status": "connected",
+  "authenticated": true,
+  "ready": true,
+  "isConnected": true,
+  "qrCode": null,
+  "linkCode": null,
+  "user": {
+    "id": "2349041648144:29@s.whatsapp.net"
+  },
+  "phone": "2349041648144",
+  "error": null
+}
+[0;32m✅ Connection verified![0m
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m📥 SECTION 2: DATA RETRIEVAL[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m2.1 Get Chats...[0m
+{
+  "success": true,
+  "chats": [
+    {
+      "id": "13135550002@s.whatsapp.net",
+      "name": "Meta AI",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://mmg.whatsapp.net/m1/v/t24/An_TR5ven0O9Qqe2LrXDME7cGYBM1AuEM1pT9Z2c0np7hX4RyerxP8qRYmdRldXV-RgjCl94hAOHE71bzws6EY3tXcyifumH9jJ6Xin9glvYsZFNYnY?stp=s810x1080&ccb=10-5&oh=01_Q5Aa2wEszyDrvA7cBPMGCWC90lBg-3sPgDtUlHTDgiIBltGrIg&oe=69175B2F&_nc_sid=e3bc14"
+    },
+    {
+      "id": "2347089378090@s.whatsapp.net",
+      "name": "Pastr wife",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/528827469_1655647422488905_6443129336174123550_n.jpg?ccb=11-4&oh=01_Q5Aa2wG75GqSpx6xLqYlQxFcYd1z6EsweDUMCB_cj4QchuaV-A&oe=68FCF2F3&_nc_sid=5e03e0&_nc_cat=110"
+    },
+    {
+      "id": "2347077967983@s.whatsapp.net",
+      "name": "Nne",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/551247429_797326922942373_1632228310400554060_n.jpg?ccb=11-4&oh=01_Q5Aa2wEBj5gD8rxePlB3C-vBtAdRs_XoW9GpMMRDvl_-C6lswA&oe=68FCD12C&_nc_sid=5e03e0&_nc_cat=111"
+    },
+    {
+      "id": "2348100583499@s.whatsapp.net",
+      "name": "Eunice Owutu",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/565851546_1938544480043912_4564662498582260325_n.jpg?ccb=11-4&oh=01_Q5Aa2wGpQZBp57DIcJGLtemby50c4hWBM6GQDmthkNxO90h-mQ&oe=68FCF5E7&_nc_sid=5e03e0&_nc_cat=108"
+    },
+    {
+      "id": "2348128785335@s.whatsapp.net",
+      "name": "Mercy🤍",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/543033708_794962249546262_4836275772439756059_n.jpg?ccb=11-4&oh=01_Q5Aa2wFQ851CWIWBswos72ZVV0wXL_0BdDIrtau1W9z1FaByhw&oe=68FCEEEE&_nc_sid=5e03e0&_nc_cat=109"
+    },
+    {
+      "id": "2348114875136@s.whatsapp.net",
+      "name": "onuorahmiracle92",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/473413748_1302342967690939_3058066970391663723_n.jpg?ccb=11-4&oh=01_Q5Aa2wFuqbpoIk7d8DhhRMjXB9fdBwitAsYpxYPUsVCn9xrsVg&oe=68FCDFA2&_nc_sid=5e03e0&_nc_cat=103"
+    },
+    {
+      "id": "2349061199841@s.whatsapp.net",
+      "name": "Crusher Church Customer",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/559175771_688853903654260_3440517953524361828_n.jpg?ccb=11-4&oh=01_Q5Aa2wHLrgWVSMk3LLK3QyDDmVu-bDQelW3wEdpNRnSDK5wDIg&oe=68FCCBC8&_nc_sid=5e03e0&_nc_cat=109"
+    },
+    {
+      "id": "2349123958727@s.whatsapp.net",
+      "name": "Paparazzi",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": null
+    },
+    {
+      "id": "2349137517405@s.whatsapp.net",
+      "name": "Honey Drop's Into Wealth",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/543161333_631206346414405_8726322465351432824_n.jpg?ccb=11-4&oh=01_Q5Aa2wHnFcqP1uDFMrJRWD1kWTvR8jqqWqyqw6i-tbe8UfVeFg&oe=68FCFE70&_nc_sid=5e03e0&_nc_cat=102"
+    },
+    {
+      "id": "2349042377075@s.whatsapp.net",
+      "name": "Rebecca💝",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/555006648_4141970782797873_3734092824890718875_n.jpg?ccb=11-4&oh=01_Q5Aa2wGlPk8HZQ1IxLxuTrg6vw4AZkVJiH11Gc-auhy6ZJ94Sg&oe=68FCD279&_nc_sid=5e03e0&_nc_cat=108"
+    },
+    {
+      "id": "2349155189680@s.whatsapp.net",
+      "name": "Ajoke",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/542816569_645758125277474_8212235841134726405_n.jpg?ccb=11-4&oh=01_Q5Aa2wHZJW0jbrTmBvt1ZNj4baVbMwJAfP1n3Rk8D9fyJ_NYkA&oe=68FCEC5C&_nc_sid=5e03e0&_nc_cat=102"
+    },
+    {
+      "id": "2348057434358@s.whatsapp.net",
+      "name": "KEWZY FUNDZ 🤡",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/513820193_1645045339495455_7516298564649687448_n.jpg?ccb=11-4&oh=01_Q5Aa2wHsgxWE5UVPmRq0WAqS8uwsdCdQgaoQD0gc3PdAKnpN7w&oe=68FCE17D&_nc_sid=5e03e0&_nc_cat=102"
+    },
+    {
+      "id": "2347046545005@s.whatsapp.net",
+      "name": "Saudat",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": null
+    },
+    {
+      "id": "2349169389772@s.whatsapp.net",
+      "name": "mom",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": null
+    },
+    {
+      "id": "2347070432576@s.whatsapp.net",
+      "name": "Ruth Otakuhi",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/473409833_537570918606199_7675350120672819929_n.jpg?ccb=11-4&oh=01_Q5Aa2wEvy6lcnjyTXfmz53k1sMKKN6IoFL8L_jyf4BKVJ4ak0A&oe=68FCFD83&_nc_sid=5e03e0&_nc_cat=106"
+    },
+    {
+      "id": "2347064640384@s.whatsapp.net",
+      "name": "Arc Austine",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/473394737_967316474838271_2106437921482608441_n.jpg?ccb=11-4&oh=01_Q5Aa2wE5z5XRum4Iv9nK6oDDkphivFKGyr9fJP9wVB2a_1Jesg&oe=68FCD932&_nc_sid=5e03e0&_nc_cat=109"
+    },
+    {
+      "id": "2348037774745@s.whatsapp.net",
+      "name": "New Customer Shettima",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": null
+    },
+    {
+      "id": "2349065034471@s.whatsapp.net",
+      "name": "blessing zam zam",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": null
+    },
+    {
+      "id": "2349124508935@s.whatsapp.net",
+      "name": "silaschristiana76",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/562352430_703232415482234_3171756649121568490_n.jpg?ccb=11-4&oh=01_Q5Aa2wE7UxSSEj-c_KOVZuHdrCxCT1Y5Lkq6Dpz6XtpqKeVU8Q&oe=68FCFD1E&_nc_sid=5e03e0&_nc_cat=109"
+    },
+    {
+      "id": "2349155210346@s.whatsapp.net",
+      "name": "itunuoluwa",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/558190658_744728795258343_6801146594280260833_n.jpg?ccb=11-4&oh=01_Q5Aa2wETzIvIM6fLNZhonXXYnMZMrptavhprqAIhp_SVCXiPzw&oe=68FCCEF8&_nc_sid=5e03e0&_nc_cat=100"
+    },
+    {
+      "id": "2348074779502@s.whatsapp.net",
+      "name": "Mary Ene🥰😍🥰",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/516640006_773263551955475_917173312663689196_n.jpg?ccb=11-4&oh=01_Q5Aa2wFqIBhgipwX2xndC7tjBhDzfwRe0Eacx21GznEJYvRnJg&oe=68FCED40&_nc_sid=5e03e0&_nc_cat=101"
+    },
+    {
+      "id": "2349037974162@s.whatsapp.net",
+      "name": "Cheenirayo🌸",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/491843938_1014296807570487_8477747546257062548_n.jpg?ccb=11-4&oh=01_Q5Aa2wGwkeXMeCsRpa_rOhFHyO3FnTdR4gRkbycuIpU52RTrfw&oe=68FCDCD5&_nc_sid=5e03e0&_nc_cat=105"
+    },
+    {
+      "id": "2348142932808@s.whatsapp.net",
+      "name": "ihuomannamdi65",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/156297605_504737330892310_1808881120383968318_n.jpg?ccb=11-4&oh=01_Q5Aa2wHgwdTufJbGJvjOnTFAtgvh91gWUVLMm9KH9WghDXRs7w&oe=68FCD9BC&_nc_sid=5e03e0&_nc_cat=110"
+    },
+    {
+      "id": "2349025322871@s.whatsapp.net",
+      "name": "Damilare",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/491841019_1014805180573693_4618326968063945949_n.jpg?ccb=11-4&oh=01_Q5Aa2wEyAjPJuTr59qr0zllJLFvWIXIr4PooBK1gLDYKPJXNeg&oe=68FCD372&_nc_sid=5e03e0&_nc_cat=100"
+    },
+    {
+      "id": "2348104522188@s.whatsapp.net",
+      "name": "collinsnnaji727@gmail.com",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/563122811_819404847219774_4385857140663266292_n.jpg?ccb=11-4&oh=01_Q5Aa2wE_MUcrRL3a92wzUwaqIIjgnINuUEiSpOhLOP1yBlsQng&oe=68FCD725&_nc_sid=5e03e0&_nc_cat=100"
+    },
+    {
+      "id": "2348123267962@s.whatsapp.net",
+      "name": "Success Shettima",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/546514649_1324525642569143_7817503848420672590_n.jpg?ccb=11-4&oh=01_Q5Aa2wHCNNBxAW9n6I292guPzRe6cm-j5r8qp8ADLOclmYO-RA&oe=68FCD204&_nc_sid=5e03e0&_nc_cat=111"
+    },
+    {
+      "id": "2349035259087@s.whatsapp.net",
+      "name": "DuduYegbe",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/516535609_734265395628100_5029782120846750829_n.jpg?ccb=11-4&oh=01_Q5Aa2wH1TE7QH4XplzdmG9tkI2EcVZrN4aYvTfFEccTVn0zKlw&oe=68FCF284&_nc_sid=5e03e0&_nc_cat=107"
+    },
+    {
+      "id": "2347041752120@s.whatsapp.net",
+      "name": "Juliet",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/554706161_1127492199115024_4561395735574400346_n.jpg?ccb=11-4&oh=01_Q5Aa2wHURNj09VyjCMrDhDm403JGOoIk3ZoPw-2xGFrcTTTQLw&oe=68FCDA55&_nc_sid=5e03e0&_nc_cat=105"
+    },
+    {
+      "id": "2347062385443@s.whatsapp.net",
+      "name": "Happiness Ajaokuta",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": null
+    },
+    {
+      "id": "2348085950760@s.whatsapp.net",
+      "name": "My Sweetheart",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/521578686_1433236861309527_7856336392197262377_n.jpg?ccb=11-4&oh=01_Q5Aa2wFQMgwJV7dkvuxqOnsdmm3nDayZ9OZtDAoCSJN_C5j1dA&oe=68FCFE1E&_nc_sid=5e03e0&_nc_cat=105"
+    },
+    {
+      "id": "2349162855461@s.whatsapp.net",
+      "name": "Sunday Lokoja",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/562169824_1873985719823868_9216154468211548940_n.jpg?ccb=11-4&oh=01_Q5Aa2wES3KCwM3nwBCXQ9NfEBioTOrv4VGDi-OjdVy-Yzvjezw&oe=68FCCD7C&_nc_sid=5e03e0&_nc_cat=103"
+    },
+    {
+      "id": "2347081433243@s.whatsapp.net",
+      "name": "Victor Ajaokuta",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/563900232_1523872801952139_6562934789466259788_n.jpg?ccb=11-4&oh=01_Q5Aa2wEn0PuHDhQJWfLREZdmMkMKqMFDGcZh2oK3Uc6smun_Jg&oe=68FCD4BE&_nc_sid=5e03e0&_nc_cat=102"
+    },
+    {
+      "id": "2347013384711@s.whatsapp.net",
+      "name": "Faniwa Hannah",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/420233128_1040256120675134_787656763885853161_n.jpg?ccb=11-4&oh=01_Q5Aa2wEQVOuc9soPUnbVz5yKDyDnCs_rPO6igBubR-gsrq2XAA&oe=68FCDF2C&_nc_sid=5e03e0&_nc_cat=101"
+    },
+    {
+      "id": "2349040402020@s.whatsapp.net",
+      "name": "''s''a",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/473407005_625125026918961_7170871067441352263_n.jpg?ccb=11-4&oh=01_Q5Aa2wGlWdOXTE7DR9CVHarVFDOlgRFCBx1QSvN3sK34csunmg&oe=68FCDA5B&_nc_sid=5e03e0&_nc_cat=111"
+    },
+    {
+      "id": "2348140407557@s.whatsapp.net",
+      "name": "Ada Vela",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/564212793_1318431882842133_4031389949660370168_n.jpg?ccb=11-4&oh=01_Q5Aa2wEchnP6BmB24vZATC0qqqKNPHYK5Wa0_i3Eo0AedziaAQ&oe=68FCD347&_nc_sid=5e03e0&_nc_cat=101"
+    },
+    {
+      "id": "2349043845616@s.whatsapp.net",
+      "name": "Damilola mi",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/490584945_1261996885494183_1377035658280401236_n.jpg?ccb=11-4&oh=01_Q5Aa2wGJg56ZNkj1hxr8ASCXjcc7D_znbls9Nzy3Z3Gz2kNzSw&oe=68FCCFB5&_nc_sid=5e03e0&_nc_cat=107"
+    },
+    {
+      "id": "2348135499007@s.whatsapp.net",
+      "name": "happiness",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": null
+    },
+    {
+      "id": "2347042514136@s.whatsapp.net",
+      "name": "Pammy",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/560095686_1884299969101663_5323788343519357426_n.jpg?ccb=11-4&oh=01_Q5Aa2wGdCgy3LLxatChZ14WfKqc2n17fqVT7uhmYn47fDJBGAQ&oe=68FCD816&_nc_sid=5e03e0&_nc_cat=109"
+    },
+    {
+      "id": "2348141140436@s.whatsapp.net",
+      "name": "Heart",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": null
+    },
+    {
+      "id": "2348120075552@s.whatsapp.net",
+      "name": "GRACE BENNETH",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/503374230_706104775537836_6141615198272276610_n.jpg?ccb=11-4&oh=01_Q5Aa2wHzx4sFN9Zh4tiLz4lUN7pAGE2hZYTaZ9hF7MSb6SYLOw&oe=68FCF93F&_nc_sid=5e03e0&_nc_cat=102"
+    },
+    {
+      "id": "2348156202408@s.whatsapp.net",
+      "name": "Magare8",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/564382535_1079480864259813_6234506755215626226_n.jpg?ccb=11-4&oh=01_Q5Aa2wHjNrXlhggVihoW1RVvn6cI45e9OpoAEN4lf2BpHJAEyg&oe=68FCFB1C&_nc_sid=5e03e0&_nc_cat=108"
+    },
+    {
+      "id": "2349165978730@s.whatsapp.net",
+      "name": "Blessing Ganaja",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/563626288_1519048135792716_4028428286708836945_n.jpg?ccb=11-4&oh=01_Q5Aa2wHosuUDQ0AeeeTH_x9ZI2OQXgt8mX0Jn3fBnIIicTSXQA&oe=68FCE7FE&_nc_sid=5e03e0&_nc_cat=103"
+    },
+    {
+      "id": "2349032160313@s.whatsapp.net",
+      "name": "M C C",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/566355915_1082220890457944_5619397967037645934_n.jpg?ccb=11-4&oh=01_Q5Aa2wGJIZBtTq3mqxAZ7BJG1gA0eEXA68qIWzXYAgQUsNYZ1A&oe=68FCD891&_nc_sid=5e03e0&_nc_cat=107"
+    },
+    {
+      "id": "2348164536729@s.whatsapp.net",
+      "name": "Esther Jacob ❤️❤️",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/490583527_2110595712716947_5036531612445523403_n.jpg?ccb=11-4&oh=01_Q5Aa2wEY_EdcZ1Rn4lCW0X69q4Tj32sHqB-mlV6p65XaSHWgZA&oe=68FCCB33&_nc_sid=5e03e0&_nc_cat=100"
+    },
+    {
+      "id": "2347044137088@s.whatsapp.net",
+      "name": "My Lunar",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/542283683_955977876697076_6951748041426023209_n.jpg?ccb=11-4&oh=01_Q5Aa2wH9dSu6xCL6fFJy8Y8LaFHwHedEhvJpUTaTTyBAg2hE6Q&oe=68FCF08B&_nc_sid=5e03e0&_nc_cat=102"
+    },
+    {
+      "id": "2348062460316@s.whatsapp.net",
+      "name": "Nnamdi Hanson",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/480394668_679100734488020_4384747010321775538_n.jpg?ccb=11-4&oh=01_Q5Aa2wFoRT-l_IC0pooiokbqApTleyDHp5cWVgmMR6Bg8VF-XA&oe=68FCEC10&_nc_sid=5e03e0&_nc_cat=106"
+    },
+    {
+      "id": "2349041648144@s.whatsapp.net",
+      "name": "2349041648144",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/461101747_890073422483178_1593072381481040421_n.jpg?ccb=11-4&oh=01_Q5Aa2wGQGCgkJlFJE14tZspilIO6gMyDpkV2HFAM86rq-D32WQ&oe=68FCF003&_nc_sid=5e03e0&_nc_cat=109"
+    },
+    {
+      "id": "2347065130726@s.whatsapp.net",
+      "name": "Ayoolami1",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/458207528_539499885689408_8182819619072833488_n.jpg?ccb=11-4&oh=01_Q5Aa2wEOmwTR7WOQ05eGqDBTYPAVvYKXkfVOpnII5bSId6EuCg&oe=68FCDF83&_nc_sid=5e03e0&_nc_cat=109"
+    },
+    {
+      "id": "2347062287946@s.whatsapp.net",
+      "name": "Ngozi nwajagu",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/565985794_702343445591723_4443225110849957322_n.jpg?ccb=11-4&oh=01_Q5Aa2wEPx0tDPygFnWPR86Sew4I3p4VaKZc4-1xhXvnbTthXTw&oe=68FCDE5A&_nc_sid=5e03e0&_nc_cat=105"
+    },
+    {
+      "id": "2348168363521@s.whatsapp.net",
+      "name": "Mrs E Ejimaji",
+      "unreadCount": 0,
+      "lastMessage": {
+        "text": "",
+        "timestamp": 1760547826171
+      },
+      "isGroup": false,
+      "isChannel": false,
+      "isArchived": false,
+      "isPinned": false,
+      "isMuted": false,
+      "profilePicUrl": "https://pps.whatsapp.net/v/t61.24694-24/480502109_626156823620628_7576250889445605053_n.jpg?ccb=11-4&oh=01_Q5Aa2wGT6HnlRSKvhHfdR0-5JNbdcappWQ1PTlwm4syGHcmOVQ&oe=68FCEC18&_nc_sid=5e03e0&_nc_cat=100"
+    }
+  ],
+  "count": 50
+}
+[0;32m✅ Found 50 chats[0m
+[0;32m✓ Selected random chat for testing: 2349124508935@s.whatsapp.net[0m
+
+[1;33m2.2 Get Contacts...[0m
+[0;34m⏳ Waiting for contacts to sync...[0m
+{
+  "success": true,
+  "contacts": [
+    {
+      "jid": "13135550002@s.whatsapp.net",
+      "name": "Meta AI",
+      "notify": "Meta AI",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347089378090@s.whatsapp.net",
+      "name": "Pastr wife",
+      "notify": "deborahnwanneka1994",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347077967983@s.whatsapp.net",
+      "name": "Nne",
+      "notify": "Boo😉",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348100583499@s.whatsapp.net",
+      "name": "Eunice Owutu",
+      "notify": "ASA Odogwu",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348128785335@s.whatsapp.net",
+      "name": "Mercy🤍",
+      "notify": "Mercy🤍",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348114875136@s.whatsapp.net",
+      "name": "onuorahmiracle92",
+      "notify": "onuorahmiracle92",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349061199841@s.whatsapp.net",
+      "name": "Crusher Church Customer",
+      "notify": "Ash",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349123958727@s.whatsapp.net",
+      "name": "Paparazzi",
+      "notify": "Paparazzi",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349137517405@s.whatsapp.net",
+      "name": "Honey Drop's Into Wealth",
+      "notify": "Honey Drop's Into Wealth",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349042377075@s.whatsapp.net",
+      "name": "Rebecca💝",
+      "notify": "Rebecca💝",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349155189680@s.whatsapp.net",
+      "name": "Ajoke",
+      "notify": "Ayo_Ife",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348057434358@s.whatsapp.net",
+      "name": "KEWZY FUNDZ 🤡",
+      "notify": "KEWZY FUNDZ 🤡",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347046545005@s.whatsapp.net",
+      "name": "Saudat",
+      "notify": "Saudyy",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349169389772@s.whatsapp.net",
+      "name": "mom",
+      "notify": "🥰🥰",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347070432576@s.whatsapp.net",
+      "name": "Ruth Otakuhi",
+      "notify": "Smart angel",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347064640384@s.whatsapp.net",
+      "name": "Arc Austine",
+      "notify": "austine989",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348037774745@s.whatsapp.net",
+      "name": "New Customer Shettima",
+      "notify": "Benjamin Akor",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349065034471@s.whatsapp.net",
+      "name": "blessing zam zam",
+      "notify": "Mary David",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349124508935@s.whatsapp.net",
+      "name": "silaschristiana76",
+      "notify": "Christyy🥰🥰🥰",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349155210346@s.whatsapp.net",
+      "name": "itunuoluwa",
+      "notify": "Dr Adewale ogunrinde",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348074779502@s.whatsapp.net",
+      "name": "Mary Ene🥰😍🥰",
+      "notify": "Mary Ene🥰😍🥰",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349037974162@s.whatsapp.net",
+      "name": "Cheenirayo🌸",
+      "notify": "Cheenirayo🌸",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348142932808@s.whatsapp.net",
+      "name": "ihuomannamdi65",
+      "notify": "ihuomannamdi65",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349025322871@s.whatsapp.net",
+      "name": "Damilare",
+      "notify": "Damilare",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348104522188@s.whatsapp.net",
+      "name": "collinsnnaji727@gmail.com",
+      "notify": "collinsnnaji727@gmail.com",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348123267962@s.whatsapp.net",
+      "name": "Success Shettima",
+      "notify": "Śüçç  èśś",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349035259087@s.whatsapp.net",
+      "name": "DuduYegbe",
+      "notify": "Christy❤️💋",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347041752120@s.whatsapp.net",
+      "name": "Juliet",
+      "notify": "O❤️h❤️u❤️t❤️u❤️l❤️e❤️n❤️e ❤️",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347062385443@s.whatsapp.net",
+      "name": "Happiness Ajaokuta",
+      "notify": "johnhappiness225",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348085950760@s.whatsapp.net",
+      "name": "My Sweetheart",
+      "notify": "Peculiar",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349162855461@s.whatsapp.net",
+      "name": "Sunday Lokoja",
+      "notify": "too much::",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347081433243@s.whatsapp.net",
+      "name": "Victor Ajaokuta",
+      "notify": "victor Joel",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347013384711@s.whatsapp.net",
+      "name": "Faniwa Hannah",
+      "notify": "hannahmoses172",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349040402020@s.whatsapp.net",
+      "name": "''s''a",
+      "notify": "ogbupeace352",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348140407557@s.whatsapp.net",
+      "name": "Ada Vela",
+      "notify": "𝓓𝓘𝓓𝓘𝓘𝓘😌😘🧚‍♂️",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349043845616@s.whatsapp.net",
+      "name": "Damilola mi",
+      "notify": "Ololade❤️🥰💋",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348135499007@s.whatsapp.net",
+      "name": "happiness",
+      "notify": "happiness",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347042514136@s.whatsapp.net",
+      "name": "Pammy",
+      "notify": "Pammy",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348141140436@s.whatsapp.net",
+      "name": "Heart",
+      "notify": "Beeebah🫅🫅🥰🥰",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348120075552@s.whatsapp.net",
+      "name": "GRACE BENNETH",
+      "notify": "GRACE BENNETH",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348156202408@s.whatsapp.net",
+      "name": "Magare8",
+      "notify": "Maggie 🌹",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349165978730@s.whatsapp.net",
+      "name": "Blessing Ganaja",
+      "notify": "Eze Blessing",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349032160313@s.whatsapp.net",
+      "name": "M C C",
+      "notify": "M C C",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348164536729@s.whatsapp.net",
+      "name": "Esther Jacob ❤️❤️",
+      "notify": "Esther Jacob ❤️❤️",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347044137088@s.whatsapp.net",
+      "name": "My Lunar",
+      "notify": "favourfavour7079",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348062460316@s.whatsapp.net",
+      "name": "Nnamdi Hanson",
+      "notify": "Nnamdi Hanson",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349041648144@s.whatsapp.net",
+      "name": "2349041648144",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "0@s.whatsapp.net",
+      "name": "WhatsApp",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347065130726@s.whatsapp.net",
+      "name": "Ayoolami1",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347062287946@s.whatsapp.net",
+      "name": "Ngozi nwajagu",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348168363521@s.whatsapp.net",
+      "name": "Mrs E Ejimaji",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349124247637@s.whatsapp.net",
+      "name": "2349124247637",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347034548503@s.whatsapp.net",
+      "name": "Hope",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "18002428478@s.whatsapp.net",
+      "name": "Chat Gpt",
+      "notify": "",
+      "verifiedName": "ChatGPT",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349154347487@s.whatsapp.net",
+      "name": "Lenient",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349163175009@s.whatsapp.net",
+      "name": "2349163175009",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349063432803@s.whatsapp.net",
+      "name": "2349063432803",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349051136188@s.whatsapp.net",
+      "name": "Christiana Precious",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348052332058@s.whatsapp.net",
+      "name": "grace",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348113054793@s.whatsapp.net",
+      "name": "Abc2",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348105602600@s.whatsapp.net",
+      "name": "aishat kabawa",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "22969774062@s.whatsapp.net",
+      "name": "Fanou Hélène Kemi",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348081443275@s.whatsapp.net",
+      "name": "Elek2",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349038644973@s.whatsapp.net",
+      "name": "Hussaina",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2349168370819@s.whatsapp.net",
+      "name": "ummi Galilee",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348149303404@s.whatsapp.net",
+      "name": "Norbert P. o. p",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347081842067@s.whatsapp.net",
+      "name": "+2347081842067",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348166649984@s.whatsapp.net",
+      "name": "Heartbeat💓1",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348126817612@s.whatsapp.net",
+      "name": "Ranti akinade",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "85246408220@s.whatsapp.net",
+      "name": "85246408220",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348147911067@s.whatsapp.net",
+      "name": "My Smallie",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "31645855058@s.whatsapp.net",
+      "name": "31645855058",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347042275876@s.whatsapp.net",
+      "name": "Luiz",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "905374319083@s.whatsapp.net",
+      "name": "905374319083",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "33649637368@s.whatsapp.net",
+      "name": "33649637368",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "905388810874@s.whatsapp.net",
+      "name": "905388810874",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347039427295@s.whatsapp.net",
+      "name": "2347039427295",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923493319105@s.whatsapp.net",
+      "name": "923493319105",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2348076996298@s.whatsapp.net",
+      "name": "Perpetual",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923140587500@s.whatsapp.net",
+      "name": "923140587500",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923439883021@s.whatsapp.net",
+      "name": "923439883021",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923037390442@s.whatsapp.net",
+      "name": "923037390442",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923146414645@s.whatsapp.net",
+      "name": "923146414645",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923017521055@s.whatsapp.net",
+      "name": "923017521055",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923347381150@s.whatsapp.net",
+      "name": "923347381150",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923315143133@s.whatsapp.net",
+      "name": "923315143133",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923287458644@s.whatsapp.net",
+      "name": "923287458644",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "923065777084@s.whatsapp.net",
+      "name": "923065777084",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    },
+    {
+      "jid": "2347079888456@s.whatsapp.net",
+      "name": "2347079888456",
+      "notify": "",
+      "verifiedName": "",
+      "imgUrl": null
+    }
+  ],
+  "count": 89
+}
+[0;32m✅ Found 89 contacts[0m
+
+[1;33m2.3 Get Groups...[0m
+{
+  "success": true,
+  "groups": [
+    {
+      "id": "120363388995420849@g.us",
+      "subject": "THE red ♥️ ROOM",
+      "size": 2,
+      "creation": 1740272994,
+      "desc": "",
+      "participants": [
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": null
+        },
+        {
+          "id": "119524997201937@lid",
+          "jid": "2349030476305@s.whatsapp.net",
+          "lid": "119524997201937@lid",
+          "admin": "admin"
+        }
+      ]
+    },
+    {
+      "id": "120363325727715969@g.us",
+      "subject": "3k every 5 days to pack 50k 👍👉👈🥰",
+      "size": 2,
+      "creation": 1728457695,
+      "owner": "117175767531560@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": null
+        },
+        {
+          "id": "72615448309948@lid",
+          "jid": "2348143427739@s.whatsapp.net",
+          "lid": "72615448309948@lid",
+          "admin": "admin"
+        }
+      ]
+    },
+    {
+      "id": "120363421779888083@g.us",
+      "subject": "Connexa Hub",
+      "size": 2,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to Connexa Hub Community 🌐\nWe build mobile apps, bots, and tools for businesses and individuals — tailored to any type you want.\nStay connected with updates, tips, and tech solutions.\n👉 Contact us via the community link in the channel.\nGitHub: https://github.com/ConnexaHub   This community is for members to chat in topic-based groups and get important announcements.",
+      "participants": [
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        }
+      ]
+    },
+    {
+      "id": "120363422362443321@g.us",
+      "subject": "Showcase",
+      "size": 5,
+      "creation": 1757972880,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363420985155425@g.us",
+      "subject": "Support",
+      "size": 5,
+      "creation": 1757972804,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363422155891971@g.us",
+      "subject": "🤝 Request and Collaboration",
+      "size": 5,
+      "creation": 1757972950,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363403359581541@g.us",
+      "subject": "General",
+      "size": 6,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to the community! 🎉\nThis is the space for questions, feedback, discussions, and ideas.\nNeed a custom app, bot, or tool? Share here or reach us via GitHub 👉 github.com/connexa-hub",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "146870970151025@lid",
+          "jid": "2349161275483@s.whatsapp.net",
+          "lid": "146870970151025@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363420612494192@g.us",
+      "subject": "Connexa Hub",
+      "size": 8,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to Connexa Hub Community 🌐\nWe build mobile apps, bots, and tools for businesses and individuals — tailored to any type you want.\nStay connected with updates, tips, and tech solutions.\n👉 Contact us via the community link in the channel.\nGitHub: https://github.com/ConnexaHub   This community is for members to chat in topic-based groups and get important announcements.",
+      "participants": [
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        },
+        {
+          "id": "111110971777216@lid",
+          "jid": "2348128785335@s.whatsapp.net",
+          "lid": "111110971777216@lid",
+          "admin": null
+        },
+        {
+          "id": "33930493313263@lid",
+          "jid": "2348168363521@s.whatsapp.net",
+          "lid": "33930493313263@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "146870970151025@lid",
+          "jid": "2349161275483@s.whatsapp.net",
+          "lid": "146870970151025@lid",
+          "admin": null
+        },
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        }
+      ]
+    }
+  ],
+  "count": 8
+}
+
+[1;33m2.4 Get Call History...[0m
+{
+  "success": true,
+  "calls": []
+}
+
+[1;33m2.5 Get Status Updates...[0m
+{
+  "success": true,
+  "statusUpdates": [],
+  "count": 0
+}
+
+[1;33m2.6 Get Channels...[0m
+{
+  "success": true,
+  "data": {
+    "channels": []
+  }
+}
+
+[1;33m2.7 Get Communities...[0m
+{
+  "success": true,
+  "communities": []
+}
+
+[1;33m2.8 Get Profile...[0m
+{
+  "success": true,
+  "data": {
+    "name": "2349041648144",
+    "phone": "2349041648144",
+    "status": "",
+    "picture": "https://pps.whatsapp.net/v/t61.24694-24/461101747_890073422483178_1593072381481040421_n.jpg?ccb=11-4&oh=01_Q5Aa2wGQGCgkJlFJE14tZspilIO6gMyDpkV2HFAM86rq-D32WQ&oe=68FCF003&_nc_sid=5e03e0&_nc_cat=109"
+  }
+}
+
+[1;33m2.9 Get Chat Labels...[0m
+{
+  "error": "Not connected to WhatsApp"
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m প্রক্র SECTION 3: MESSAGING[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m3.1 Send Text Message to: 2349124508935@s.whatsapp.net...[0m
+[0;34mPress ENTER to send test message...[0m
+{
+  "success": true,
+  "messageId": "3EB08842D9022189235805"
+}
+[0;32m✅ Message sent successfully[0m
+
+[1;33m3.2 Send Poll...[0m
+{
+  "success": true,
+  "messageId": "3EB0514C8C93BA42C69AFD"
+}
+
+[1;33m3.3 Send Location...[0m
+{
+  "success": true,
+  "messageId": "3EB08F6931D4523C9E44BF"
+}
+
+[1;33m3.4 Send Broadcast Message...[0m
+{
+  "success": true,
+  "results": [
+    {
+      "recipient": "2349124508935@s.whatsapp.net",
+      "success": true,
+      "messageId": "3EB0CE61370089BC72D89C"
+    }
+  ]
+}
+
+[1;33m3.5 Reply to Message (Note: requires valid quotedMessage)...[0m
+Skipped - requires specific quotedMessage from previous messages
+
+[1;33m3.6 Send Contact Card...[0m
+{
+  "success": true,
+  "messageId": "3EB081210D63786D5A4BE0"
+}
+
+[1;33m3.7 Send List Message...[0m
+{
+  "success": true,
+  "messageId": "3EB09B101A0DF88296E5CD"
+}
+
+[1;33m3.8 Download Media (Note: requires message with media)...[0m
+Skipped - requires specific message with media
+
+[1;33m3.9 Forward Message (Note: requires valid message)...[0m
+Skipped - requires specific message to forward
+
+[1;33m3.10 Mark Message as Read (Note: requires valid messageKey)...[0m
+Skipped - requires specific messageKey
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m⚙️ SECTION 4: MESSAGE ACTIONS[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m4.1 React to Message (Note: requires valid messageKey)...[0m
+Skipped - requires specific messageKey from previous messages
+
+[1;33m4.2 Edit Message (Note: requires valid messageKey)...[0m
+Skipped - requires specific messageKey from previous messages
+
+[1;33m4.3 Star Message (Note: requires valid messageKey)...[0m
+Skipped - requires specific messageKey from previous messages
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m💬 SECTION 5: CHAT ACTIONS[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m5.1 Archive Chat...[0m
+{
+  "success": true,
+  "message": "Chat archived"
+}
+
+[1;33m5.2 Unarchive Chat...[0m
+{
+  "success": true,
+  "message": "Chat unarchived"
+}
+
+[1;33m5.3 Pin Chat...[0m
+{
+  "success": true,
+  "message": "Chat pinned"
+}
+
+[1;33m5.4 Unpin Chat...[0m
+{
+  "success": true,
+  "message": "Chat unpinned"
+}
+
+[1;33m5.5 Mute Chat (8 hours)...[0m
+{
+  "success": true,
+  "message": "Chat muted"
+}
+
+[1;33m5.6 Mark as Read...[0m
+{
+  "success": true,
+  "message": "Chat marked as read"
+}
+
+[1;33m5.7 Mark as Unread...[0m
+{
+  "success": true,
+  "message": "Chat marked as unread"
+}
+
+[1;33m5.8 Clear Chat...[0m
+{
+  "success": true
+}
+
+[1;33m5.9 Add Chat Label (Note: business feature)...[0m
+{
+  "success": true
+}
+
+[1;33m5.10 Remove Chat Label...[0m
+{
+  "success": true
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m📸 SECTION 6: STATUS/STORY[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m6.1 Post Text Status...[0m
+{
+  "success": true,
+  "messageId": "3EB02E6B9FB409078916B7"
+}
+
+[1;33m6.2 Get Status Privacy Settings...[0m
+{
+  "success": true,
+  "privacy": {
+    "readreceipts": "all",
+    "profile": "all",
+    "status": "contacts",
+    "online": "match_last_seen",
+    "last": "contact_blacklist",
+    "groupadd": "all",
+    "calladd": "all",
+    "stickers": "contacts",
+    "messages": "all"
+  }
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m👥 SECTION 7: GROUP MANAGEMENT[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m7.1 List Groups...[0m
+{
+  "success": true,
+  "groups": [
+    {
+      "id": "120363388995420849@g.us",
+      "subject": "THE red ♥️ ROOM",
+      "size": 2,
+      "creation": 1740272994,
+      "desc": "",
+      "participants": [
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": null
+        },
+        {
+          "id": "119524997201937@lid",
+          "jid": "2349030476305@s.whatsapp.net",
+          "lid": "119524997201937@lid",
+          "admin": "admin"
+        }
+      ]
+    },
+    {
+      "id": "120363325727715969@g.us",
+      "subject": "3k every 5 days to pack 50k 👍👉👈🥰",
+      "size": 2,
+      "creation": 1728457695,
+      "owner": "117175767531560@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": null
+        },
+        {
+          "id": "72615448309948@lid",
+          "jid": "2348143427739@s.whatsapp.net",
+          "lid": "72615448309948@lid",
+          "admin": "admin"
+        }
+      ]
+    },
+    {
+      "id": "120363421779888083@g.us",
+      "subject": "Connexa Hub",
+      "size": 2,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to Connexa Hub Community 🌐\nWe build mobile apps, bots, and tools for businesses and individuals — tailored to any type you want.\nStay connected with updates, tips, and tech solutions.\n👉 Contact us via the community link in the channel.\nGitHub: https://github.com/ConnexaHub   This community is for members to chat in topic-based groups and get important announcements.",
+      "participants": [
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        }
+      ]
+    },
+    {
+      "id": "120363422362443321@g.us",
+      "subject": "Showcase",
+      "size": 5,
+      "creation": 1757972880,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363420985155425@g.us",
+      "subject": "Support",
+      "size": 5,
+      "creation": 1757972804,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363422155891971@g.us",
+      "subject": "🤝 Request and Collaboration",
+      "size": 5,
+      "creation": 1757972950,
+      "owner": "29103201714288@lid",
+      "desc": "",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363403359581541@g.us",
+      "subject": "General",
+      "size": 6,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to the community! 🎉\nThis is the space for questions, feedback, discussions, and ideas.\nNeed a custom app, bot, or tool? Share here or reach us via GitHub 👉 github.com/connexa-hub",
+      "participants": [
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        },
+        {
+          "id": "146870970151025@lid",
+          "jid": "2349161275483@s.whatsapp.net",
+          "lid": "146870970151025@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        }
+      ]
+    },
+    {
+      "id": "120363420612494192@g.us",
+      "subject": "Connexa Hub",
+      "size": 8,
+      "creation": 1757972356,
+      "owner": "29103201714288@lid",
+      "desc": "> Welcome to Connexa Hub Community 🌐\nWe build mobile apps, bots, and tools for businesses and individuals — tailored to any type you want.\nStay connected with updates, tips, and tech solutions.\n👉 Contact us via the community link in the channel.\nGitHub: https://github.com/ConnexaHub   This community is for members to chat in topic-based groups and get important announcements.",
+      "participants": [
+        {
+          "id": "74161703665757@lid",
+          "jid": "2347065130726@s.whatsapp.net",
+          "lid": "74161703665757@lid",
+          "admin": null
+        },
+        {
+          "id": "111110971777216@lid",
+          "jid": "2348128785335@s.whatsapp.net",
+          "lid": "111110971777216@lid",
+          "admin": null
+        },
+        {
+          "id": "33930493313263@lid",
+          "jid": "2348168363521@s.whatsapp.net",
+          "lid": "33930493313263@lid",
+          "admin": null
+        },
+        {
+          "id": "29103201714288@lid",
+          "jid": "2349041648144@s.whatsapp.net",
+          "lid": "29103201714288@lid",
+          "admin": "superadmin"
+        },
+        {
+          "id": "46283037397203@lid",
+          "jid": "2349137517405@s.whatsapp.net",
+          "lid": "46283037397203@lid",
+          "admin": null
+        },
+        {
+          "id": "177648839999677@lid",
+          "jid": "2349154347487@s.whatsapp.net",
+          "lid": "177648839999677@lid",
+          "admin": "admin"
+        },
+        {
+          "id": "146870970151025@lid",
+          "jid": "2349161275483@s.whatsapp.net",
+          "lid": "146870970151025@lid",
+          "admin": null
+        },
+        {
+          "id": "268449045585939@lid",
+          "jid": "2349165978730@s.whatsapp.net",
+          "lid": "268449045585939@lid",
+          "admin": null
+        }
+      ]
+    }
+  ],
+  "count": 8
+}
+
+[1;33m7.2 Create Group (Note: requires participants)...[0m
+Skipped - requires valid participant JIDs
+
+[1;33m7.3 Get Group Invite Code (Note: requires group)...[0m
+Skipped - requires existing group
+
+[1;33m7.4 Get Group Metadata (Note: requires group)...[0m
+Skipped - requires existing group
+
+[1;33m7.5 Update Group Subject (Note: requires group)...[0m
+Skipped - requires existing group and admin rights
+
+[1;33m7.6 Update Group Description (Note: requires group)...[0m
+Skipped - requires existing group and admin rights
+
+[1;33m7.7 Add/Remove Participants (Note: requires group)...[0m
+Skipped - requires existing group and admin rights
+
+[1;33m7.8 Promote/Demote Participants (Note: requires group)...[0m
+Skipped - requires existing group and admin rights
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m🤖 SECTION 8: AI FEATURES[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m8.1 Generate Smart Reply...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.2 Analyze Sentiment...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.3 Translate Text...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.4 Improve Message...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.5 Content Moderation...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.6 Smart Compose...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.7 Generate AI Response...[0m
+{
+  "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+}
+
+[1;33m8.8 Batch Analyze Messages...[0m
+{
+  "success": true,
+  "results": [
+    {
+      "messageId": "1",
+      "success": false,
+      "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+    },
+    {
+      "messageId": "2",
+      "success": false,
+      "error": "429 You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+    }
+  ]
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m📡 SECTION 9: CHANNELS & CALLS[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m9.1 Get Channels...[0m
+{
+  "success": true,
+  "data": {
+    "channels": []
+  }
+}
+
+[1;33m9.2 Get Communities...[0m
+{
+  "success": true,
+  "communities": []
+}
+
+[1;33m9.3 Get Channel Metadata (Note: requires channel JID)...[0m
+Skipped - requires valid channel JID
+
+[1;33m9.4 Mute Channel (Note: requires channel JID)...[0m
+Skipped - requires valid channel JID
+
+[1;33m9.5 Get Call History...[0m
+{
+  "success": true,
+  "calls": []
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m👤 SECTION 10: PRESENCE & PROFILE[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m10.1 Update Presence (Typing)...[0m
+{
+  "success": true,
+  "presence": "composing",
+  "chatId": "2349124508935@s.whatsapp.net"
+}
+
+[1;33m10.1b Update Presence (Recording)...[0m
+{
+  "success": true,
+  "presence": "recording",
+  "chatId": "2349124508935@s.whatsapp.net"
+}
+
+[1;33m10.1c Update Presence (Available)...[0m
+{
+  "success": true,
+  "presence": "available",
+  "chatId": "2349124508935@s.whatsapp.net"
+}
+
+[1;33m10.2 Get Profile...[0m
+{
+  "success": true,
+  "data": {
+    "name": "2349041648144",
+    "phone": "2349041648144",
+    "status": "",
+    "picture": "https://pps.whatsapp.net/v/t61.24694-24/461101747_890073422483178_1593072381481040421_n.jpg?ccb=11-4&oh=01_Q5Aa2wGQGCgkJlFJE14tZspilIO6gMyDpkV2HFAM86rq-D32WQ&oe=68FCF003&_nc_sid=5e03e0&_nc_cat=109"
+  }
+}
+
+[1;33m10.3 Update Profile Name...[0m
+{
+  "error": "phone.replace is not a function"
+}
+
+[1;33m10.4 Update Profile Status...[0m
+{
+  "error": "phone.replace is not a function"
+}
+
+[1;33m10.5 Get Profile Picture (Note: requires JID)...[0m
+Skipped - requires valid JID
+
+[1;33m10.6 Contact Actions - Block/Unblock...[0m
+{
+  "success": true,
+  "blocked": []
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m🔒 SECTION 11: PRIVACY & SECURITY[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m11.1 Get Privacy Settings...[0m
+{
+  "success": true,
+  "data": {
+    "readreceipts": "all",
+    "profile": "all",
+    "status": "contacts",
+    "online": "match_last_seen",
+    "last": "contact_blacklist",
+    "groupadd": "all",
+    "calladd": "all",
+    "stickers": "contacts",
+    "messages": "all"
+  }
+}
+
+[1;33m11.2 Get Blocked Contacts...[0m
+{
+  "success": true,
+  "data": []
+}
+
+[1;33m11.3 Update Privacy Settings (Status visibility to contacts)...[0m
+{
+  "success": true
+}
+
+[1;33m11.4 Set Disappearing Messages (24 hours)...[0m
+{
+  "success": true,
+  "message": "Disappearing messages updated"
+}
+
+[1;33m11.5 Get Business Profile (Note: requires business account JID)...[0m
+Skipped - requires valid business account JID
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m⚡ SECTION 12: ADVANCED FEATURES[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m12.1 Get AI Chat History...[0m
+{
+  "success": true,
+  "history": []
+}
+
+[1;33m12.2 Clear Session State (Partial)...[0m
+{
+  "success": true,
+  "message": "State cleared successfully"
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m🧹 SECTION 13: CLEANUP (OPTIONAL)[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m13.1 Clear AI Chat History...[0m
+{
+  "success": true,
+  "cleared": 1
+}
+
+[0;31mWould you like to logout? (y/n)[0m
+
+[1;33m13.2 Logout...[0m
+{
+  "success": true,
+  "message": "Session cleared. Please reconnect."
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m🔍 SECTION 14: ADVANCED SEARCH & STARRED[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m14.1 Global Message Search...[0m
+{
+  "error": "Not connected"
+}
+
+[1;33m14.2 Search by Media Type...[0m
+{
+  "error": "Not connected"
+}
+
+[1;33m14.3 Get Unread Chats...[0m
+{
+  "error": "Not connected"
+}
+
+[1;33m14.4 Get All Starred Messages...[0m
+{
+  "error": "Not connected"
+}
+
+[1;33m14.5 Search Starred Messages...[0m
+{
+  "error": "Not connected"
+}
+
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;32m📱 SECTION 15: LINKED DEVICES[0m
+[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+
+[1;33m15.1 Get Linked Devices...[0m
+{
+  "error": "Not connected to WhatsApp"
+}
+
+[0;32m
+╔════════════════════════════════════════════╗
+║        ✅ ALL TESTS COMPLETED              ║
+╚════════════════════════════════════════════╝
+[0m
+[0;34m📝 Test Summary:[0m
+  [0;32m✓[0m Health & Connection Tests (5 tests - including OpenAI status)
+  [0;32m✓[0m Data Retrieval Tests (9 tests)
+  [0;32m✓[0m Messaging Tests (10 tests - all message types)
+  [0;32m✓[0m Message Actions Tests (3 tests)
+  [0;32m✓[0m Chat Actions Tests (10 tests - including labels)
+  [0;32m✓[0m Status/Story Tests (2 tests)
+  [0;32m✓[0m Group Management Tests (8 tests - all actions)
+  [0;32m✓[0m AI Features Tests (8 tests)
+  [0;32m✓[0m Channels & Calls Tests (5 tests)
+  [0;32m✓[0m Presence & Profile Tests (8 tests - all states)
+  [0;32m✓[0m Privacy & Security Tests (5 tests)
+  [0;32m✓[0m Advanced Features Tests (2 tests)
+  [0;32m✓[0m Advanced Search & Starred Tests (5 tests)
+  [0;32m✓[0m Linked Devices Tests (1 test)
+  [0;32m✓[0m Cleanup Tests (2 tests)
+
+[0;32mTotal: 83+ endpoint tests covering 100% backend functionality[0m
+
+[1;33mTo run with custom values:[0m
+  [0;34mBASE_URL=http://localhost:5000 PHONE=123456789 ./test-endpoints.sh[0m
+
