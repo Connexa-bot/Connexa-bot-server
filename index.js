@@ -45,7 +45,7 @@ const io = new Server(server, { cors: { origin: "*" } });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const AUTH_DIR = process.env.AUTH_DIR || "./auth";
 
 // Auto-detect server URL based on environment (prioritize Replit/Render detection)
