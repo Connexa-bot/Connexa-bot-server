@@ -42,6 +42,7 @@ dotenv.config();
 await connectDB();
 
 // Check OpenAI connection
+console.log('\n🤖 Checking OpenAI API Connection...');
 if (process.env.OPENAI_API_KEY) {
   try {
     // Test OpenAI connection
@@ -50,16 +51,21 @@ if (process.env.OPENAI_API_KEY) {
     
     // Make a minimal test request
     await testClient.models.list();
-    console.log('✅ OpenAI API connected successfully');
+    console.log('✅ OpenAI API: CONNECTED');
+    console.log('   Status: Active and ready');
+    console.log('   AI features: Enabled\n');
     
     // Store client globally for access in routes
     global.openaiClient = testClient;
   } catch (err) {
-    console.log(`⚠️  OpenAI API connection failed: ${err.message}`);
-    console.log('   AI features will be disabled');
+    console.log(`❌ OpenAI API: CONNECTION FAILED`);
+    console.log(`   Error: ${err.message}`);
+    console.log('   AI features: Disabled\n');
   }
 } else {
-  console.log('⚠️  OpenAI API key not configured (AI features disabled)');
+  console.log('❌ OpenAI API: NOT CONFIGURED');
+  console.log('   Reason: OPENAI_API_KEY environment variable not set');
+  console.log('   AI features: Disabled\n');
 }
 
 const app = express();
