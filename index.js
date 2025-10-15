@@ -24,6 +24,9 @@ import channelRoutes from "./routes/channels.js";
 import callRoutes from "./routes/calls.js";
 import chatRoutes from "./routes/chats.js";
 import privacyRoutes from "./routes/privacy.js";
+import starredRoutes from "./routes/starred.js";
+import broadcastRoutes from "./routes/broadcast.js";
+import searchRoutes from "./routes/search.js";
 
 // 🤖 Bot Helper
 import { startBot, clearSession } from "./helpers/whatsapp.js";
@@ -127,6 +130,9 @@ app.use("/api/channels", channelRoutes);
 app.use("/api/calls", callRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/privacy", privacyRoutes);
+app.use("/api/starred", starredRoutes);
+app.use("/api/broadcast", broadcastRoutes);
+app.use("/api/search", searchRoutes);
 
 // WebSocket handlers
 io.on("connection", (socket) => {
