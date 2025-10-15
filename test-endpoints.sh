@@ -142,47 +142,23 @@ echo -e "${GREEN}📥 SECTION 2: DATA RETRIEVAL${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 echo -e "\n${YELLOW}2.1 Get Chats...${NC}"
-echo -e "${BLUE}⏳ Waiting for chats to sync...${NC}"
+CHATS_RESPONSE=$(curl -s "$BASE_URL/api/chats/$PHONE")
+echo "$CHATS_RESPONSE" | format_output
 
-MAX_RETRIES=1
-RETRY_COUNT=0
-HAS_CHATS=false
+if [ "$HAS_JQ" = true ]; then
+  CHAT_COUNT=$(echo "$CHATS_RESPONSE" | jq -r '.count // 0' 2>/dev/null)
+  CHAT_COUNT=${CHAT_COUNT:-0}
+  
+  if ! [[ "$CHAT_COUNT" =~ ^[0-9]+$ ]]; then
+    CHAT_COUNT=0
+  fi
 
-while [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
-  CHATS_RESPONSE=$(curl -s "$BASE_URL/api/chats/$PHONE")
-
-  if [ "$HAS_JQ" = true ]; then
-    # Safely extract numeric chat count, default to 0 if invalid or missing
-    CHAT_COUNT=$(echo "$CHATS_RESPONSE" | jq -r '.count // 0' 2>/dev/null)
-    # If jq returned nothing, fallback to 0 to avoid "integer expected"
-    CHAT_COUNT=${CHAT_COUNT:-0}
-
-    # Ensure CHAT_COUNT is numeric (remove non-digits just in case)
-    if ! [[ "$CHAT_COUNT" =~ ^[0-9]+$ ]]; then
-      CHAT_COUNT=0
-    fi
-
-    if [ "$CHAT_COUNT" -gt 0 ]; then
-      HAS_CHATS=true
-      echo "$CHATS_RESPONSE" | format_output
-      echo -e "${GREEN}✅ Found $CHAT_COUNT chats${NC}"
-      break
-    fi
+  if [ "$CHAT_COUNT" -gt 0 ]; then
+    echo -e "${GREEN}✅ Found $CHAT_COUNT chats${NC}"
   else
-    echo "$CHATS_RESPONSE" | format_output
-    break
+    echo -e "${YELLOW}⚠ No chats found. Chats are constructed from contacts or message history.${NC}"
+    echo -e "${YELLOW}💡 Send a message to someone to create a chat.${NC}"
   fi
-
-  RETRY_COUNT=$((RETRY_COUNT + 1))
-  if [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; then
-    echo -e "${YELLOW}⏳ Waiting for chats to sync... (attempt $RETRY_COUNT/$MAX_RETRIES)${NC}"
-    sleep 2
-  fi
-done
-
-if [ "$HAS_CHATS" = false ] && [ "$HAS_JQ" = true ]; then
-  echo -e "${YELLOW}⚠ No chats found yet. This is normal for new connections.${NC}"
-  echo -e "${YELLOW}💡 You may need to send a message first to populate the chat list.${NC}"
 fi
 
 # Extract a random chat ID from contacts (excluding your own number)

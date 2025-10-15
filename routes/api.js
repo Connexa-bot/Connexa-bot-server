@@ -11,7 +11,7 @@ import * as profileActions from "../helpers/profileActions.js";
 import * as statusActions from "../helpers/statusActions.js";
 import * as channelActions from "../helpers/channelActions.js";
 import * as callActions from "../helpers/callActions.js";
-import { fetchChats } from "../helpers/fetchers.js"; // Explicitly import fetchChats
+import { fetchCalls } from "../helpers/fetchers.js"; // Explicitly import fetchCalls
 
 export function createApiRoutes(broadcast) {
   const router = express.Router();
@@ -928,7 +928,7 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = mentions && mentions.length > 0 
+      const result = mentions && mentions.length > 0
         ? await messageActions.sendMessageWithMentions(normalizePhone(phone), to, text, mentions)
         : await messageActions.sendMessage(normalizePhone(phone), to, text);
       res.json({ success: true, messageId: result.key?.id });
@@ -1172,11 +1172,10 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const { fetchCalls } = await import("../helpers/fetchers.js");
-      const calls = await fetchCalls(validation.session.store);
-      res.json({ success: true, data: { calls } });
+      const calls = await fetchCalls(normalizedPhone);
+      res.json({ success: true, calls: calls });
     } catch (err) {
-      res.status(500).json({ success: false, error: err.message });
+      res.status(500).json({ success: false, calls: [], error: err.message });
     }
   });
 
@@ -1186,9 +1185,9 @@ export function createApiRoutes(broadcast) {
     const validation = validateSession(phone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
-    res.json({ 
-      success: false, 
-      error: "Direct call initiation is not supported by Baileys API. Use WhatsApp client to make calls." 
+    res.json({
+      success: false,
+      error: "Direct call initiation is not supported by Baileys API. Use WhatsApp client to make calls."
     });
   });
 
@@ -1423,9 +1422,9 @@ export function createApiRoutes(broadcast) {
     const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
-    res.json({ 
-      success: true, 
-      message: "Broadcast lists are managed client-side. Use send-broadcast endpoint to send messages." 
+    res.json({
+      success: true,
+      message: "Broadcast lists are managed client-side. Use send-broadcast endpoint to send messages."
     });
   });
 
@@ -1490,9 +1489,9 @@ export function createApiRoutes(broadcast) {
     const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
-    res.json({ 
-      success: false, 
-      error: "Business catalog features are limited in Baileys. Use WhatsApp Business API for full support." 
+    res.json({
+      success: false,
+      error: "Business catalog features are limited in Baileys. Use WhatsApp Business API for full support."
     });
   });
 
@@ -1511,13 +1510,13 @@ export function createApiRoutes(broadcast) {
   router.get("/openai/status", (req, res) => {
     const isOpenAiConnected = typeof global.openaiClient !== 'undefined' && global.openaiClient !== null;
     const hasApiKey = !!process.env.OPENAI_API_KEY;
-    
-    res.json({ 
+
+    res.json({
       connected: isOpenAiConnected,
       configured: hasApiKey,
       status: isOpenAiConnected ? 'active' : (hasApiKey ? 'error' : 'not_configured'),
-      message: isOpenAiConnected 
-        ? 'OpenAI API is connected and ready' 
+      message: isOpenAiConnected
+        ? 'OpenAI API is connected and ready'
         : (hasApiKey ? 'OpenAI API key configured but connection failed' : 'OpenAI API key not configured')
     });
   });

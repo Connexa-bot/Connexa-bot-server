@@ -14,55 +14,88 @@ export async function fetchChats(phone) {
     return [];
   }
 
-  const store = session.store;
   const sock = session.sock;
   
-  if (!store || !store.chats) {
-    console.log(`No store or chats found for ${normalizedPhone}`);
+  if (!sock) {
+    console.log(`No socket found for ${normalizedPhone}`);
     return [];
   }
 
   try {
-    // Get all chats from the store
-    const allChats = store.chats.all ? store.chats.all() : Object.values(store.chats);
-    console.log(`📋 Fetched ${allChats.length} raw chats for ${normalizedPhone}`);
+    // Use Baileys method to fetch chats
+    console.log(`📋 Fetching chats for ${normalizedPhone}...`);
+    
+    // Get chats using store.chats if available, otherwise use contacts
+    let allChats = [];
+    
+    // Try to get chats from the store
+    if (session.store?.chats) {
+      const storeChats = session.store.chats;
+      if (typeof storeChats.all === 'function') {
+        allChats = storeChats.all();
+      } else if (typeof storeChats === 'object') {
+        allChats = Object.values(storeChats);
+      }
+    }
+    
+    // If no chats from store, construct from contacts
+    if (allChats.length === 0 && session.store?.contacts) {
+      console.log(`📋 No chats in store, constructing from contacts...`);
+      const contacts = session.store.contacts;
+      const contactChats = Object.entries(contacts)
+        .filter(([jid]) => jid.endsWith('@s.whatsapp.net') && jid !== '0@s.whatsapp.net')
+        .map(([jid, contact]) => ({
+          id: jid,
+          name: contact.name || contact.notify || contact.verifiedName || jid.split('@')[0],
+          conversationTimestamp: Date.now(),
+          unreadCount: 0
+        }));
+      allChats = contactChats;
+    }
+
+    console.log(`📋 Found ${allChats.length} raw chats for ${normalizedPhone}`);
 
     if (!allChats || allChats.length === 0) {
-      console.log(`⚠️ No chats found in store for ${normalizedPhone}`);
+      console.log(`⚠️ No chats found for ${normalizedPhone}`);
       return [];
     }
 
     // Format chats with profile pictures and proper names
     const formattedChats = await Promise.all(allChats.map(async (chat) => {
       let profilePicUrl = null;
-      let displayName = chat.name || chat.id.split('@')[0];
+      let displayName = chat.name || chat.id?.split('@')[0] || 'Unknown';
       let lastMessageText = '';
 
       // Try to get profile picture
       try {
-        if (sock) {
-          profilePicUrl = await sock.profilePictureUrl(chat.id, 'image');
-        }
+        profilePicUrl = await sock.profilePictureUrl(chat.id, 'image').catch(() => null);
       } catch (err) {
         // No profile picture available
       }
 
       // For individual chats, try to get contact name from store
-      if (!chat.id.includes('@g.us') && !chat.id.includes('@newsletter')) {
-        const contact = store.contacts?.[chat.id];
+      if (!chat.id?.includes('@g.us') && !chat.id?.includes('@newsletter')) {
+        const contact = session.store?.contacts?.[chat.id];
         if (contact) {
           displayName = contact.name || contact.notify || contact.verifiedName || displayName;
         }
       }
 
       // Extract last message text if available
-      if (chat.lastMessage) {
-        if (typeof chat.lastMessage === 'string') {
-          lastMessageText = chat.lastMessage;
-        } else if (chat.lastMessage.conversation) {
-          lastMessageText = chat.lastMessage.conversation;
-        } else if (chat.lastMessage.extendedTextMessage?.text) {
-          lastMessageText = chat.lastMessage.extendedTextMessage.text;
+      if (chat.lastMessage || chat.messages) {
+        const lastMsg = chat.lastMessage || chat.messages?.[0];
+        if (lastMsg) {
+          if (typeof lastMsg === 'string') {
+            lastMessageText = lastMsg;
+          } else if (lastMsg.message?.conversation) {
+            lastMessageText = lastMsg.message.conversation;
+          } else if (lastMsg.message?.extendedTextMessage?.text) {
+            lastMessageText = lastMsg.message.extendedTextMessage.text;
+          } else if (lastMsg.conversation) {
+            lastMessageText = lastMsg.conversation;
+          } else if (lastMsg.extendedTextMessage?.text) {
+            lastMessageText = lastMsg.extendedTextMessage.text;
+          }
         }
       }
 
@@ -70,14 +103,14 @@ export async function fetchChats(phone) {
         id: chat.id,
         name: displayName,
         unreadCount: chat.unreadCount || 0,
-        lastMessage: chat.conversationTimestamp ? {
+        lastMessage: chat.conversationTimestamp || chat.timestamp ? {
           text: lastMessageText,
-          timestamp: chat.conversationTimestamp
+          timestamp: chat.conversationTimestamp || chat.timestamp
         } : null,
-        isGroup: chat.id.includes('@g.us'),
-        isChannel: chat.id.includes('@newsletter'),
+        isGroup: chat.id?.includes('@g.us') || false,
+        isChannel: chat.id?.includes('@newsletter') || false,
         isArchived: chat.archive || false,
-        isPinned: chat.pin || false,
+        isPinned: chat.pin || chat.pinned || false,
         isMuted: chat.mute ? true : false,
         profilePicUrl: profilePicUrl
       };
@@ -164,52 +197,95 @@ export async function fetchContacts(store, sock) {
  * Fetch all groups
  */
 export async function fetchGroups(phone) {
-  const client = getClient(phone);
+  const normalizedPhone = phone.replace(/^\+|\s/g, '');
+  const session = sessions.get(normalizedPhone);
 
-  if (!client) {
+  if (!session || !session.sock) {
     throw new Error(`No active WhatsApp client for ${phone}`);
   }
 
-  const groups = await client.groupFetchAllParticipating();
+  try {
+    const groups = await session.sock.groupFetchAllParticipating();
 
-  return Object.values(groups).map(group => ({
-    id: group.id,
-    subject: group.subject,
-    size: group.participants?.length || 0,
-    creation: group.creation,
-    owner: group.owner,
-    desc: group.desc || '',
-    participants: group.participants || [],
-  }));
+    return Object.values(groups).map(group => ({
+      id: group.id,
+      subject: group.subject,
+      size: group.participants?.length || 0,
+      creation: group.creation,
+      owner: group.owner,
+      desc: group.desc || '',
+      participants: group.participants || [],
+    }));
+  } catch (error) {
+    console.error(`Error fetching groups for ${phone}:`, error.message);
+    return [];
+  }
 }
 
 /**
  * Fetch status updates
  */
 export async function fetchStatusUpdates(phone) {
-  const store = getStore(phone);
+  const normalizedPhone = phone.replace(/^\+|\s/g, '');
+  const session = sessions.get(normalizedPhone);
 
-  if (!store) {
+  if (!session) {
     throw new Error(`No active session for ${phone}`);
   }
 
   const statusUpdates = [];
-  const messages = store.messages || {};
+  
+  try {
+    // Check if store has status messages
+    if (session.store?.messages) {
+      const messages = session.store.messages;
+      
+      // Look for status broadcast messages
+      const statusJid = 'status@broadcast';
+      if (messages[statusJid]) {
+        const statusMessages = Array.isArray(messages[statusJid]) 
+          ? messages[statusJid] 
+          : Object.values(messages[statusJid]);
 
-  // Look for status broadcast messages
-  const statusMessages = messages['status@broadcast'];
-
-  if (statusMessages && Array.isArray(statusMessages)) {
-    for (const msg of statusMessages) {
-      if (msg.key && msg.message) {
-        statusUpdates.push({
-          key: msg.key,
-          message: msg.message,
-          messageTimestamp: msg.messageTimestamp,
-          pushName: msg.pushName,
-        });
+        for (const msg of statusMessages) {
+          if (msg?.key && msg?.message) {
+            statusUpdates.push({
+              key: msg.key,
+              message: msg.message,
+              messageTimestamp: msg.messageTimestamp,
+              pushName: msg.pushName || msg.participant?.split('@')[0],
+            });
+          }
+        }
       }
     }
+
+    // Also check chats for status
+    if (session.store?.chats) {
+      const chats = typeof session.store.chats.all === 'function' 
+        ? session.store.chats.all() 
+        : Object.values(session.store.chats);
+      
+      const statusChat = chats.find(chat => chat.id === 'status@broadcast');
+      if (statusChat?.messages) {
+        const msgs = Array.isArray(statusChat.messages) 
+          ? statusChat.messages 
+          : Object.values(statusChat.messages);
+        
+        for (const msg of msgs) {
+          if (msg?.key && msg?.message && !statusUpdates.find(s => s.key.id === msg.key.id)) {
+            statusUpdates.push({
+              key: msg.key,
+              message: msg.message,
+              messageTimestamp: msg.messageTimestamp,
+              pushName: msg.pushName || msg.participant?.split('@')[0],
+            });
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error(`Error fetching status updates for ${phone}:`, error.message);
   }
 
   return statusUpdates;
@@ -219,25 +295,34 @@ export async function fetchStatusUpdates(phone) {
  * Fetch channels
  */
 export async function fetchChannels(phone) {
-  const store = getStore(phone);
-  const client = getClient(phone);
+  const normalizedPhone = phone.replace(/^\+|\s/g, '');
+  const session = sessions.get(normalizedPhone);
 
-  if (!store || !client) {
+  if (!session) {
     throw new Error(`No active session for ${phone}`);
   }
 
   const channels = [];
-  const storeChats = store.chats?.all() || [];
+  
+  try {
+    if (session.store?.chats) {
+      const storeChats = typeof session.store.chats.all === 'function' 
+        ? session.store.chats.all() 
+        : Object.values(session.store.chats);
 
-  for (const chat of storeChats) {
-    // Channels end with @newsletter
-    if (chat.id.endsWith('@newsletter')) {
-      channels.push({
-        id: chat.id,
-        name: chat.name || chat.id.split('@')[0],
-        unreadCount: chat.unreadCount || 0,
-      });
+      for (const chat of storeChats) {
+        // Channels end with @newsletter
+        if (chat.id?.endsWith('@newsletter')) {
+          channels.push({
+            id: chat.id,
+            name: chat.name || chat.subject || chat.id.split('@')[0],
+            unreadCount: chat.unreadCount || 0,
+          });
+        }
+      }
     }
+  } catch (error) {
+    console.error(`Error fetching channels for ${phone}:`, error.message);
   }
 
   return channels;
@@ -247,24 +332,34 @@ export async function fetchChannels(phone) {
  * Fetch communities (linked channels)
  */
 export async function fetchCommunities(phone) {
-  const store = getStore(phone);
+  const normalizedPhone = phone.replace(/^\+|\s/g, '');
+  const session = sessions.get(normalizedPhone);
 
-  if (!store) {
+  if (!session) {
     throw new Error(`No active session for ${phone}`);
   }
 
   const communities = [];
-  const storeChats = store.chats?.all() || [];
+  
+  try {
+    if (session.store?.chats) {
+      const storeChats = typeof session.store.chats.all === 'function' 
+        ? session.store.chats.all() 
+        : Object.values(session.store.chats);
 
-  for (const chat of storeChats) {
-    // Communities are special group types
-    if (chat.id.endsWith('@g.us') && chat.isParentGroup) {
-      communities.push({
-        id: chat.id,
-        name: chat.name || chat.subject,
-        linkedGroups: chat.linkedParent || [],
-      });
+      for (const chat of storeChats) {
+        // Communities are special group types with parent group flag
+        if (chat.id?.endsWith('@g.us') && (chat.isParentGroup || chat.parentGroup)) {
+          communities.push({
+            id: chat.id,
+            name: chat.name || chat.subject,
+            linkedGroups: chat.linkedParent || chat.subGroups || [],
+          });
+        }
+      }
     }
+  } catch (error) {
+    console.error(`Error fetching communities for ${phone}:`, error.message);
   }
 
   return communities;
@@ -273,17 +368,13 @@ export async function fetchCommunities(phone) {
 /**
  * Fetch call history
  */
-export async function fetchCalls(store) {
-  if (!store) {
-    return [];
-  }
-
+export async function fetchCalls(phone) {
   // Baileys doesn't directly store call history in the standard store
-  // This would need to be tracked separately via events
-  // Check if store has call logs
-  const calls = store.calls || [];
-
-  return Array.isArray(calls) ? calls : [];
+  // Call history needs to be tracked via call events and stored separately
+  // For now, return empty array - this should be implemented with event listeners
+  
+  console.log(`ℹ️ Call history not available in Baileys store - needs event-based tracking for ${phone}`);
+  return [];
 }
 
 /**
