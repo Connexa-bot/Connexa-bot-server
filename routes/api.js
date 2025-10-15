@@ -204,12 +204,13 @@ export function createApiRoutes(broadcast) {
   // Archive/Unarchive chat
   router.post("/chats/archive", async (req, res) => {
     const { phone, chatId, archive } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await chatActions.archiveChat(validation.session.sock, chatId, archive);
-      res.json(result);
+      const result = await chatActions.archiveChat(normalizedPhone, chatId);
+      res.json({ success: true, message: archive ? "Chat archived" : "Chat unarchived" });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -218,12 +219,13 @@ export function createApiRoutes(broadcast) {
   // Pin/Unpin chat
   router.post("/chats/pin", async (req, res) => {
     const { phone, chatId, pin } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await chatActions.pinChat(validation.session.sock, chatId, pin);
-      res.json(result);
+      const result = await chatActions.pinChat(normalizedPhone, chatId, pin);
+      res.json({ success: true, message: pin ? "Chat pinned" : "Chat unpinned" });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -232,12 +234,13 @@ export function createApiRoutes(broadcast) {
   // Delete chat
   router.post("/chats/delete", async (req, res) => {
     const { phone, chatId } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await chatActions.deleteChat(validation.session.sock, chatId);
-      res.json(result);
+      const result = await chatActions.deleteChat(normalizedPhone, chatId);
+      res.json({ success: true, message: "Chat deleted" });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -246,12 +249,13 @@ export function createApiRoutes(broadcast) {
   // Mark chat as read/unread
   router.post("/chats/mark-read", async (req, res) => {
     const { phone, chatId } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await chatActions.markChatAsRead(validation.session.sock, chatId);
-      res.json(result);
+      const result = await chatActions.markChatRead(normalizedPhone, chatId);
+      res.json({ success: true, message: "Chat marked as read" });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -259,12 +263,13 @@ export function createApiRoutes(broadcast) {
 
   router.post("/chats/mark-unread", async (req, res) => {
     const { phone, chatId } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await chatActions.markChatAsUnread(validation.session.sock, chatId);
-      res.json(result);
+      const result = await chatActions.markChatUnread(normalizedPhone, chatId);
+      res.json({ success: true, message: "Chat marked as unread" });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -273,12 +278,13 @@ export function createApiRoutes(broadcast) {
   // Mute/Unmute chat
   router.post("/chats/mute", async (req, res) => {
     const { phone, chatId, duration } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await chatActions.muteChat(validation.session.sock, chatId, duration);
-      res.json(result);
+      const result = await chatActions.muteChat(normalizedPhone, chatId, duration);
+      res.json({ success: true, message: duration ? "Chat muted" : "Chat unmuted" });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -287,11 +293,12 @@ export function createApiRoutes(broadcast) {
   // Clear chat history
   router.post("/chats/clear", async (req, res) => {
     const { phone, chatId } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await chatActions.clearChat(validation.session.sock, chatId);
+      const result = await chatActions.clearChat(normalizedPhone, chatId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });

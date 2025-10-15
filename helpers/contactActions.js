@@ -1,10 +1,9 @@
 // helpers/contactActions.js
 import { fetchContacts as fetchContactsFromStore } from './fetchers.js';
+import { getClient } from './whatsapp.js';
 
 /**
  * Get all contacts from the Baileys store
- * @param {object} store - Baileys in-memory store
- * @returns {Array} - Array of contacts
  */
 export const getContacts = async (store) => {
   try {
@@ -17,37 +16,98 @@ export const getContacts = async (store) => {
 };
 
 /**
- * Block a user
- * @param {object} sock - Baileys socket instance
- * @param {string} jid - JID of user to block
+ * Get specific contact
  */
-export const blockUser = async (sock, jid) => {
+export const getContact = async (phone, contactId) => {
+  const sock = getClient(phone);
   try {
-    await sock.updateBlockStatus(jid, 'block');
+    const contact = await sock.onWhatsApp(contactId);
+    return { success: true, contact };
   } catch (err) {
-    console.error(`Failed to block user ${jid}:`, err);
-    throw err;
+    return { success: false, error: err.message };
   }
 };
 
 /**
- * Unblock a user
- * @param {object} sock - Baileys socket instance
- * @param {string} jid - JID of user to unblock
+ * Get profile picture
  */
-export const unblockUser = async (sock, jid) => {
+export const getProfilePicture = async (phone, contactId) => {
+  const sock = getClient(phone);
   try {
-    await sock.updateBlockStatus(jid, 'unblock');
+    const profilePicUrl = await sock.profilePictureUrl(contactId, 'image');
+    return { success: true, profilePicUrl };
   } catch (err) {
-    console.error(`Failed to unblock user ${jid}:`, err);
-    throw err;
+    return { success: true, profilePicUrl: null, message: 'No profile picture' };
+  }
+};
+
+/**
+ * Get contact status/about
+ */
+export const getStatus = async (phone, contactId) => {
+  const sock = getClient(phone);
+  try {
+    const status = await sock.fetchStatus(contactId);
+    return { success: true, status };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+/**
+ * Check if contact exists on WhatsApp
+ */
+export const checkIfContactExists = async (phone, phoneNumber) => {
+  const sock = getClient(phone);
+  try {
+    const [result] = await sock.onWhatsApp(phoneNumber);
+    return { success: true, exists: !!result, jid: result?.jid };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+/**
+ * Block a contact
+ */
+export const blockContact = async (phone, contactId) => {
+  const sock = getClient(phone);
+  try {
+    await sock.updateBlockStatus(contactId, 'block');
+    return { success: true, message: 'Contact blocked' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+/**
+ * Unblock a contact
+ */
+export const unblockContact = async (phone, contactId) => {
+  const sock = getClient(phone);
+  try {
+    await sock.updateBlockStatus(contactId, 'unblock');
+    return { success: true, message: 'Contact unblocked' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+/**
+ * Get business profile
+ */
+export const getBusinessProfile = async (phone, contactId) => {
+  const sock = getClient(phone);
+  try {
+    const profile = await sock.getBusinessProfile(contactId);
+    return { success: true, profile };
+  } catch (err) {
+    return { success: false, error: err.message, message: 'Not a business account' };
   }
 };
 
 /**
  * Get blocked users
- * @param {object} sock - Baileys socket instance
- * @returns {Array} - Array of blocked users
  */
 export const getBlockedUsers = async (sock) => {
   try {

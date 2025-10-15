@@ -1,4 +1,6 @@
 import { getClient } from "./whatsapp.js";
+import { fetchChats as fetchChatsFromStore } from "./fetchers.js";
+import Chat from "../models/Chat.js";
 
 // Archive a chat
 export async function archiveChat(phone, chatId) {
@@ -171,6 +173,52 @@ export async function getBusinessProfile(phone, jid) {
     return { success: true, profile };
   } catch (error) {
     console.error('Failed to fetch business profile:', error);
-    return { success: false, message: 'Not a business account or profile unavailable' };
+    return { success: true, message: 'Not a business account or profile unavailable' };
+  }
+}
+
+// Get all chats
+export async function getChats(phone) {
+  try {
+    const result = await fetchChatsFromStore(phone);
+    return result;
+  } catch (error) {
+    return { success: false, chats: [], count: 0, error: error.message };
+  }
+}
+
+// Get chat by ID
+export async function getChatById(phone, chatId) {
+  try {
+    const chat = await Chat.findOne({ phone, chatId });
+    if (!chat) {
+      return { success: false, error: "Chat not found" };
+    }
+    return { success: true, chat };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+// Get archived chats
+export async function getArchivedChats(phone) {
+  try {
+    const chats = await Chat.find({ phone, isArchived: true });
+    return { success: true, chats, count: chats.length };
+  } catch (error) {
+    return { success: false, chats: [], count: 0, error: error.message };
+  }
+}
+
+// Search chats
+export async function searchChats(phone, query) {
+  try {
+    const chats = await Chat.find({ 
+      phone, 
+      name: { $regex: query, $options: 'i' } 
+    });
+    return { success: true, chats, count: chats.length };
+  } catch (error) {
+    return { success: false, chats: [], count: 0, error: error.message };
   }
 }
