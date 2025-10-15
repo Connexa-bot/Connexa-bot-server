@@ -264,7 +264,7 @@ export const API_ENDPOINTS = {
 
   // ========== STATUS/STORY ==========
   GET_STATUS_UPDATES: (phone) => ({
-    url: `${API_BASE_URL}/api/status/updates/${phone}`,
+    url: `${API_BASE_URL}/api/status-updates/${phone}`,
     method: 'GET',
     description: 'Get all status updates'
   }),

@@ -474,7 +474,7 @@ export function createApiRoutes(broadcast) {
   // ===============================
 
   // Get all status updates
-  router.get("/status/updates/:phone", async (req, res) => {
+  router.get("/status-updates/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
     const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
@@ -495,8 +495,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await statusActions.postTextStatus(normalizePhone(phone), text, { statusJidList, backgroundColor, font });
-      res.json(result);
+      const result = await statusActions.postTextStatus(normalizePhone(phone), text, statusJidList || [], { backgroundColor, font });
+      res.json({ success: true, messageId: result.key?.id });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -565,8 +565,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await statusActions.getStatusPrivacy(normalizePhone(phone));
-      res.json(result);
+      const result = await statusActions.getStatusPrivacy(normalizedPhone);
+      res.json({ success: true, privacy: result });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -928,8 +928,10 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendTextMessage(normalizePhone(phone), to, text, mentions);
-      res.json(result);
+      const result = mentions && mentions.length > 0 
+        ? await messageActions.sendMessageWithMentions(normalizePhone(phone), to, text, mentions)
+        : await messageActions.sendMessage(normalizePhone(phone), to, text);
+      res.json({ success: true, messageId: result.key?.id });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -943,7 +945,7 @@ export function createApiRoutes(broadcast) {
 
     try {
       const result = await messageActions.replyToMessage(normalizePhone(phone), to, text, quotedMessage);
-      res.json(result);
+      res.json({ success: true, messageId: result.key?.id });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -956,8 +958,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendImageMessage(normalizePhone(phone), to, imageUrl, caption);
-      res.json(result);
+      const result = await messageActions.sendImage(normalizePhone(phone), to, imageUrl, caption);
+      res.json({ success: true, messageId: result.key?.id });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -970,8 +972,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendVideoMessage(normalizePhone(phone), to, videoUrl, caption, gifPlayback);
-      res.json(result);
+      const result = await messageActions.sendVideo(normalizePhone(phone), to, videoUrl, caption, gifPlayback);
+      res.json({ success: true, messageId: result.key?.id });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -984,8 +986,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendAudioMessage(normalizePhone(phone), to, audioUrl, ptt);
-      res.json(result);
+      const result = await messageActions.sendAudio(normalizePhone(phone), to, audioUrl, ptt);
+      res.json({ success: true, messageId: result.key?.id });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -998,8 +1000,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendDocumentMessage(normalizePhone(phone), to, documentUrl, fileName, mimetype);
-      res.json(result);
+      const result = await messageActions.sendDocument(normalizePhone(phone), to, documentUrl, fileName, mimetype);
+      res.json({ success: true, messageId: result.key?.id });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -1012,8 +1014,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendLocationMessage(normalizePhone(phone), to, latitude, longitude, name, address);
-      res.json(result);
+      const result = await messageActions.sendLocation(normalizePhone(phone), to, parseFloat(latitude), parseFloat(longitude), name, address);
+      res.json({ success: true, messageId: result.key?.id });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -1026,8 +1028,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendContactMessage(normalizePhone(phone), to, contacts);
-      res.json(result);
+      const result = await messageActions.sendContact(normalizePhone(phone), to, contacts);
+      res.json({ success: true, messageId: result.key?.id });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -1040,8 +1042,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendPollMessage(normalizePhone(phone), to, name, options, selectableCount);
-      res.json(result);
+      const result = await messageActions.sendPoll(normalizePhone(phone), to, name, options, selectableCount || 1);
+      res.json({ success: true, messageId: result.key?.id });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -1054,8 +1056,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendListMessage(normalizePhone(phone), to, text, buttonText, sections, footer, title);
-      res.json(result);
+      const result = await messageActions.sendList(normalizePhone(phone), to, text, buttonText, sections, footer, title);
+      res.json({ success: true, messageId: result.key?.id });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -1152,8 +1154,8 @@ export function createApiRoutes(broadcast) {
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await messageActions.sendBroadcastMessage(normalizePhone(phone), recipients, message);
-      res.json(result);
+      const result = await messageActions.sendBroadcast(normalizePhone(phone), recipients, message);
+      res.json({ success: true, results: result });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -1197,11 +1199,12 @@ export function createApiRoutes(broadcast) {
   // Update presence (typing, recording, online, etc.)
   router.post("/presence/update", async (req, res) => {
     const { phone, chatId, presence } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await presenceActions.updatePresence(normalizePhone(phone), chatId, presence);
+      const result = await presenceActions.updatePresence(normalizedPhone, chatId, presence);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1211,11 +1214,12 @@ export function createApiRoutes(broadcast) {
   // Subscribe to presence updates
   router.post("/presence/subscribe", async (req, res) => {
     const { phone, contactId } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await presenceActions.subscribeToPresence(normalizePhone(phone), contactId);
+      const result = await presenceActions.subscribeToPresence(normalizedPhone, contactId);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1253,11 +1257,12 @@ export function createApiRoutes(broadcast) {
   // Update profile name
   router.post("/profile/update-name", async (req, res) => {
     const { phone, name } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await profileActions.updateProfileName(normalizePhone(phone), name);
+      const result = await profileActions.updateProfileName(normalizedPhone, name);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1267,11 +1272,12 @@ export function createApiRoutes(broadcast) {
   // Update profile status/about
   router.post("/profile/update-status", async (req, res) => {
     const { phone, status } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const result = await profileActions.updateProfileStatus(normalizePhone(phone), status);
+      const result = await profileActions.updateProfileStatus(normalizedPhone, status);
       res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -1327,12 +1333,14 @@ export function createApiRoutes(broadcast) {
   // Update privacy settings
   router.post("/privacy/settings/update", async (req, res) => {
     const { phone, setting, value } = req.body;
-    const validation = validateSession(phone);
+    const normalizedPhone = normalizePhone(phone);
+    const validation = validateSession(normalizedPhone);
     if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      await validation.session.sock.updatePrivacySettings({ [setting]: value });
-      res.json({ success: true, message: "Privacy settings updated" });
+      // Use the chatActions helper which has the proper implementation
+      const result = await chatActions.updatePrivacySettings(normalizedPhone, setting, value);
+      res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
