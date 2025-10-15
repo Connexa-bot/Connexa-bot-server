@@ -1,7 +1,5 @@
-// ===============================
-// 🌐 ConnexaBot Complete API Reference
-// ===============================
-// 100% Coverage of all WhatsApp Backend Endpoints
+// API.js - Complete WhatsApp Backend API Endpoints Configuration
+// Base URL detection for different environments
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 
                      process.env.VITE_API_URL ||
@@ -11,7 +9,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL ||
 
 export const API_ENDPOINTS = {
 
-  // ========== HEALTH & CONNECTION ==========
+  // ========== SECTION 0: HEALTH & CONNECTION ==========
   HEALTH: () => ({
     url: `${API_BASE_URL}/health`,
     method: 'GET',
@@ -50,35 +48,23 @@ export const API_ENDPOINTS = {
     description: 'Logout and clear WhatsApp session'
   }),
 
-  CLEAR_STATE: (phone, fullReset = false) => ({
-    url: `${API_BASE_URL}/api/clear-state/${phone}?fullReset=${fullReset}`,
+  CLEAR_STATE: (phoneNumber, fullReset = false) => ({
+    url: `${API_BASE_URL}/api/clear-state/${phoneNumber}?fullReset=${fullReset}`,
     method: 'POST',
-    description: 'Clear session state (partial or full reset)'
+    description: 'Clear session state'
   }),
 
-  // ========== CHATS ==========
+  // ========== SECTION 1: CHAT LIST SCREEN ==========
   GET_CHATS: (phone) => ({
     url: `${API_BASE_URL}/api/chats/${phone}`,
     method: 'GET',
-    description: 'Get all chats with profile pictures, names, and last messages (sorted by recent)'
+    description: 'Get all chats with profile pictures'
   }),
 
   GET_CHAT_BY_ID: (phone, chatId) => ({
     url: `${API_BASE_URL}/api/chats/${phone}/${chatId}`,
     method: 'GET',
-    description: 'Get specific chat details'
-  }),
-
-  GET_ARCHIVED_CHATS: (phone) => ({
-    url: `${API_BASE_URL}/api/chats/archived/${phone}`,
-    method: 'GET',
-    description: 'Get all archived chats'
-  }),
-
-  SEARCH_CHATS: (phone, query) => ({
-    url: `${API_BASE_URL}/api/chats/search/${phone}?query=${encodeURIComponent(query)}`,
-    method: 'GET',
-    description: 'Search chats by name or message content'
+    description: 'Get specific chat by ID'
   }),
 
   ARCHIVE_CHAT: (phone, chatId, archive = true) => ({
@@ -95,18 +81,18 @@ export const API_ENDPOINTS = {
     description: 'Pin or unpin a chat'
   }),
 
-  MUTE_CHAT: (phone, chatId, duration) => ({
-    url: `${API_BASE_URL}/api/chats/mute`,
+  DELETE_CHAT: (phone, chatId) => ({
+    url: `${API_BASE_URL}/api/chats/delete`,
     method: 'POST',
-    body: { phone, chatId, duration },
-    description: 'Mute chat for specified duration (ms), null to unmute'
+    body: { phone, chatId },
+    description: 'Delete a chat'
   }),
 
   MARK_CHAT_READ: (phone, chatId) => ({
     url: `${API_BASE_URL}/api/chats/mark-read`,
     method: 'POST',
     body: { phone, chatId },
-    description: 'Mark all messages in chat as read'
+    description: 'Mark chat as read'
   }),
 
   MARK_CHAT_UNREAD: (phone, chatId) => ({
@@ -116,297 +102,33 @@ export const API_ENDPOINTS = {
     description: 'Mark chat as unread'
   }),
 
-  DELETE_CHAT: (phone, chatId) => ({
-    url: `${API_BASE_URL}/api/chats/delete`,
+  MUTE_CHAT: (phone, chatId, duration = null) => ({
+    url: `${API_BASE_URL}/api/chats/mute`,
     method: 'POST',
-    body: { phone, chatId },
-    description: 'Delete entire chat'
+    body: { phone, chatId, duration },
+    description: 'Mute or unmute a chat (duration in seconds, null to unmute)'
   }),
 
   CLEAR_CHAT: (phone, chatId) => ({
     url: `${API_BASE_URL}/api/chats/clear`,
     method: 'POST',
     body: { phone, chatId },
-    description: 'Clear chat messages (keeps chat)'
+    description: 'Clear chat history'
   }),
 
-  // ========== MESSAGES ==========
-  GET_MESSAGES: (phone, chatId, limit = 50) => ({
-    url: `${API_BASE_URL}/api/messages/${phone}/${chatId}?limit=${limit}`,
+  GET_ARCHIVED_CHATS: (phone) => ({
+    url: `${API_BASE_URL}/api/chats/archived/${phone}`,
     method: 'GET',
-    description: 'Get messages from a specific chat'
+    description: 'Get archived chats'
   }),
 
-  SEND_MESSAGE: (phone, to, text, mentions = []) => ({
-    url: `${API_BASE_URL}/api/messages/send`,
-    method: 'POST',
-    body: { phone, to, text, mentions },
-    description: 'Send text message with optional mentions'
-  }),
-
-  REPLY_MESSAGE: (phone, to, text, quotedMessage) => ({
-    url: `${API_BASE_URL}/api/messages/reply`,
-    method: 'POST',
-    body: { phone, to, text, quotedMessage },
-    description: 'Reply to a specific message'
-  }),
-
-  SEND_IMAGE: (phone, to, imageUrl, caption = '') => ({
-    url: `${API_BASE_URL}/api/messages/send-image`,
-    method: 'POST',
-    body: { phone, to, imageUrl, caption },
-    description: 'Send image with optional caption'
-  }),
-
-  SEND_VIDEO: (phone, to, videoUrl, caption = '', gifPlayback = false) => ({
-    url: `${API_BASE_URL}/api/messages/send-video`,
-    method: 'POST',
-    body: { phone, to, videoUrl, caption, gifPlayback },
-    description: 'Send video with optional caption and GIF mode'
-  }),
-
-  SEND_AUDIO: (phone, to, audioUrl, ptt = false) => ({
-    url: `${API_BASE_URL}/api/messages/send-audio`,
-    method: 'POST',
-    body: { phone, to, audioUrl, ptt },
-    description: 'Send audio (ptt=true for voice note)'
-  }),
-
-  SEND_DOCUMENT: (phone, to, documentUrl, fileName, mimetype) => ({
-    url: `${API_BASE_URL}/api/messages/send-document`,
-    method: 'POST',
-    body: { phone, to, documentUrl, fileName, mimetype },
-    description: 'Send document file'
-  }),
-
-  SEND_LOCATION: (phone, to, latitude, longitude, name = '', address = '') => ({
-    url: `${API_BASE_URL}/api/messages/send-location`,
-    method: 'POST',
-    body: { phone, to, latitude, longitude, name, address },
-    description: 'Send location with coordinates'
-  }),
-
-  SEND_CONTACT: (phone, to, contacts) => ({
-    url: `${API_BASE_URL}/api/messages/send-contact`,
-    method: 'POST',
-    body: { phone, to, contacts },
-    description: 'Send contact card(s)'
-  }),
-
-  SEND_POLL: (phone, to, name, options, selectableCount = 1) => ({
-    url: `${API_BASE_URL}/api/messages/send-poll`,
-    method: 'POST',
-    body: { phone, to, name, options, selectableCount },
-    description: 'Send poll with options'
-  }),
-
-  SEND_LIST: (phone, to, text, buttonText, sections, footer = '', title = '') => ({
-    url: `${API_BASE_URL}/api/messages/send-list`,
-    method: 'POST',
-    body: { phone, to, text, buttonText, sections, footer, title },
-    description: 'Send interactive list message'
-  }),
-
-  SEND_BROADCAST: (phone, recipients, message) => ({
-    url: `${API_BASE_URL}/api/messages/send-broadcast`,
-    method: 'POST',
-    body: { phone, recipients, message },
-    description: 'Broadcast message to multiple recipients'
-  }),
-
-  DOWNLOAD_MEDIA: (phone, messageKey) => ({
-    url: `${API_BASE_URL}/api/messages/download`,
-    method: 'POST',
-    body: { phone, messageKey },
-    description: 'Download media from message'
-  }),
-
-  DELETE_MESSAGE: (phone, chatId, messageKey) => ({
-    url: `${API_BASE_URL}/api/messages/delete`,
-    method: 'POST',
-    body: { phone, chatId, messageKey },
-    description: 'Delete message for everyone'
-  }),
-
-  FORWARD_MESSAGE: (phone, to, message) => ({
-    url: `${API_BASE_URL}/api/messages/forward`,
-    method: 'POST',
-    body: { phone, to, message },
-    description: 'Forward message to another chat'
-  }),
-
-  REACT_MESSAGE: (phone, chatId, messageKey, emoji) => ({
-    url: `${API_BASE_URL}/api/messages/react`,
-    method: 'POST',
-    body: { phone, chatId, messageKey, emoji },
-    description: 'React to message with emoji'
-  }),
-
-  EDIT_MESSAGE: (phone, chatId, messageKey, newText) => ({
-    url: `${API_BASE_URL}/api/messages/edit`,
-    method: 'POST',
-    body: { phone, chatId, messageKey, newText },
-    description: 'Edit sent message'
-  }),
-
-  STAR_MESSAGE: (phone, chatId, messageKey, star = true) => ({
-    url: `${API_BASE_URL}/api/messages/star`,
-    method: 'POST',
-    body: { phone, chatId, messageKey, star },
-    description: 'Star or unstar message'
-  }),
-
-  GET_STARRED_MESSAGES: (phone) => ({
-    url: `${API_BASE_URL}/api/messages/starred/${phone}`,
+  SEARCH_CHATS: (phone, query) => ({
+    url: `${API_BASE_URL}/api/chats/search/${phone}?query=${encodeURIComponent(query)}`,
     method: 'GET',
-    description: 'Get all starred messages'
+    description: 'Search chats by name or content'
   }),
 
-  // ========== STATUS/STORY ==========
-  GET_STATUS_UPDATES: (phone) => ({
-    url: `${API_BASE_URL}/api/status-updates/${phone}`,
-    method: 'GET',
-    description: 'Get all status updates'
-  }),
-
-  POST_TEXT_STATUS: (phone, text, statusJidList = [], backgroundColor = '', font = '') => ({
-    url: `${API_BASE_URL}/api/status/post-text`,
-    method: 'POST',
-    body: { phone, text, statusJidList, backgroundColor, font },
-    description: 'Post text status/story'
-  }),
-
-  POST_IMAGE_STATUS: (phone, imageUrl, caption = '', statusJidList = []) => ({
-    url: `${API_BASE_URL}/api/status/post-image`,
-    method: 'POST',
-    body: { phone, imageUrl, caption, statusJidList },
-    description: 'Post image status/story'
-  }),
-
-  POST_VIDEO_STATUS: (phone, videoUrl, caption = '', statusJidList = []) => ({
-    url: `${API_BASE_URL}/api/status/post-video`,
-    method: 'POST',
-    body: { phone, videoUrl, caption, statusJidList },
-    description: 'Post video status/story'
-  }),
-
-  DELETE_STATUS: (phone, statusKey) => ({
-    url: `${API_BASE_URL}/api/status/delete`,
-    method: 'POST',
-    body: { phone, statusKey },
-    description: 'Delete your status'
-  }),
-
-  VIEW_STATUS: (phone, statusJid, messageKeys) => ({
-    url: `${API_BASE_URL}/api/status/view`,
-    method: 'POST',
-    body: { phone, statusJid, messageKeys },
-    description: 'Mark status as viewed'
-  }),
-
-  GET_STATUS_PRIVACY: (phone) => ({
-    url: `${API_BASE_URL}/api/status/privacy/${phone}`,
-    method: 'GET',
-    description: 'Get status privacy settings'
-  }),
-
-  // ========== GROUPS ==========
-  GET_GROUPS: (phone) => ({
-    url: `${API_BASE_URL}/api/groups/${phone}`,
-    method: 'GET',
-    description: 'Get all groups'
-  }),
-
-  GET_GROUP_METADATA: (phone, groupId) => ({
-    url: `${API_BASE_URL}/api/groups/${phone}/${groupId}/metadata`,
-    method: 'GET',
-    description: 'Get group metadata'
-  }),
-
-  CREATE_GROUP: (phone, name, participants) => ({
-    url: `${API_BASE_URL}/api/groups/create`,
-    method: 'POST',
-    body: { phone, name, participants },
-    description: 'Create new group'
-  }),
-
-  GET_GROUP_INVITE_CODE: (phone, groupId) => ({
-    url: `${API_BASE_URL}/api/groups/${phone}/${groupId}/invite-code`,
-    method: 'GET',
-    description: 'Get group invite code'
-  }),
-
-  JOIN_GROUP_VIA_INVITE: (phone, inviteCode) => ({
-    url: `${API_BASE_URL}/api/groups/join-via-invite`,
-    method: 'POST',
-    body: { phone, inviteCode },
-    description: 'Join group using invite code'
-  }),
-
-  LEAVE_GROUP: (phone, groupId) => ({
-    url: `${API_BASE_URL}/api/groups/leave`,
-    method: 'POST',
-    body: { phone, groupId },
-    description: 'Leave a group'
-  }),
-
-  UPDATE_GROUP_SUBJECT: (phone, groupId, subject) => ({
-    url: `${API_BASE_URL}/api/groups/update-subject`,
-    method: 'POST',
-    body: { phone, groupId, subject },
-    description: 'Update group name'
-  }),
-
-  UPDATE_GROUP_DESCRIPTION: (phone, groupId, description) => ({
-    url: `${API_BASE_URL}/api/groups/update-description`,
-    method: 'POST',
-    body: { phone, groupId, description },
-    description: 'Update group description'
-  }),
-
-  ADD_GROUP_PARTICIPANTS: (phone, groupId, participants) => ({
-    url: `${API_BASE_URL}/api/groups/add-participants`,
-    method: 'POST',
-    body: { phone, groupId, participants },
-    description: 'Add participants to group'
-  }),
-
-  REMOVE_GROUP_PARTICIPANTS: (phone, groupId, participants) => ({
-    url: `${API_BASE_URL}/api/groups/remove-participants`,
-    method: 'POST',
-    body: { phone, groupId, participants },
-    description: 'Remove participants from group'
-  }),
-
-  PROMOTE_GROUP_PARTICIPANTS: (phone, groupId, participants) => ({
-    url: `${API_BASE_URL}/api/groups/promote-participants`,
-    method: 'POST',
-    body: { phone, groupId, participants },
-    description: 'Promote participants to admin'
-  }),
-
-  DEMOTE_GROUP_PARTICIPANTS: (phone, groupId, participants) => ({
-    url: `${API_BASE_URL}/api/groups/demote-participants`,
-    method: 'POST',
-    body: { phone, groupId, participants },
-    description: 'Demote admins to participants'
-  }),
-
-  UPDATE_GROUP_PICTURE: (phone, groupId, imageUrl) => ({
-    url: `${API_BASE_URL}/api/groups/update-picture`,
-    method: 'POST',
-    body: { phone, groupId, imageUrl },
-    description: 'Update group picture'
-  }),
-
-  TOGGLE_GROUP_ANNOUNCEMENT: (phone, groupId, announce) => ({
-    url: `${API_BASE_URL}/api/groups/toggle-announcement`,
-    method: 'POST',
-    body: { phone, groupId, announce },
-    description: 'Toggle announcement mode (admins only can send)'
-  }),
-
-  // ========== CONTACTS ==========
+  // ========== SECTION 2: CONTACT PROFILE SCREEN ==========
   GET_CONTACTS: (phone) => ({
     url: `${API_BASE_URL}/api/contacts/${phone}`,
     method: 'GET',
@@ -416,7 +138,7 @@ export const API_ENDPOINTS = {
   GET_CONTACT: (phone, contactId) => ({
     url: `${API_BASE_URL}/api/contacts/${phone}/${contactId}`,
     method: 'GET',
-    description: 'Get specific contact'
+    description: 'Get specific contact details'
   }),
 
   GET_CONTACT_PICTURE: (phone, contactId) => ({
@@ -458,22 +180,340 @@ export const API_ENDPOINTS = {
     description: 'Get business profile information'
   }),
 
-  // ========== PRESENCE ==========
+  // ========== SECTION 3: STATUS/UPDATES SCREEN ==========
+  GET_STATUS_UPDATES: (phone) => ({
+    url: `${API_BASE_URL}/api/status-updates/${phone}`,
+    method: 'GET',
+    description: 'Get all status updates'
+  }),
+
+  POST_TEXT_STATUS: (phone, text, statusJidList = [], backgroundColor = '#000000', font = 0) => ({
+    url: `${API_BASE_URL}/api/status/post-text`,
+    method: 'POST',
+    body: { phone, text, statusJidList, backgroundColor, font },
+    description: 'Post text status update'
+  }),
+
+  POST_IMAGE_STATUS: (phone, imageUrl, caption = '', statusJidList = []) => ({
+    url: `${API_BASE_URL}/api/status/post-image`,
+    method: 'POST',
+    body: { phone, imageUrl, caption, statusJidList },
+    description: 'Post image status update'
+  }),
+
+  POST_VIDEO_STATUS: (phone, videoUrl, caption = '', statusJidList = []) => ({
+    url: `${API_BASE_URL}/api/status/post-video`,
+    method: 'POST',
+    body: { phone, videoUrl, caption, statusJidList },
+    description: 'Post video status update'
+  }),
+
+  DELETE_STATUS: (phone, statusKey) => ({
+    url: `${API_BASE_URL}/api/status/delete`,
+    method: 'POST',
+    body: { phone, statusKey },
+    description: 'Delete a status update'
+  }),
+
+  VIEW_STATUS: (phone, statusJid, messageKeys) => ({
+    url: `${API_BASE_URL}/api/status/view`,
+    method: 'POST',
+    body: { phone, statusJid, messageKeys },
+    description: 'View someone\'s status'
+  }),
+
+  GET_STATUS_PRIVACY: (phone) => ({
+    url: `${API_BASE_URL}/api/status/privacy/${phone}`,
+    method: 'GET',
+    description: 'Get status privacy settings'
+  }),
+
+  // ========== SECTION 4: GROUPS SCREEN ==========
+  GET_GROUPS: (phone) => ({
+    url: `${API_BASE_URL}/api/groups/${phone}`,
+    method: 'GET',
+    description: 'Get all groups'
+  }),
+
+  GET_GROUP_METADATA: (phone, groupId) => ({
+    url: `${API_BASE_URL}/api/groups/${phone}/${groupId}/metadata`,
+    method: 'GET',
+    description: 'Get group metadata and participants'
+  }),
+
+  CREATE_GROUP: (phone, name, participants) => ({
+    url: `${API_BASE_URL}/api/groups/create`,
+    method: 'POST',
+    body: { phone, name, participants },
+    description: 'Create a new group'
+  }),
+
+  GET_GROUP_INVITE_CODE: (phone, groupId) => ({
+    url: `${API_BASE_URL}/api/groups/${phone}/${groupId}/invite-code`,
+    method: 'GET',
+    description: 'Get group invite code'
+  }),
+
+  JOIN_GROUP_VIA_INVITE: (phone, inviteCode) => ({
+    url: `${API_BASE_URL}/api/groups/join-via-invite`,
+    method: 'POST',
+    body: { phone, inviteCode },
+    description: 'Join group via invite code'
+  }),
+
+  LEAVE_GROUP: (phone, groupId) => ({
+    url: `${API_BASE_URL}/api/groups/leave`,
+    method: 'POST',
+    body: { phone, groupId },
+    description: 'Leave a group'
+  }),
+
+  UPDATE_GROUP_SUBJECT: (phone, groupId, subject) => ({
+    url: `${API_BASE_URL}/api/groups/update-subject`,
+    method: 'POST',
+    body: { phone, groupId, subject },
+    description: 'Update group name/subject'
+  }),
+
+  UPDATE_GROUP_DESCRIPTION: (phone, groupId, description) => ({
+    url: `${API_BASE_URL}/api/groups/update-description`,
+    method: 'POST',
+    body: { phone, groupId, description },
+    description: 'Update group description'
+  }),
+
+  ADD_GROUP_PARTICIPANTS: (phone, groupId, participants) => ({
+    url: `${API_BASE_URL}/api/groups/add-participants`,
+    method: 'POST',
+    body: { phone, groupId, participants },
+    description: 'Add participants to group'
+  }),
+
+  REMOVE_GROUP_PARTICIPANTS: (phone, groupId, participants) => ({
+    url: `${API_BASE_URL}/api/groups/remove-participants`,
+    method: 'POST',
+    body: { phone, groupId, participants },
+    description: 'Remove participants from group'
+  }),
+
+  PROMOTE_GROUP_PARTICIPANTS: (phone, groupId, participants) => ({
+    url: `${API_BASE_URL}/api/groups/promote-participants`,
+    method: 'POST',
+    body: { phone, groupId, participants },
+    description: 'Promote participants to admin'
+  }),
+
+  DEMOTE_GROUP_PARTICIPANTS: (phone, groupId, participants) => ({
+    url: `${API_BASE_URL}/api/groups/demote-participants`,
+    method: 'POST',
+    body: { phone, groupId, participants },
+    description: 'Demote participants from admin'
+  }),
+
+  UPDATE_GROUP_PICTURE: (phone, groupId, imageUrl) => ({
+    url: `${API_BASE_URL}/api/groups/update-picture`,
+    method: 'POST',
+    body: { phone, groupId, imageUrl },
+    description: 'Update group picture'
+  }),
+
+  TOGGLE_GROUP_ANNOUNCEMENT: (phone, groupId, announce = true) => ({
+    url: `${API_BASE_URL}/api/groups/toggle-announcement`,
+    method: 'POST',
+    body: { phone, groupId, announce },
+    description: 'Toggle announcement mode (only admins can send)'
+  }),
+
+  // ========== SECTION 5: CHANNELS SCREEN ==========
+  GET_CHANNELS: (phone) => ({
+    url: `${API_BASE_URL}/api/channels/${phone}`,
+    method: 'GET',
+    description: 'Get all channels'
+  }),
+
+  GET_CHANNEL_INFO: (phone, channelId) => ({
+    url: `${API_BASE_URL}/api/channels/${phone}/${channelId}/info`,
+    method: 'GET',
+    description: 'Get channel information'
+  }),
+
+  FOLLOW_CHANNEL: (phone, channelJid) => ({
+    url: `${API_BASE_URL}/api/channels/follow`,
+    method: 'POST',
+    body: { phone, channelJid },
+    description: 'Follow a channel'
+  }),
+
+  UNFOLLOW_CHANNEL: (phone, channelJid) => ({
+    url: `${API_BASE_URL}/api/channels/unfollow`,
+    method: 'POST',
+    body: { phone, channelJid },
+    description: 'Unfollow a channel'
+  }),
+
+  MUTE_CHANNEL: (phone, channelJid, duration = null) => ({
+    url: `${API_BASE_URL}/api/channels/mute`,
+    method: 'POST',
+    body: { phone, channelJid, duration },
+    description: 'Mute or unmute a channel'
+  }),
+
+  // ========== SECTION 6: COMMUNITIES SCREEN ==========
+  GET_COMMUNITIES: (phone) => ({
+    url: `${API_BASE_URL}/api/communities/${phone}`,
+    method: 'GET',
+    description: 'Get all communities'
+  }),
+
+  // ========== SECTION 7: CHAT VIEW/MESSAGING ==========
+  GET_MESSAGES: (phone, chatId, limit = 50) => ({
+    url: `${API_BASE_URL}/api/messages/${phone}/${chatId}?limit=${limit}`,
+    method: 'GET',
+    description: 'Get messages from a chat'
+  }),
+
+  SEND_MESSAGE: (phone, to, text, mentions = []) => ({
+    url: `${API_BASE_URL}/api/messages/send`,
+    method: 'POST',
+    body: { phone, to, text, mentions },
+    description: 'Send text message (with optional mentions)'
+  }),
+
+  REPLY_MESSAGE: (phone, to, text, quotedMessage) => ({
+    url: `${API_BASE_URL}/api/messages/reply`,
+    method: 'POST',
+    body: { phone, to, text, quotedMessage },
+    description: 'Reply to a message'
+  }),
+
+  SEND_IMAGE: (phone, to, imageUrl, caption = '') => ({
+    url: `${API_BASE_URL}/api/messages/send-image`,
+    method: 'POST',
+    body: { phone, to, imageUrl, caption },
+    description: 'Send image message'
+  }),
+
+  SEND_VIDEO: (phone, to, videoUrl, caption = '', gifPlayback = false) => ({
+    url: `${API_BASE_URL}/api/messages/send-video`,
+    method: 'POST',
+    body: { phone, to, videoUrl, caption, gifPlayback },
+    description: 'Send video message'
+  }),
+
+  SEND_AUDIO: (phone, to, audioUrl, ptt = false) => ({
+    url: `${API_BASE_URL}/api/messages/send-audio`,
+    method: 'POST',
+    body: { phone, to, audioUrl, ptt },
+    description: 'Send audio message (ptt = push-to-talk/voice note)'
+  }),
+
+  SEND_DOCUMENT: (phone, to, documentUrl, fileName, mimetype) => ({
+    url: `${API_BASE_URL}/api/messages/send-document`,
+    method: 'POST',
+    body: { phone, to, documentUrl, fileName, mimetype },
+    description: 'Send document message'
+  }),
+
+  SEND_LOCATION: (phone, to, latitude, longitude, name = '', address = '') => ({
+    url: `${API_BASE_URL}/api/messages/send-location`,
+    method: 'POST',
+    body: { phone, to, latitude, longitude, name, address },
+    description: 'Send location message'
+  }),
+
+  SEND_CONTACT: (phone, to, contacts) => ({
+    url: `${API_BASE_URL}/api/messages/send-contact`,
+    method: 'POST',
+    body: { phone, to, contacts },
+    description: 'Send contact card(s)'
+  }),
+
+  SEND_POLL: (phone, to, name, options, selectableCount = 1) => ({
+    url: `${API_BASE_URL}/api/messages/send-poll`,
+    method: 'POST',
+    body: { phone, to, name, options, selectableCount },
+    description: 'Send poll message'
+  }),
+
+  SEND_LIST: (phone, to, text, buttonText, sections, footer = '', title = '') => ({
+    url: `${API_BASE_URL}/api/messages/send-list`,
+    method: 'POST',
+    body: { phone, to, text, buttonText, sections, footer, title },
+    description: 'Send list message'
+  }),
+
+  FORWARD_MESSAGE: (phone, to, message) => ({
+    url: `${API_BASE_URL}/api/messages/forward`,
+    method: 'POST',
+    body: { phone, to, message },
+    description: 'Forward a message'
+  }),
+
+  DELETE_MESSAGE: (phone, chatId, messageKey) => ({
+    url: `${API_BASE_URL}/api/messages/delete`,
+    method: 'POST',
+    body: { phone, chatId, messageKey },
+    description: 'Delete a message'
+  }),
+
+  REACT_TO_MESSAGE: (phone, chatId, messageKey, emoji) => ({
+    url: `${API_BASE_URL}/api/messages/react`,
+    method: 'POST',
+    body: { phone, chatId, messageKey, emoji },
+    description: 'React to a message with emoji'
+  }),
+
+  EDIT_MESSAGE: (phone, chatId, messageKey, newText) => ({
+    url: `${API_BASE_URL}/api/messages/edit`,
+    method: 'POST',
+    body: { phone, chatId, messageKey, newText },
+    description: 'Edit a message'
+  }),
+
+  STAR_MESSAGE: (phone, chatId, messageKey, star = true) => ({
+    url: `${API_BASE_URL}/api/messages/star`,
+    method: 'POST',
+    body: { phone, chatId, messageKey, star },
+    description: 'Star or unstar a message'
+  }),
+
+  DOWNLOAD_MEDIA: (phone, messageKey) => ({
+    url: `${API_BASE_URL}/api/messages/download`,
+    method: 'POST',
+    body: { phone, messageKey },
+    description: 'Download media from message'
+  }),
+
+  SEND_BROADCAST: (phone, recipients, message) => ({
+    url: `${API_BASE_URL}/api/messages/send-broadcast`,
+    method: 'POST',
+    body: { phone, recipients, message },
+    description: 'Send broadcast message to multiple recipients'
+  }),
+
+  // ========== SECTION 8: CALLS ==========
+  GET_CALL_HISTORY: (phone) => ({
+    url: `${API_BASE_URL}/api/calls/${phone}`,
+    method: 'GET',
+    description: 'Get call history'
+  }),
+
+  // ========== SECTION 9: PRESENCE & TYPING ==========
   UPDATE_PRESENCE: (phone, chatId, presence) => ({
     url: `${API_BASE_URL}/api/presence/update`,
     method: 'POST',
     body: { phone, chatId, presence },
-    description: 'Update presence (composing, recording, available, unavailable, paused)'
+    description: 'Update presence (composing, recording, available, unavailable)'
   }),
 
   SUBSCRIBE_PRESENCE: (phone, contactId) => ({
     url: `${API_BASE_URL}/api/presence/subscribe`,
     method: 'POST',
     body: { phone, contactId },
-    description: 'Subscribe to presence updates'
+    description: 'Subscribe to contact presence updates'
   }),
 
-  // ========== PROFILE ==========
+  // ========== SECTION 10: PROFILE SETTINGS ==========
   GET_PROFILE: (phone) => ({
     url: `${API_BASE_URL}/api/profile/${phone}`,
     method: 'GET',
@@ -508,152 +548,7 @@ export const API_ENDPOINTS = {
     description: 'Remove profile picture'
   }),
 
-  // ========== AI AUTOMATION ==========
-  AI_SMART_REPLY: (phone, chatId, lastMessage, senderName = 'User', relationship = 'friend') => ({
-    url: `${API_BASE_URL}/api/ai/smart-reply`,
-    method: 'POST',
-    body: { phone, chatId, lastMessage, senderName, relationship },
-    description: 'Generate smart reply suggestions using AI'
-  }),
-
-  AI_AUTO_REPLY: (phone, chatId, to, message, settings = {}) => ({
-    url: `${API_BASE_URL}/api/ai/auto-reply`,
-    method: 'POST',
-    body: { phone, chatId, to, message, settings },
-    description: 'Auto-reply with AI-generated response'
-  }),
-
-  AI_GENERATE: (phone, chatId, userMessage, systemPrompt = '', maxTokens = 500, includeHistory = true) => ({
-    url: `${API_BASE_URL}/api/ai/generate`,
-    method: 'POST',
-    body: { phone, chatId, userMessage, systemPrompt, maxTokens, includeHistory },
-    description: 'Generate AI response with conversation context'
-  }),
-
-  AI_SENTIMENT: (phone, text) => ({
-    url: `${API_BASE_URL}/api/ai/sentiment`,
-    method: 'POST',
-    body: { phone, text },
-    description: 'Analyze text sentiment'
-  }),
-
-  AI_ANALYZE_IMAGE: (phone, base64Image, prompt = '') => ({
-    url: `${API_BASE_URL}/api/ai/analyze-image`,
-    method: 'POST',
-    body: { phone, base64Image, prompt },
-    description: 'Analyze image with AI vision'
-  }),
-
-  AI_TRANSCRIBE: (phone, audioFilePath) => ({
-    url: `${API_BASE_URL}/api/ai/transcribe`,
-    method: 'POST',
-    body: { phone, audioFilePath },
-    description: 'Transcribe audio to text'
-  }),
-
-  AI_SUMMARIZE: (phone, chatId, messageCount = 20) => ({
-    url: `${API_BASE_URL}/api/ai/summarize`,
-    method: 'POST',
-    body: { phone, chatId, messageCount },
-    description: 'Summarize conversation'
-  }),
-
-  AI_TRANSLATE: (phone, text, targetLang) => ({
-    url: `${API_BASE_URL}/api/ai/translate`,
-    method: 'POST',
-    body: { phone, text, targetLang },
-    description: 'Translate text to target language'
-  }),
-
-  AI_COMPOSE: (phone, chatId, context, tone = 'friendly') => ({
-    url: `${API_BASE_URL}/api/ai/compose`,
-    method: 'POST',
-    body: { phone, chatId, context, tone },
-    description: 'Compose message with AI'
-  }),
-
-  AI_IMPROVE: (phone, text, improvements = ['grammar', 'clarity', 'tone']) => ({
-    url: `${API_BASE_URL}/api/ai/improve`,
-    method: 'POST',
-    body: { phone, text, improvements },
-    description: 'Improve message quality'
-  }),
-
-  AI_MODERATE: (phone, text) => ({
-    url: `${API_BASE_URL}/api/ai/moderate`,
-    method: 'POST',
-    body: { phone, text },
-    description: 'Check content safety/moderation'
-  }),
-
-  AI_BATCH_ANALYZE: (phone, messages) => ({
-    url: `${API_BASE_URL}/api/ai/batch-analyze`,
-    method: 'POST',
-    body: { phone, messages },
-    description: 'Analyze multiple messages in batch'
-  }),
-
-  AI_GET_HISTORY: (phone, chatId) => ({
-    url: `${API_BASE_URL}/api/ai/history/${phone}/${chatId}`,
-    method: 'GET',
-    description: 'Get AI chat history'
-  }),
-
-  AI_CLEAR_HISTORY: (phone, chatId = null) => ({
-    url: `${API_BASE_URL}/api/ai/history/clear`,
-    method: 'POST',
-    body: { phone, chatId },
-    description: 'Clear AI chat history'
-  }),
-
-  // ========== CHANNELS ==========
-  GET_CHANNELS: (phone) => ({
-    url: `${API_BASE_URL}/api/channels/${phone}`,
-    method: 'GET',
-    description: 'Get all channels'
-  }),
-
-  GET_CHANNEL_INFO: (phone, channelId) => ({
-    url: `${API_BASE_URL}/api/channels/${phone}/${channelId}/info`,
-    method: 'GET',
-    description: 'Get channel information'
-  }),
-
-  FOLLOW_CHANNEL: (phone, channelJid) => ({
-    url: `${API_BASE_URL}/api/channels/follow`,
-    method: 'POST',
-    body: { phone, channelJid },
-    description: 'Follow a channel'
-  }),
-
-  UNFOLLOW_CHANNEL: (phone, channelJid) => ({
-    url: `${API_BASE_URL}/api/channels/unfollow`,
-    method: 'POST',
-    body: { phone, channelJid },
-    description: 'Unfollow a channel'
-  }),
-
-  MUTE_CHANNEL: (phone, channelJid, duration) => ({
-    url: `${API_BASE_URL}/api/channels/mute`,
-    method: 'POST',
-    body: { phone, channelJid, duration },
-    description: 'Mute channel notifications'
-  }),
-
-  GET_COMMUNITIES: (phone) => ({
-    url: `${API_BASE_URL}/api/communities/${phone}`,
-    method: 'GET',
-    description: 'Get all communities'
-  }),
-
-  // ========== CALLS ==========
-  GET_CALLS: (phone) => ({
-    url: `${API_BASE_URL}/api/calls/${phone}`,
-    method: 'GET',
-    description: 'Get call history'
-  }),
-
-  // ========== PRIVACY & SECURITY ==========
+  // ========== SECTION 11: PRIVACY SETTINGS ==========
   GET_PRIVACY_SETTINGS: (phone) => ({
     url: `${API_BASE_URL}/api/privacy/settings/${phone}`,
     method: 'GET',
@@ -667,7 +562,7 @@ export const API_ENDPOINTS = {
     description: 'Update privacy settings'
   }),
 
-  GET_BLOCKED_USERS: (phone) => ({
+  GET_BLOCKED_CONTACTS: (phone) => ({
     url: `${API_BASE_URL}/api/privacy/blocked/${phone}`,
     method: 'GET',
     description: 'Get blocked contacts list'
@@ -677,31 +572,31 @@ export const API_ENDPOINTS = {
     url: `${API_BASE_URL}/api/privacy/disappearing-messages`,
     method: 'POST',
     body: { phone, chatId, duration },
-    description: 'Set disappearing messages timer'
+    description: 'Set disappearing messages duration'
   }),
 
-  // ========== SEARCH ==========
-  SEARCH_MESSAGES: (phone, query) => ({
-    url: `${API_BASE_URL}/api/search/messages/${phone}?q=${encodeURIComponent(query)}`,
-    method: 'GET',
-    description: 'Search messages globally'
-  }),
-
-  // ========== BROADCAST ==========
-  GET_BROADCAST_LISTS: (phone) => ({
-    url: `${API_BASE_URL}/api/broadcast/lists/${phone}`,
-    method: 'GET',
-    description: 'Get all broadcast lists'
-  }),
-
-  // ========== STARRED MESSAGES ==========
-  GET_ALL_STARRED: (phone) => ({
-    url: `${API_BASE_URL}/api/starred/${phone}`,
+  // ========== SECTION 12: STARRED MESSAGES ==========
+  GET_STARRED_MESSAGES: (phone) => ({
+    url: `${API_BASE_URL}/api/messages/starred/${phone}`,
     method: 'GET',
     description: 'Get all starred messages'
   }),
 
-  // ========== DEVICES & MULTI-DEVICE ==========
+  // ========== SECTION 13: MEDIA GALLERY ==========
+  GET_SHARED_MEDIA: (phone, chatId, type = 'image') => ({
+    url: `${API_BASE_URL}/api/media/${phone}/${chatId}?type=${type}`,
+    method: 'GET',
+    description: 'Get shared media from chat (type: image, video, document, etc.)'
+  }),
+
+  // ========== SECTION 15: SEARCH ==========
+  SEARCH_MESSAGES: (phone, query) => ({
+    url: `${API_BASE_URL}/api/search/messages/${phone}?query=${encodeURIComponent(query)}`,
+    method: 'GET',
+    description: 'Search messages globally'
+  }),
+
+  // ========== SECTION 16: DEVICES & MULTI-DEVICE ==========
   GET_LINKED_DEVICES: (phone) => ({
     url: `${API_BASE_URL}/api/devices/${phone}`,
     method: 'GET',
@@ -734,5 +629,9 @@ export const callAPI = async (endpoint) => {
     throw error;
   }
 };
+
+// Usage examples:
+// const result = await callAPI(API_ENDPOINTS.GET_CHATS('1234567890'));
+// const result = await callAPI(API_ENDPOINTS.SEND_MESSAGE('1234567890', '9876543210@s.whatsapp.net', 'Hello!'));
 
 export default API_ENDPOINTS;
