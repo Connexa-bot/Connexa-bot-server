@@ -1,24 +1,48 @@
 import express from "express";
-import { sessions, startBot, logoutFromWhatsApp, clearSession, clearSessionState } from "../helpers/whatsapp.js"; // main sessions map & helpers
+import { sessions, startBot, logoutFromWhatsApp, clearSession, clearSessionState } from "../helpers/whatsapp.js";
 
-import * as chatCtrl from "../controllers/chats.js";
-import * as groupCtrl from "../controllers/groups.js";
-import * as msgCtrl from "../controllers/messages.js";
-import * as profileCtrl from "../controllers/profile.js";
-import * as contactCtrl from "../controllers/contacts.js";
-import * as presenceCtrl from "../controllers/presence.js";
+// Import action helpers
+import * as chatActions from "../helpers/chatActions.js";
+import * as messageActions from "../helpers/messageActions.js";
+import * as groupActions from "../helpers/groupActions.js";
+import * as contactActions from "../helpers/contactActions.js";
+import * as presenceActions from "../helpers/presenceActions.js";
+import * as profileActions from "../helpers/profileActions.js";
+import * as statusActions from "../helpers/statusActions.js";
+import * as channelActions from "../helpers/channelActions.js";
+import * as callActions from "../helpers/callActions.js";
 
 export function createApiRoutes(broadcast) {
   const router = express.Router();
 
+  // ===============================
+  // UTILITY FUNCTIONS
+  // ===============================
   const normalizePhone = (phone) => {
     if (!phone) return '';
     return String(phone).replace(/\D/g, '');
   };
 
+  const getSession = (phone) => {
+    const normalizedPhone = normalizePhone(phone);
+    return sessions.get(normalizedPhone);
+  };
+
+  const validateSession = (phone) => {
+    const session = getSession(phone);
+    if (!session || !session.connected) {
+      return { valid: false, error: "Not connected to WhatsApp" };
+    }
+    return { valid: true, session };
+  };
+
+  // ===============================
+  // SECTION 0: HEALTH & CONNECTION
+  // ===============================
+  
   router.get("/", (req, res) => res.send("🚀 WhatsApp Bot Backend running..."));
 
-  // ============= HEALTH CHECK =============
+  // Health check endpoint
   router.get("/health", (req, res) => {
     res.json({
       status: "ok",
@@ -28,7 +52,7 @@ export function createApiRoutes(broadcast) {
     });
   });
 
-  // ============= CONNECTION =============
+  // Connect to WhatsApp and generate QR/link code
   router.post("/connect", async (req, res) => {
     const { phone } = req.body;
     const normalizedPhone = normalizePhone(phone);
@@ -36,13 +60,10 @@ export function createApiRoutes(broadcast) {
 
     try {
       if (sessions.has(normalizedPhone)) await clearSession(normalizedPhone);
-
-      // Start bot connection
       await startBot(normalizedPhone, broadcast);
 
-      // Wait for session to be initialized and get QR/link code
       let attempts = 0;
-      const maxAttempts = 120; // 120 * 500ms = 60 seconds max wait
+      const maxAttempts = 120;
       const checkInterval = 500;
 
       const checkSession = () => new Promise((resolve) => {
@@ -50,40 +71,28 @@ export function createApiRoutes(broadcast) {
           const session = sessions.get(normalizedPhone);
           attempts++;
 
-          console.log(`🔍 Connect check attempt ${attempts}/${maxAttempts}: session=${!!session}, qr=${!!session?.qrCode}, link=${!!session?.linkCode}, connected=${session?.connected}, error=${session?.error}`);
-
-          // Success conditions: we have QR, link code, connection, or error
           if (session && (session.qrCode || session.linkCode || session.connected || session.error)) {
             clearInterval(interval);
-
-            const result = {
+            resolve({
               success: true,
               qrCode: session.qrCode || null,
               linkCode: session.linkCode || null,
               message: session.error || (session.connected ? "Connected" : "Scan QR code or use link code"),
               connected: session.connected || false
-            };
-
-            console.log(`✅ Connect returning:`, result);
-            resolve(result);
+            });
             return;
           }
 
-          // Timeout condition
           if (attempts >= maxAttempts) {
             clearInterval(interval);
-
-            const result = {
+            resolve({
               success: false,
               qrCode: null,
               linkCode: null,
               message: "Connection timeout. Please try again.",
               connected: false,
               error: "Timeout waiting for QR/link code"
-            };
-
-            console.log(`⏱️ Connect timeout:`, result);
-            resolve(result);
+            });
           }
         }, checkInterval);
       });
@@ -102,20 +111,12 @@ export function createApiRoutes(broadcast) {
     }
   });
 
+  // Get connection status
   router.get("/status/:phone", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phone);
-
-    console.log('='.repeat(50));
-    console.log(`🔍 STATUS CHECK for ${normalizedPhone}`);
-    console.log(`📊 Total sessions in Map: ${sessions.size}`);
-    console.log(`📊 All session keys:`, Array.from(sessions.keys()));
-
     const session = sessions.get(normalizedPhone);
-    console.log(`📊 Session exists: ${!!session}`);
 
     if (!session) {
-      console.log(`❌ No session found for ${normalizedPhone}`);
-      console.log('='.repeat(50));
       return res.json({
         connected: false,
         status: 'not_found',
@@ -123,21 +124,7 @@ export function createApiRoutes(broadcast) {
       });
     }
 
-    const isConnected = session.connected === true ||
-                       session.sock?.user?.id ||
-                       false;
-
-    console.log(`📊 Session details:`, {
-      connected: session.connected,
-      hasSocket: !!session.sock,
-      hasUser: !!session.sock?.user,
-      userId: session.sock?.user?.id,
-      linkCode: session.linkCode,
-      qrCode: session.qrCode ? 'present' : 'null',
-      error: session.error
-    });
-    console.log(`📊 Final isConnected status: ${isConnected}`);
-    console.log('='.repeat(50));
+    const isConnected = session.connected === true || session.sock?.user?.id || false;
 
     res.json({
       connected: isConnected,
@@ -153,16 +140,19 @@ export function createApiRoutes(broadcast) {
     });
   });
 
+  // Logout and clear session
   router.post("/logout", async (req, res) => {
     const { phone } = req.body;
     const normalizedPhone = normalizePhone(phone);
     const session = sessions.get(normalizedPhone);
-    if (session && session.sock.ws?.readyState !== 3) await logoutFromWhatsApp(session.sock, normalizedPhone);
-    await clearSession(normalizedPhone, sessions);
-    res.json({ message: "Session cleared. Please reconnect." });
+    if (session && session.sock?.ws?.readyState !== 3) {
+      await logoutFromWhatsApp(session.sock, normalizedPhone);
+    }
+    await clearSession(normalizedPhone);
+    res.json({ success: true, message: "Session cleared. Please reconnect." });
   });
 
-  // ============= CLEAR STATE =============
+  // Clear session state
   router.post("/clear-state/:phoneNumber", async (req, res) => {
     const normalizedPhone = normalizePhone(req.params.phoneNumber);
     const { fullReset } = req.query;
@@ -179,85 +169,594 @@ export function createApiRoutes(broadcast) {
     }
   });
 
-  // ============= CHATS =============
+  // ===============================
+  // SECTION 1: CHAT LIST SCREEN
+  // ===============================
+  
+  // Get all chats
   router.get("/chats/:phone", async (req, res) => {
-    const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-    const session = sessions.get(normalizedPhone);
-    if (!session?.connected) return res.status(400).json({ error: "Not connected" });
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const chats = await chatCtrl.getChats(normalizedPhone);
-      const timestamp = new Date().toISOString();
-      res.json({ success: true, chats, count: chats.length, timestamp });
+      const result = await chatActions.getChats(normalizedPhone);
+      res.json(result);
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ success: false, error: err.message });
     }
   });
 
-  // ============= MESSAGES =============
-  router.get("/messages/:phone/:chatId", async (req, res) => {
+  // Get specific chat by ID
+  router.get("/chats/:phone/:chatId", async (req, res) => {
     const { phone, chatId } = req.params;
-    const { limit } = req.query;
-    const session = sessions.get(phone.replace(/^\+|\s/g, ""));
-    if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const { fetchMessages } = await import("../helpers/fetchers.js");
-      const messages = await fetchMessages(session.store, chatId, parseInt(limit) || 50);
-      res.json({ success: true, data: { messages } });
+      const result = await chatActions.getChatById(phone, chatId);
+      res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
   });
 
-  // ============= CALLS =============
-  router.get("/calls/:phone", async (req, res) => {
-    const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
-    if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+  // Archive/Unarchive chat
+  router.post("/chats/archive", async (req, res) => {
+    const { phone, chatId, archive } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const { fetchCalls } = await import("../helpers/fetchers.js");
-      const calls = await fetchCalls(session.store);
-      res.json({ success: true, data: { calls } });
+      const result = await chatActions.archiveChat(validation.session.sock, chatId, archive);
+      res.json(result);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
   });
 
-  // ============= STATUS UPDATES =============
-  router.get("/status-updates/:phone", async (req, res) => {
-    const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-    const session = sessions.get(normalizedPhone);
-    if (!session?.connected) return res.status(400).json({ error: "Not connected" });
+  // Pin/Unpin chat
+  router.post("/chats/pin", async (req, res) => {
+    const { phone, chatId, pin } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
-      const { fetchStatusUpdates } = await import("../helpers/fetchers.js");
-      const statusUpdates = await fetchStatusUpdates(normalizedPhone);
-      res.json({ success: true, statusUpdates, count: statusUpdates.length });
+      const result = await chatActions.pinChat(validation.session.sock, chatId, pin);
+      res.json(result);
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ success: false, error: err.message });
     }
   });
 
-  // ============= CONTACTS =============
+  // Delete chat
+  router.post("/chats/delete", async (req, res) => {
+    const { phone, chatId } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await chatActions.deleteChat(validation.session.sock, chatId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Mark chat as read/unread
+  router.post("/chats/mark-read", async (req, res) => {
+    const { phone, chatId } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await chatActions.markChatAsRead(validation.session.sock, chatId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  router.post("/chats/mark-unread", async (req, res) => {
+    const { phone, chatId } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await chatActions.markChatAsUnread(validation.session.sock, chatId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Mute/Unmute chat
+  router.post("/chats/mute", async (req, res) => {
+    const { phone, chatId, duration } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await chatActions.muteChat(validation.session.sock, chatId, duration);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Clear chat history
+  router.post("/chats/clear", async (req, res) => {
+    const { phone, chatId } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await chatActions.clearChat(validation.session.sock, chatId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get archived chats
+  router.get("/chats/archived/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await chatActions.getArchivedChats(normalizedPhone);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Search chats
+  router.get("/chats/search/:phone", async (req, res) => {
+    const { phone } = req.params;
+    const { query } = req.query;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await chatActions.searchChats(phone, query);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 2: CONTACT PROFILE SCREEN
+  // ===============================
+  
+  // Get all contacts
   router.get("/contacts/:phone", async (req, res) => {
-    const session = sessions.get(req.params.phone.replace(/^\+|\s/g, ""));
-    if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
       const { fetchContacts } = await import("../helpers/fetchers.js");
-      const contacts = await fetchContacts(session.store, session.sock);
+      const contacts = await fetchContacts(validation.session.store, validation.session.sock);
       res.json({ success: true, contacts, count: contacts.length });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
   });
 
-  // ============= CHANNELS =============
+  // Get specific contact
+  router.get("/contacts/:phone/:contactId", async (req, res) => {
+    const { phone, contactId } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await contactActions.getContact(validation.session.sock, contactId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get profile picture
+  router.get("/contacts/:phone/:contactId/picture", async (req, res) => {
+    const { phone, contactId } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await contactActions.getProfilePicture(validation.session.sock, contactId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get contact status/about
+  router.get("/contacts/:phone/:contactId/status", async (req, res) => {
+    const { phone, contactId } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await contactActions.getStatus(validation.session.sock, contactId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Check if contact exists on WhatsApp
+  router.post("/contacts/check-exists", async (req, res) => {
+    const { phone, phoneNumber } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await contactActions.checkIfContactExists(validation.session.sock, phoneNumber);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Block contact
+  router.post("/contacts/block", async (req, res) => {
+    const { phone, contactId } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await contactActions.blockContact(validation.session.sock, contactId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Unblock contact
+  router.post("/contacts/unblock", async (req, res) => {
+    const { phone, contactId } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await contactActions.unblockContact(validation.session.sock, contactId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get business profile
+  router.get("/contacts/:phone/:contactId/business-profile", async (req, res) => {
+    const { phone, contactId } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await contactActions.getBusinessProfile(validation.session.sock, contactId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 3: STATUS/UPDATES SCREEN
+  // ===============================
+  
+  // Get all status updates
+  router.get("/status/updates/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const { fetchStatusUpdates } = await import("../helpers/fetchers.js");
+      const statusUpdates = await fetchStatusUpdates(normalizedPhone);
+      res.json({ success: true, statusUpdates, count: statusUpdates.length });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Post text status
+  router.post("/status/post-text", async (req, res) => {
+    const { phone, text, statusJidList, backgroundColor, font } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await statusActions.postTextStatus(validation.session.sock, text, { statusJidList, backgroundColor, font });
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Post image status
+  router.post("/status/post-image", async (req, res) => {
+    const { phone, imageUrl, caption, statusJidList } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await statusActions.postImageStatus(validation.session.sock, imageUrl, caption, statusJidList);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Post video status
+  router.post("/status/post-video", async (req, res) => {
+    const { phone, videoUrl, caption, statusJidList } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await statusActions.postVideoStatus(validation.session.sock, videoUrl, caption, statusJidList);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Delete status
+  router.post("/status/delete", async (req, res) => {
+    const { phone, statusKey } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await statusActions.deleteStatus(validation.session.sock, statusKey);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // View status
+  router.post("/status/view", async (req, res) => {
+    const { phone, statusJid, messageKeys } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await statusActions.viewStatus(validation.session.sock, statusJid, messageKeys);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get status privacy settings
+  router.get("/status/privacy/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await statusActions.getStatusPrivacy(validation.session.sock);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 4: GROUPS SCREEN
+  // ===============================
+  
+  // Get all groups
+  router.get("/groups/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const { fetchGroups } = await import("../helpers/fetchers.js");
+      const groups = await fetchGroups(normalizedPhone);
+      res.json({ success: true, groups, count: groups.length });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get group metadata
+  router.get("/groups/:phone/:groupId/metadata", async (req, res) => {
+    const { phone, groupId } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.getGroupMetadata(validation.session.sock, groupId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Create group
+  router.post("/groups/create", async (req, res) => {
+    const { phone, name, participants } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.createGroup(validation.session.sock, name, participants);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get group invite code
+  router.get("/groups/:phone/:groupId/invite-code", async (req, res) => {
+    const { phone, groupId } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.getGroupInviteCode(validation.session.sock, groupId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Join group via invite
+  router.post("/groups/join-via-invite", async (req, res) => {
+    const { phone, inviteCode } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.joinGroupViaInvite(validation.session.sock, inviteCode);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Leave group
+  router.post("/groups/leave", async (req, res) => {
+    const { phone, groupId } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.leaveGroup(validation.session.sock, groupId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Update group subject
+  router.post("/groups/update-subject", async (req, res) => {
+    const { phone, groupId, subject } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.updateGroupSubject(validation.session.sock, groupId, subject);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Update group description
+  router.post("/groups/update-description", async (req, res) => {
+    const { phone, groupId, description } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.updateGroupDescription(validation.session.sock, groupId, description);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Add participants
+  router.post("/groups/add-participants", async (req, res) => {
+    const { phone, groupId, participants } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.addParticipants(validation.session.sock, groupId, participants);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Remove participants
+  router.post("/groups/remove-participants", async (req, res) => {
+    const { phone, groupId, participants } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.removeParticipants(validation.session.sock, groupId, participants);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Promote participants to admin
+  router.post("/groups/promote-participants", async (req, res) => {
+    const { phone, groupId, participants } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.promoteParticipants(validation.session.sock, groupId, participants);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Demote participants from admin
+  router.post("/groups/demote-participants", async (req, res) => {
+    const { phone, groupId, participants } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.demoteParticipants(validation.session.sock, groupId, participants);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Update group picture
+  router.post("/groups/update-picture", async (req, res) => {
+    const { phone, groupId, imageUrl } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.updateGroupPicture(validation.session.sock, groupId, imageUrl);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Toggle announcement mode
+  router.post("/groups/toggle-announcement", async (req, res) => {
+    const { phone, groupId, announce } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await groupActions.toggleAnnouncement(validation.session.sock, groupId, announce);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 5: CHANNELS SCREEN
+  // ===============================
+  
+  // Get all channels
   router.get("/channels/:phone", async (req, res) => {
-    const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-    const session = sessions.get(normalizedPhone);
-    if (!session?.connected) return res.status(400).json({ error: "Not connected" });
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
       const { fetchChannels } = await import("../helpers/fetchers.js");
@@ -268,11 +767,71 @@ export function createApiRoutes(broadcast) {
     }
   });
 
-  // ============= COMMUNITIES =============
+  // Get channel info
+  router.get("/channels/:phone/:channelId/info", async (req, res) => {
+    const { phone, channelId } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await channelActions.getChannelInfo(validation.session.sock, channelId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Follow channel
+  router.post("/channels/follow", async (req, res) => {
+    const { phone, channelJid } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await channelActions.followChannel(validation.session.sock, channelJid);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Unfollow channel
+  router.post("/channels/unfollow", async (req, res) => {
+    const { phone, channelJid } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await channelActions.unfollowChannel(validation.session.sock, channelJid);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Mute channel
+  router.post("/channels/mute", async (req, res) => {
+    const { phone, channelJid, duration } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await channelActions.muteChannel(validation.session.sock, channelJid, duration);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 6: COMMUNITIES SCREEN
+  // ===============================
+  
+  // Get all communities
   router.get("/communities/:phone", async (req, res) => {
-    const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-    const session = sessions.get(normalizedPhone);
-    if (!session?.connected) return res.status(400).json({ error: "Not connected" });
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
       const { fetchCommunities } = await import("../helpers/fetchers.js");
@@ -283,19 +842,344 @@ export function createApiRoutes(broadcast) {
     }
   });
 
-  // ============= PROFILE =============
+  // ===============================
+  // SECTION 7: CHAT VIEW/MESSAGING
+  // ===============================
+  
+  // Get messages from a chat
+  router.get("/messages/:phone/:chatId", async (req, res) => {
+    const { phone, chatId } = req.params;
+    const { limit } = req.query;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const { fetchMessages } = await import("../helpers/fetchers.js");
+      const messages = await fetchMessages(validation.session.store, chatId, parseInt(limit) || 50);
+      res.json({ success: true, data: { messages } });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Send text message
+  router.post("/messages/send", async (req, res) => {
+    const { phone, to, text, mentions } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.sendTextMessage(validation.session.sock, to, text, mentions);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Reply to message
+  router.post("/messages/reply", async (req, res) => {
+    const { phone, to, text, quotedMessage } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.replyToMessage(validation.session.sock, to, text, quotedMessage);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Send image
+  router.post("/messages/send-image", async (req, res) => {
+    const { phone, to, imageUrl, caption } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.sendImageMessage(validation.session.sock, to, imageUrl, caption);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Send video
+  router.post("/messages/send-video", async (req, res) => {
+    const { phone, to, videoUrl, caption, gifPlayback } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.sendVideoMessage(validation.session.sock, to, videoUrl, caption, gifPlayback);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Send audio
+  router.post("/messages/send-audio", async (req, res) => {
+    const { phone, to, audioUrl, ptt } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.sendAudioMessage(validation.session.sock, to, audioUrl, ptt);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Send document
+  router.post("/messages/send-document", async (req, res) => {
+    const { phone, to, documentUrl, fileName, mimetype } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.sendDocumentMessage(validation.session.sock, to, documentUrl, fileName, mimetype);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Send location
+  router.post("/messages/send-location", async (req, res) => {
+    const { phone, to, latitude, longitude, name, address } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.sendLocationMessage(validation.session.sock, to, latitude, longitude, name, address);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Send contact
+  router.post("/messages/send-contact", async (req, res) => {
+    const { phone, to, contacts } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.sendContactMessage(validation.session.sock, to, contacts);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Send poll
+  router.post("/messages/send-poll", async (req, res) => {
+    const { phone, to, name, options, selectableCount } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.sendPollMessage(validation.session.sock, to, name, options, selectableCount);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Send list message
+  router.post("/messages/send-list", async (req, res) => {
+    const { phone, to, text, buttonText, sections, footer, title } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.sendListMessage(validation.session.sock, to, text, buttonText, sections, footer, title);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Forward message
+  router.post("/messages/forward", async (req, res) => {
+    const { phone, to, message } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.forwardMessage(validation.session.sock, to, message);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Delete message
+  router.post("/messages/delete", async (req, res) => {
+    const { phone, chatId, messageKey } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.deleteMessage(validation.session.sock, chatId, messageKey);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // React to message
+  router.post("/messages/react", async (req, res) => {
+    const { phone, chatId, messageKey, emoji } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.reactToMessage(validation.session.sock, chatId, messageKey, emoji);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Edit message
+  router.post("/messages/edit", async (req, res) => {
+    const { phone, chatId, messageKey, newText } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.editMessage(validation.session.sock, chatId, messageKey, newText);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Star message
+  router.post("/messages/star", async (req, res) => {
+    const { phone, chatId, messageKey, star } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.starMessage(validation.session.sock, chatId, messageKey, star);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Download media
+  router.post("/messages/download", async (req, res) => {
+    const { phone, messageKey } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.downloadMedia(validation.session.sock, messageKey);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Send broadcast message
+  router.post("/messages/send-broadcast", async (req, res) => {
+    const { phone, recipients, message } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.sendBroadcastMessage(validation.session.sock, recipients, message);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 8: CALLS
+  // ===============================
+  
+  // Get call history
+  router.get("/calls/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const { fetchCalls } = await import("../helpers/fetchers.js");
+      const calls = await fetchCalls(validation.session.store);
+      res.json({ success: true, data: { calls } });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Make call (note: not directly supported by Baileys)
+  router.post("/calls/make", async (req, res) => {
+    const { phone, to, isVideo } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    res.json({ 
+      success: false, 
+      error: "Direct call initiation is not supported by Baileys API. Use WhatsApp client to make calls." 
+    });
+  });
+
+  // ===============================
+  // SECTION 9: PRESENCE & TYPING
+  // ===============================
+  
+  // Update presence (typing, recording, online, etc.)
+  router.post("/presence/update", async (req, res) => {
+    const { phone, chatId, presence } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await presenceActions.updatePresence(validation.session.sock, chatId, presence);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Subscribe to presence updates
+  router.post("/presence/subscribe", async (req, res) => {
+    const { phone, contactId } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await presenceActions.subscribeToPresence(validation.session.sock, contactId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 10: PROFILE SETTINGS
+  // ===============================
+  
+  // Get own profile
   router.get("/profile/:phone", async (req, res) => {
-    const normalizedPhone = req.params.phone.replace(/^\+|\s/g, "");
-    const session = sessions.get(normalizedPhone);
-    if (!session?.connected) return res.status(400).json({ success: false, error: "Not connected" });
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
 
     try {
       const { fetchProfile } = await import("../helpers/fetchers.js");
       const jid = normalizedPhone + '@s.whatsapp.net';
-      const profile = await fetchProfile(session.sock, jid);
+      const profile = await fetchProfile(validation.session.sock, jid);
 
       const userData = {
-        name: session.sock.user?.name || normalizedPhone,
+        name: validation.session.sock.user?.name || normalizedPhone,
         phone: normalizedPhone,
         status: profile.status || '',
         picture: profile.profilePicUrl || null,
@@ -306,6 +1190,251 @@ export function createApiRoutes(broadcast) {
       res.status(500).json({ success: false, error: err.message });
     }
   });
+
+  // Update profile name
+  router.post("/profile/update-name", async (req, res) => {
+    const { phone, name } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await profileActions.updateProfileName(validation.session.sock, name);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Update profile status/about
+  router.post("/profile/update-status", async (req, res) => {
+    const { phone, status } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await profileActions.updateProfileStatus(validation.session.sock, status);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Update profile picture
+  router.post("/profile/update-picture", async (req, res) => {
+    const { phone, imageUrl } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await profileActions.updateProfilePicture(validation.session.sock, imageUrl);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Remove profile picture
+  router.post("/profile/remove-picture", async (req, res) => {
+    const { phone } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await profileActions.removeProfilePicture(validation.session.sock);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 11: PRIVACY SETTINGS
+  // ===============================
+  
+  // Get privacy settings
+  router.get("/privacy/settings/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await validation.session.sock.fetchPrivacySettings();
+      res.json({ success: true, data: result });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Update privacy settings
+  router.post("/privacy/settings/update", async (req, res) => {
+    const { phone, setting, value } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      await validation.session.sock.updatePrivacySettings({ [setting]: value });
+      res.json({ success: true, message: "Privacy settings updated" });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get blocked contacts
+  router.get("/privacy/blocked/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await validation.session.sock.fetchBlocklist();
+      res.json({ success: true, data: result });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Set disappearing messages
+  router.post("/privacy/disappearing-messages", async (req, res) => {
+    const { phone, chatId, duration } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      await validation.session.sock.sendMessage(chatId, {
+        disappearingMessagesInChat: duration ? duration : false
+      });
+      res.json({ success: true, message: "Disappearing messages updated" });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 12: STARRED MESSAGES
+  // ===============================
+  
+  // Get starred messages
+  router.get("/messages/starred/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.getStarredMessages(normalizedPhone);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 13: MEDIA GALLERY
+  // ===============================
+  
+  // Get shared media from chat
+  router.get("/media/:phone/:chatId", async (req, res) => {
+    const { phone, chatId } = req.params;
+    const { type } = req.query;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.getSharedMedia(validation.session.store, chatId, type);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 14: BROADCAST LISTS
+  // ===============================
+  
+  // Get broadcast lists
+  router.get("/broadcast/lists/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    res.json({ 
+      success: true, 
+      message: "Broadcast lists are managed client-side. Use send-broadcast endpoint to send messages." 
+    });
+  });
+
+  // ===============================
+  // SECTION 15: SEARCH
+  // ===============================
+  
+  // Search messages globally
+  router.get("/search/messages/:phone", async (req, res) => {
+    const { phone } = req.params;
+    const { query } = req.query;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await messageActions.searchMessages(phone, query);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 16: QR CODE & MULTI-DEVICE
+  // ===============================
+  
+  // Get linked devices
+  router.get("/devices/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const devices = await validation.session.sock.getLinkedDevices();
+      res.json({ success: true, devices });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Unlink device
+  router.post("/devices/unlink", async (req, res) => {
+    const { phone, deviceId } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      await validation.session.sock.unlinkDevice(deviceId);
+      res.json({ success: true, message: "Device unlinked" });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 17: BUSINESS FEATURES
+  // ===============================
+  
+  // Get business catalog
+  router.get("/business/catalog/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    res.json({ 
+      success: false, 
+      error: "Business catalog features are limited in Baileys. Use WhatsApp Business API for full support." 
+    });
+  });
+
+  // ===============================
+  // SECTION 18: AUTOMATION & AI
+  // ===============================
+  
+  // AI endpoints are handled in separate routes/ai.js file
+  // This section is a placeholder for reference
 
   return router;
 }
