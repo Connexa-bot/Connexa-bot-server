@@ -15,6 +15,8 @@ export async function fetchChats(phone) {
   }
 
   const store = session.store;
+  const sock = session.sock;
+  
   if (!store) {
     console.log(`No store found for ${normalizedPhone}`);
     return [];
@@ -22,7 +24,7 @@ export async function fetchChats(phone) {
 
   try {
     const chats = store.chats?.all() || [];
-    console.log(`Fetched ${chats.length} chats for ${normalizedPhone}`);
+    console.log(`📋 Fetched ${chats.length} raw chats for ${normalizedPhone}`);
 
     // Format chats with profile pictures and proper names
     const formattedChats = await Promise.all(chats.map(async (chat) => {
@@ -31,7 +33,9 @@ export async function fetchChats(phone) {
 
       // Try to get profile picture
       try {
-        profilePicUrl = await getClient(phone)?.profilePictureUrl(chat.id, 'image');
+        if (sock) {
+          profilePicUrl = await sock.profilePictureUrl(chat.id, 'image');
+        }
       } catch (err) {
         // No profile picture available
       }
@@ -68,10 +72,13 @@ export async function fetchChats(phone) {
       return timeB - timeA;
     });
 
-    return { success: true, chats: formattedChats, count: formattedChats.length };
+    console.log(`✅ Returning ${formattedChats.length} formatted chats`);
+    
+    // Return just the array, not an object
+    return formattedChats;
   } catch (err) {
-    console.error(`Error fetching chats for ${normalizedPhone}:`, err.message);
-    return { success: false, chats: [], count: 0, message: err.message };
+    console.error(`❌ Error fetching chats for ${normalizedPhone}:`, err.message);
+    return [];
   }
 }
 

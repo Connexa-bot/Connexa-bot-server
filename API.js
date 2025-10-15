@@ -778,6 +778,75 @@ export const API_ENDPOINTS = {
     body: { phone, broadcastId, message },
     description: 'Send message to broadcast list'
   }),
+
+  // ========== ADVANCED SEARCH ==========
+  SEARCH_MESSAGES_GLOBAL: (phone, query, limit = 100) => ({
+    url: `${API_BASE_URL}/api/search/messages`,
+    method: 'POST',
+    body: { phone, query, limit },
+    description: 'Search messages globally across all chats'
+  }),
+
+  SEARCH_BY_DATE: (phone, startDate, endDate) => ({
+    url: `${API_BASE_URL}/api/search/by-date`,
+    method: 'POST',
+    body: { phone, startDate, endDate },
+    description: 'Search messages by date range'
+  }),
+
+  SEARCH_BY_MEDIA_TYPE: (phone, mediaType) => ({
+    url: `${API_BASE_URL}/api/search/by-media`,
+    method: 'POST',
+    body: { phone, mediaType },
+    description: 'Search messages by media type (image, video, audio, document)'
+  }),
+
+  GET_UNREAD_CHATS: (phone) => ({
+    url: `${API_BASE_URL}/api/search/unread/${phone}`,
+    method: 'GET',
+    description: 'Get all unread chats with counts'
+  }),
+
+  // ========== STARRED MESSAGES ==========
+  GET_ALL_STARRED: (phone) => ({
+    url: `${API_BASE_URL}/api/starred/${phone}`,
+    method: 'GET',
+    description: 'Get all starred messages across chats'
+  }),
+
+  GET_STARRED_BY_CHAT: (phone, chatId) => ({
+    url: `${API_BASE_URL}/api/starred/${phone}/${chatId}`,
+    method: 'GET',
+    description: 'Get starred messages from specific chat'
+  }),
+
+  SEARCH_STARRED: (phone, query) => ({
+    url: `${API_BASE_URL}/api/starred/search`,
+    method: 'POST',
+    body: { phone, query },
+    description: 'Search within starred messages'
+  }),
+
+  UNSTAR_ALL: (phone) => ({
+    url: `${API_BASE_URL}/api/starred/unstar-all`,
+    method: 'POST',
+    body: { phone },
+    description: 'Remove star from all messages'
+  }),
+
+  // ========== DEVICES & MULTI-DEVICE ==========
+  GET_LINKED_DEVICES: (phone) => ({
+    url: `${API_BASE_URL}/api/devices/${phone}`,
+    method: 'GET',
+    description: 'Get all linked devices'
+  }),
+
+  UNLINK_DEVICE: (phone, deviceId) => ({
+    url: `${API_BASE_URL}/api/devices/unlink`,
+    method: 'POST',
+    body: { phone, deviceId },
+    description: 'Unlink a specific device'
+  }),
 };
 
 // Helper function to make API calls

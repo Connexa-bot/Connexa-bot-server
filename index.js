@@ -43,7 +43,21 @@ await connectDB();
 
 // Check OpenAI connection
 if (process.env.OPENAI_API_KEY) {
-  console.log('✅ OpenAI API connected successfully');
+  try {
+    // Test OpenAI connection
+    const { default: OpenAI } = await import('openai');
+    const testClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    
+    // Make a minimal test request
+    await testClient.models.list();
+    console.log('✅ OpenAI API connected successfully');
+    
+    // Store client globally for access in routes
+    global.openaiClient = testClient;
+  } catch (err) {
+    console.log(`⚠️  OpenAI API connection failed: ${err.message}`);
+    console.log('   AI features will be disabled');
+  }
 } else {
   console.log('⚠️  OpenAI API key not configured (AI features disabled)');
 }

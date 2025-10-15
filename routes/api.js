@@ -816,6 +816,40 @@ export function createApiRoutes(broadcast) {
       const result = await channelActions.followChannel(normalizePhone(phone), channelJid);
       res.json(result);
     } catch (err) {
+
+
+  // ===============================
+  // SECTION 18: LINKED DEVICES
+  // ===============================
+
+  // Get linked devices
+  router.get("/devices/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const devices = await validation.session.sock.getLinkedDevices();
+      res.json({ success: true, devices });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Unlink device
+  router.post("/devices/unlink", async (req, res) => {
+    const { phone, deviceId } = req.body;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      await validation.session.sock.unlinkDevice(deviceId);
+      res.json({ success: true, message: "Device unlinked" });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
       res.status(500).json({ success: false, error: err.message });
     }
   });

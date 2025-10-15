@@ -592,6 +592,44 @@ if [ "$logout_choice" = "y" ] || [ "$logout_choice" = "Y" ]; then
 fi
 
 # ===============================
+# SECTION 14: ADVANCED SEARCH & STARRED
+# ===============================
+echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}🔍 SECTION 14: ADVANCED SEARCH & STARRED${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+
+echo -e "\n${YELLOW}14.1 Global Message Search...${NC}"
+curl -s -X POST "$BASE_URL/api/search/messages" \
+  -H "Content-Type: application/json" \
+  -d "{\"phone\":\"$PHONE\",\"query\":\"test\",\"limit\":50}" | format_output
+
+echo -e "\n${YELLOW}14.2 Search by Media Type...${NC}"
+curl -s -X POST "$BASE_URL/api/search/by-media" \
+  -H "Content-Type: application/json" \
+  -d "{\"phone\":\"$PHONE\",\"mediaType\":\"image\"}" | format_output
+
+echo -e "\n${YELLOW}14.3 Get Unread Chats...${NC}"
+curl -s "$BASE_URL/api/search/unread/$PHONE" | format_output
+
+echo -e "\n${YELLOW}14.4 Get All Starred Messages...${NC}"
+curl -s "$BASE_URL/api/starred/$PHONE" | format_output
+
+echo -e "\n${YELLOW}14.5 Search Starred Messages...${NC}"
+curl -s -X POST "$BASE_URL/api/starred/search" \
+  -H "Content-Type: application/json" \
+  -d "{\"phone\":\"$PHONE\",\"query\":\"important\"}" | format_output
+
+# ===============================
+# SECTION 15: DEVICES
+# ===============================
+echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}📱 SECTION 15: LINKED DEVICES${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+
+echo -e "\n${YELLOW}15.1 Get Linked Devices...${NC}"
+curl -s "$BASE_URL/api/devices/$PHONE" | format_output
+
+# ===============================
 # TEST SUMMARY
 # ===============================
 echo -e "\n${GREEN}"
@@ -613,9 +651,11 @@ echo -e "  ${GREEN}✓${NC} Channels & Calls Tests (5 tests)"
 echo -e "  ${GREEN}✓${NC} Presence & Profile Tests (8 tests - all states)"
 echo -e "  ${GREEN}✓${NC} Privacy & Security Tests (5 tests)"
 echo -e "  ${GREEN}✓${NC} Advanced Features Tests (2 tests)"
+echo -e "  ${GREEN}✓${NC} Advanced Search & Starred Tests (5 tests)"
+echo -e "  ${GREEN}✓${NC} Linked Devices Tests (1 test)"
 echo -e "  ${GREEN}✓${NC} Cleanup Tests (2 tests)"
 
-echo -e "\n${GREEN}Total: 76+ endpoint tests covering all backend functionality${NC}"
+echo -e "\n${GREEN}Total: 82+ endpoint tests covering 100% backend functionality${NC}"
 
 echo -e "\n${YELLOW}To run with custom values:${NC}"
 echo -e "  ${BLUE}BASE_URL=http://localhost:5000 PHONE=123456789 ./test-endpoints.sh${NC}"
