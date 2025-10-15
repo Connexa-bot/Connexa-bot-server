@@ -12,6 +12,3 @@ replit.nix
 .config
 attached_assets
 test-endpoints.sh
-.koyeb.yaml
-Dockerfile
-.dockerignore
