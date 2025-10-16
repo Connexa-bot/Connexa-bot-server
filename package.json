@@ -17,8 +17,8 @@
   "license": "ISC",
   "dependencies": {
     "@rodrigogs/baileys-store": "^1.0.1",
+    "@whiskeysockets/baileys": "^7.0.0-rc.5",
     "axios": "^1.12.2",
-    "baileys": "^6.7.20",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.21.2",

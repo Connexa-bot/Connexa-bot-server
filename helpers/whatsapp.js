@@ -5,7 +5,7 @@ import {
   Browsers,
   delay,
   downloadMediaMessage,
-} from "baileys";
+} from "@whiskeysockets/baileys";
 import fs from "fs/promises";
 import path from "path";
 import { makeInMemoryStore } from "@rodrigogs/baileys-store";

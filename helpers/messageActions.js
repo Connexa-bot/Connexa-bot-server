@@ -4,7 +4,7 @@
 // ===============================
 
 import { getClient } from "./whatsapp.js";
-import { generateWAMessageFromContent, proto } from "baileys";
+import { generateWAMessageFromContent, proto } from "@whiskeysockets/baileys";
 import fs from "fs/promises";
 import path from "path";
 
