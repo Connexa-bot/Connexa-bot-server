@@ -56,11 +56,19 @@ export async function followChannel(phone, channelJid) {
   if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
 
   try {
-    // Placeholder for channel follow functionality
-    // Implementation depends on Baileys newsletter support
-    return { success: false, message: 'Channel features not fully supported yet' };
+    await client.newsletterFollow(channelJid);
+    return { 
+      success: true, 
+      message: 'Successfully followed channel',
+      channelJid
+    };
   } catch (error) {
-    throw new Error(`Failed to follow channel: ${error.message}`);
+    console.error('Error following channel:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Failed to follow channel',
+      message: 'Channel follow functionality has limited support in Baileys'
+    };
   }
 }
 
@@ -72,10 +80,19 @@ export async function unfollowChannel(phone, channelJid) {
   if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
 
   try {
-    // Placeholder for channel unfollow functionality
-    return { success: false, message: 'Channel features not fully supported yet' };
+    await client.newsletterUnfollow(channelJid);
+    return { 
+      success: true, 
+      message: 'Successfully unfollowed channel',
+      channelJid
+    };
   } catch (error) {
-    throw new Error(`Failed to unfollow channel: ${error.message}`);
+    console.error('Error unfollowing channel:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Failed to unfollow channel',
+      message: 'Channel unfollow functionality has limited support in Baileys'
+    };
   }
 }
 
@@ -87,11 +104,136 @@ export async function getChannelMetadata(phone, channelJid) {
   if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
 
   try {
-    // Placeholder for channel metadata
-    return { success: false, message: 'Channel features not fully supported yet' };
+    const metadata = await client.newsletterMetadata(channelJid);
+    const profilePic = await client.profilePictureUrl(channelJid, 'image').catch(() => null);
+    
+    return { 
+      success: true, 
+      metadata: {
+        id: metadata.id,
+        name: metadata.name,
+        description: metadata.description,
+        subscriberCount: metadata.subscribers_count,
+        createdAt: metadata.creation_time,
+        verified: metadata.verification === 'VERIFIED',
+        profilePicUrl: profilePic
+      }
+    };
   } catch (error) {
-    throw new Error(`Failed to get channel metadata: ${error.message}`);
+    console.error('Error getting channel metadata:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Failed to get channel metadata'
+    };
   }
+}
+
+/**
+ * Get channel messages with pagination
+ * @param {string} phone - User's phone number
+ * @param {string} channelJid - Channel JID
+ * @param {object} options - Pagination options
+ * @returns {Promise<object>} Channel messages
+ */
+export async function getChannelMessages(phone, channelJid, options = {}) {
+  const client = getClient(phone);
+  if (!client) throw new Error(`No active WhatsApp client for ${phone}`);
+
+  const { limit = 50, cursor = null } = options;
+
+  try {
+    const { sessions } = await import('./whatsapp.js');
+    const normalizedPhone = phone.replace(/\D/g, '');
+    const session = sessions.get(normalizedPhone);
+    
+    if (!session || !session.store) {
+      throw new Error(`No store found for ${phone}`);
+    }
+
+    const store = session.store;
+    let messages = [];
+
+    const allMessages = store.messages?.[channelJid];
+    if (allMessages) {
+      const messageArray = Array.from(allMessages.values());
+      
+      messageArray.sort((a, b) => (b.messageTimestamp || 0) - (a.messageTimestamp || 0));
+      
+      if (cursor) {
+        const cursorIndex = messageArray.findIndex(m => m.key?.id === cursor);
+        if (cursorIndex !== -1) {
+          messages = messageArray.slice(cursorIndex + 1, cursorIndex + 1 + limit);
+        }
+      } else {
+        messages = messageArray.slice(0, limit);
+      }
+    }
+
+    const formattedMessages = messages.map(msg => formatChannelMessage(msg));
+
+    const nextCursor = messages.length > 0 
+      ? messages[messages.length - 1]?.key?.id 
+      : null;
+
+    return {
+      success: true,
+      channelJid,
+      messages: formattedMessages,
+      hasMore: messages.length === limit,
+      nextCursor,
+      count: formattedMessages.length
+    };
+  } catch (error) {
+    console.error('Error fetching channel messages:', error);
+    return {
+      success: false,
+      error: error.message,
+      messages: [],
+      count: 0
+    };
+  }
+}
+
+function formatChannelMessage(message) {
+  if (!message) return null;
+
+  const msg = message.message || {};
+  const key = message.key || {};
+
+  return {
+    id: key.id,
+    timestamp: message.messageTimestamp 
+      ? parseInt(message.messageTimestamp) * 1000 
+      : Date.now(),
+    type: getMessageType(msg),
+    content: extractContent(msg),
+    reactions: message.reactions || []
+  };
+}
+
+function getMessageType(msg) {
+  if (msg.conversation || msg.extendedTextMessage) return 'text';
+  if (msg.imageMessage) return 'image';
+  if (msg.videoMessage) return 'video';
+  if (msg.audioMessage) return 'audio';
+  if (msg.documentMessage) return 'document';
+  return 'unknown';
+}
+
+function extractContent(msg) {
+  if (msg.conversation) return { text: msg.conversation };
+  if (msg.extendedTextMessage) return { text: msg.extendedTextMessage.text };
+  if (msg.imageMessage) return { 
+    caption: msg.imageMessage.caption,
+    url: msg.imageMessage.url,
+    mimetype: msg.imageMessage.mimetype
+  };
+  if (msg.videoMessage) return { 
+    caption: msg.videoMessage.caption,
+    url: msg.videoMessage.url,
+    mimetype: msg.videoMessage.mimetype
+  };
+  return {};
 }
 
 /**

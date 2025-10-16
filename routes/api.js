@@ -11,6 +11,9 @@ import * as profileActions from "../helpers/profileActions.js";
 import * as statusActions from "../helpers/statusActions.js";
 import * as channelActions from "../helpers/channelActions.js";
 import * as callActions from "../helpers/callActions.js";
+import * as historyFetch from "../helpers/historyFetch.js";
+import * as businessActions from "../helpers/businessActions.js";
+import * as communityActions from "../helpers/communityActions.js";
 import { fetchCalls } from "../helpers/fetchers.js"; // Explicitly import fetchCalls
 
 export function createApiRoutes(broadcast) {
@@ -1520,7 +1523,183 @@ export function createApiRoutes(broadcast) {
   // This section is a placeholder for reference
 
   // ===============================
-  // SECTION 19: OPENAI STATUS
+  // SECTION 19: MESSAGE HISTORY (Chat View)
+  // ===============================
+
+  // Get messages for specific chat/group/channel with pagination
+  router.get("/messages/:phone/:chatId", async (req, res) => {
+    const { phone, chatId } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const { limit, cursor, direction, includeMedia } = req.query;
+      const options = {
+        limit: limit ? parseInt(limit) : 50,
+        cursor: cursor || null,
+        direction: direction || 'before',
+        includeMedia: includeMedia !== 'false'
+      };
+
+      const result = await historyFetch.getChatHistory(normalizePhone(phone), chatId, options);
+      res.json(result);
+    } catch (err) {
+      console.error('Error fetching chat history:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 20: STATUS FEED
+  // ===============================
+
+  // Get all status updates from contacts
+  router.get("/status-feed/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await statusActions.getStatusFeed(normalizedPhone);
+      res.json(result);
+    } catch (err) {
+      console.error('Error fetching status feed:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get status messages from specific contact
+  router.get("/status-messages/:phone/:statusJid", async (req, res) => {
+    const { phone, statusJid } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await statusActions.getStatusMessages(normalizePhone(phone), statusJid);
+      res.json(result);
+    } catch (err) {
+      console.error('Error fetching status messages:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 21: COMMUNITIES
+  // ===============================
+
+  // List all communities
+  router.get("/communities/:phone", async (req, res) => {
+    const normalizedPhone = normalizePhone(req.params.phone);
+    const validation = validateSession(normalizedPhone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await communityActions.getCommunities(normalizedPhone);
+      res.json(result);
+    } catch (err) {
+      console.error('Error fetching communities:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get community metadata and linked groups
+  router.get("/communities/:phone/:communityJid", async (req, res) => {
+    const { phone, communityJid } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const metadata = await communityActions.getCommunityMetadata(normalizePhone(phone), communityJid);
+      const linkedGroups = await communityActions.getLinkedGroups(normalizePhone(phone), communityJid);
+      
+      res.json({
+        success: true,
+        metadata: metadata.metadata,
+        linkedGroups: linkedGroups.linkedGroups,
+        linkedGroupsCount: linkedGroups.count
+      });
+    } catch (err) {
+      console.error('Error fetching community details:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 22: BUSINESS FEATURES
+  // ===============================
+
+  // Get business profile
+  router.get("/business/:phone/:jid/profile", async (req, res) => {
+    const { phone, jid } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await businessActions.getBusinessProfile(normalizePhone(phone), jid);
+      res.json(result);
+    } catch (err) {
+      console.error('Error fetching business profile:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get business catalog
+  router.get("/business/:phone/:jid/catalog", async (req, res) => {
+    const { phone, jid } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await businessActions.getBusinessCatalog(normalizePhone(phone), jid);
+      res.json(result);
+    } catch (err) {
+      console.error('Error fetching business catalog:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // Get catalog item details
+  router.get("/business/:phone/:jid/catalog/:itemId", async (req, res) => {
+    const { phone, jid, itemId } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const result = await businessActions.getCatalogItem(normalizePhone(phone), jid, itemId);
+      res.json(result);
+    } catch (err) {
+      console.error('Error fetching catalog item:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 23: CHANNEL MESSAGES
+  // ===============================
+
+  // Get channel messages with pagination
+  router.get("/channel-messages/:phone/:channelJid", async (req, res) => {
+    const { phone, channelJid } = req.params;
+    const validation = validateSession(phone);
+    if (!validation.valid) return res.status(400).json({ error: validation.error });
+
+    try {
+      const { limit, cursor } = req.query;
+      const options = {
+        limit: limit ? parseInt(limit) : 50,
+        cursor: cursor || null
+      };
+
+      const result = await channelActions.getChannelMessages(normalizePhone(phone), channelJid, options);
+      res.json(result);
+    } catch (err) {
+      console.error('Error fetching channel messages:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ===============================
+  // SECTION 24: OPENAI STATUS
   // ===============================
 
   // Check OpenAI connection status
