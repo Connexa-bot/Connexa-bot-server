@@ -72,23 +72,64 @@ export function createApiRoutes(broadcast) {
 
       const checkSession = () => new Promise((resolve) => {
         const interval = setInterval(() => {
-          const session = sessions.get(normalizedPhone);
           attempts++;
+          const session = sessions.get(normalizedPhone);
+          
+          console.log(`📊 Polling session (attempt ${attempts}/${maxAttempts}):`, {
+            hasSession: !!session,
+            connected: session?.connected,
+            hasQR: !!session?.qrCode,
+            hasLink: !!session?.linkCode,
+            hasError: !!session?.error
+          });
 
-          if (session && (session.qrCode || session.linkCode || session.connected || session.error)) {
+          // Return immediately if we have QR/link code OR if there's an error
+          if (session && (session.qrCode || session.linkCode)) {
             clearInterval(interval);
+            console.log(`✅ Returning auth data for ${normalizedPhone}`);
             resolve({
               success: true,
               qrCode: session.qrCode || null,
               linkCode: session.linkCode || null,
-              message: session.error || (session.connected ? "Connected" : "Scan QR code or use link code"),
+              message: "Scan QR code or use link code to authenticate",
               connected: session.connected || false
             });
             return;
           }
 
+          // If already connected (session exists from before), return that
+          if (session && session.connected) {
+            clearInterval(interval);
+            console.log(`✅ Already connected: ${normalizedPhone}`);
+            resolve({
+              success: true,
+              qrCode: null,
+              linkCode: null,
+              message: "Already connected",
+              connected: true
+            });
+            return;
+          }
+
+          // If there's an error, return it
+          if (session && session.error) {
+            clearInterval(interval);
+            console.log(`❌ Session error for ${normalizedPhone}: ${session.error}`);
+            resolve({
+              success: false,
+              qrCode: null,
+              linkCode: null,
+              message: session.error,
+              connected: false,
+              error: session.error
+            });
+            return;
+          }
+
+          // Timeout after max attempts
           if (attempts >= maxAttempts) {
             clearInterval(interval);
+            console.log(`⏱️ Timeout waiting for ${normalizedPhone}`);
             resolve({
               success: false,
               qrCode: null,
