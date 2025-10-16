@@ -5,6 +5,7 @@ import {
   Browsers,
   delay,
   downloadMediaMessage,
+  DisconnectReason
 } from "@whiskeysockets/baileys";
 import fs from "fs/promises";
 import path from "path";
@@ -20,6 +21,7 @@ const AUTH_BASE_DIR = process.env.AUTH_DIR || "./auth";
 const MEDIA_BASE_DIR = process.env.MEDIA_DIR || "./media";
 const MAX_QR_ATTEMPTS = parseInt(process.env.MAX_QR_ATTEMPTS || "3");
 const CONNECTION_TIMEOUT_MS = parseInt(process.env.MAX_QR_WAIT || "60000");
+const MAX_RECONNECT_ATTEMPTS = parseInt(process.env.MAX_RECONNECT_ATTEMPTS || "5"); // Added for reconnection attempts
 
 // Session map to keep track of active sockets
 export const sessions = new Map();
@@ -42,13 +44,13 @@ export async function ensureMediaDir(phone) {
 export async function clearSession(phone) {
   const normalizedPhone = phone.replace(/^\+|\s/g, "");
   const session = sessions.get(normalizedPhone);
-  
+
   // Stop interval first to prevent write attempts
   if (session?.intervalId) {
     clearInterval(session.intervalId);
     session.intervalId = null;
   }
-  
+
   try {
     const dir = path.join(AUTH_BASE_DIR, normalizedPhone);
     await fs.rm(dir, { recursive: true, force: true });
@@ -62,7 +64,7 @@ export async function clearSession(phone) {
 export async function clearSessionState(phoneNumber, fullReset = false) {
   try {
     const sessionDir = path.join(AUTH_BASE_DIR, phoneNumber);
-    
+
     if (fullReset) {
       await fs.rm(sessionDir, { recursive: true, force: true });
       sessions.delete(phoneNumber);
@@ -137,8 +139,9 @@ export async function startBot(phone, broadcast) {
     error: null,
     intervalId,
     qrAttempts: 0,
+    reconnectAttempts: 0, // Added for reconnection attempts
   };
-  
+
   sessions.set(normalizedPhone, initialSession);
   console.log(`🎯 Initial session placeholder created for ${normalizedPhone}`);
 
@@ -165,7 +168,7 @@ export async function startBot(phone, broadcast) {
   });
 
   store.bind(sock.ev);
-  
+
   // ✅ Update session with socket
   initialSession.sock = sock;
   sessions.set(normalizedPhone, initialSession);
@@ -176,26 +179,28 @@ export async function startBot(phone, broadcast) {
   });
 
   sock.ev.on("connection.update", async (update) => {
-    const { qr, connection, lastDisconnect } = update;
+    const { connection, lastDisconnect, qr } = update;
     const session = sessions.get(normalizedPhone);
     if (!session) return;
 
-    console.log(`📊 Connection update for ${normalizedPhone}:`, { 
-      connection, 
+    const statusCode = lastDisconnect?.error?.output?.statusCode;
+    console.log(`📡 Connection update for ${normalizedPhone}:`, {
+      connection,
+      statusCode,
       hasQR: !!qr,
-      registered: state.creds.registered 
+      registered: state.creds.registered
     });
 
-    // Handle QR codes
+    // Handle QR codes FIRST (before checking connection status)
     if (qr) {
       session.qrAttempts++;
       session.qrCode = qr;
       console.log(`📱 QR Code generated for ${normalizedPhone} (attempt ${session.qrAttempts})`);
-      
+
       // ✅ UPDATE SESSION IMMEDIATELY
       sessions.set(normalizedPhone, session);
       broadcast("qr", { phone: normalizedPhone, qr });
-      
+
       // Request pairing code (link code) - always try on first attempt
       if (!session.linkCode && session.qrAttempts === 1) {
         try {
@@ -203,7 +208,7 @@ export async function startBot(phone, broadcast) {
           const code = await sock.requestPairingCode(normalizedPhone);
           session.linkCode = code;
           console.log(`✅ Pairing code for ${normalizedPhone}: ${code}`);
-          
+
           // ✅ UPDATE SESSION WITH LINK CODE
           sessions.set(normalizedPhone, session);
           broadcast("linkCode", { phone: normalizedPhone, code });
@@ -212,10 +217,40 @@ export async function startBot(phone, broadcast) {
           // Don't fail completely, QR is still available
         }
       }
-      
+
       if (session.qrAttempts >= MAX_QR_ATTEMPTS) {
         session.error = `❌ Max QR attempts reached (${MAX_QR_ATTEMPTS})`;
         sessions.set(normalizedPhone, session);
+        broadcast("error", { phone: normalizedPhone, error: session.error });
+        sock.ws?.close();
+        return;
+      }
+    }
+
+    // Connection closed - handle AFTER QR generation
+    if (connection === "close") {
+      const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
+      const closeReason = lastDisconnect?.error?.message || "Unknown";
+
+      console.log(`🔌 Connection closed for ${normalizedPhone}: ${closeReason} (code: ${statusCode})`);
+
+      // Don't fail if we already have QR/link code - user is still authenticating
+      if (session.qrCode || session.linkCode) {
+        console.log(`⏳ Connection closed but auth in progress for ${normalizedPhone}, ignoring...`);
+        return;
+      }
+
+      if (shouldReconnect && session.reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+        session.reconnectAttempts++;
+        console.log(`🔄 Reconnecting ${normalizedPhone} (attempt ${session.reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
+        await delay(2000 * session.reconnectAttempts);
+        await startBot(normalizedPhone, broadcast);
+        return;
+      } else {
+        session.error = `Connection closed (code: ${statusCode}, reason: ${closeReason})`;
+        session.connected = false;
+        sessions.set(normalizedPhone, session);
+        broadcast("status", { phone: normalizedPhone, connected: false, error: session.error });
         sock.ws?.close();
         return;
       }
@@ -228,25 +263,26 @@ export async function startBot(phone, broadcast) {
       session.error = null;
       session.qrCode = null;
       session.linkCode = null;
-      
+      session.reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+
       // ✅ CRITICAL: Update the session in the Map IMMEDIATELY
       sessions.set(normalizedPhone, session);
-      
+
       console.log(`✅ Session updated - connected: ${session.connected}`);
       broadcast("status", { phone: normalizedPhone, connected: true });
-      
+
       // ✅ Force sync all data after connection
       try {
         console.log(`🔄 Syncing WhatsApp data for ${normalizedPhone}...`);
-        
+
         // Sync contacts
         const contactsCount = Object.keys(store.contacts || {}).length;
         console.log(`📇 Contacts synced: ${contactsCount}`);
-        
+
         // Sync chats
         const chatsCount = (store.chats?.all() || []).length;
         console.log(`💬 Chats synced: ${chatsCount}`);
-        
+
         // If no chats in store, force fetch from WhatsApp
         if (chatsCount === 0) {
           console.log(`⚠️ No chats in store, forcing sync...`);
@@ -256,30 +292,6 @@ export async function startBot(phone, broadcast) {
         }
       } catch (syncErr) {
         console.error(`⚠️ Error syncing data: ${syncErr.message}`);
-      }
-    }
-
-    // Closed
-    if (connection === "close") {
-      const code = lastDisconnect?.error?.output?.statusCode;
-      const reason = lastDisconnect?.error?.output?.payload?.message || 'Unknown';
-      const shouldReconnect = code !== 401 && code !== 403;
-      session.connected = false;
-      session.error = `Connection closed (code: ${code}, reason: ${reason})`;
-      
-      // ✅ UPDATE SESSION IMMEDIATELY
-      sessions.set(normalizedPhone, session);
-      
-      console.log(`❌ Connection closed for ${normalizedPhone}: ${session.error}`);
-      broadcast("status", { phone: normalizedPhone, connected: false, error: session.error });
-
-      if (shouldReconnect) {
-        console.log(`🔁 Reconnecting ${normalizedPhone} in 5 seconds...`);
-        await delay(5000);
-        startBot(normalizedPhone, broadcast);
-      } else {
-        console.log(`🚫 Not reconnecting ${normalizedPhone} (logout required)`);
-        await clearSession(normalizedPhone);
       }
     }
   });
